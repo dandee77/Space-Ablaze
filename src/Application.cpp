@@ -7,6 +7,7 @@
 static constexpr int screenWidth = 3840;
 static constexpr int screenHeight = 2160;
 
+
 Application::Application()
 {
     const int windowWidth = 1280;
@@ -17,6 +18,14 @@ Application::Application()
 
     m_target = LoadRenderTexture(screenWidth, screenHeight);
     SetTextureFilter(m_target.texture, TEXTURE_FILTER_BILINEAR);
+
+    m_camera = Camera2D{ 0 };
+    m_camera.target = { 0.0f, 0.0f };
+    m_camera.offset = { (float)screenWidth/2.0f, (float)screenHeight/2.0f };
+    m_camera.rotation = 0.0f;
+    m_camera.zoom = 1.0f;
+
+    m_shader = LoadShader(0, "assets/shaders/shader.fs");
 
     // Resource Manager
 }
@@ -31,41 +40,55 @@ Application::~Application()
 
 void Application::Run()
 {
+    int resolutionLoc = GetShaderLocation(m_shader, "resolution");
+    RenderTexture targetFinal = LoadRenderTexture(screenWidth, screenHeight);
+    int timeLoc = GetShaderLocation(m_shader, "time");
+
+    Image whitePixel = GenImageColor(1, 1, WHITE);
+    Texture2D whiteTex = LoadTextureFromImage(whitePixel);
+    UnloadImage(whitePixel);
+
     while (!WindowShouldClose())
     {
-        float scale = MIN((float)GetScreenWidth()/screenWidth, (float)GetScreenHeight()/screenHeight);
-        Vector2 mouse = GetMousePosition();
-        Vector2 virtualMouse = { 0 };
-        virtualMouse.x = (mouse.x - ((float)GetScreenWidth() - ((float)screenWidth*scale))*0.5f)/scale;
-        virtualMouse.y = (mouse.y - ((float)GetScreenHeight() - ((float)screenHeight*scale))*0.5f)/scale;
-        virtualMouse = Vector2Clamp(virtualMouse, Vector2Zero(), Vector2{ (float)screenWidth, (float)screenHeight });
+        float time = GetTime();
+        float resolution[2] = { (float)screenWidth, (float)screenHeight };
+        SetShaderValue(m_shader, resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+        SetShaderValue(m_shader, timeLoc, &time, SHADER_UNIFORM_FLOAT);
 
-        SetMouseOffset(static_cast<int>(-((float)GetScreenWidth() - ((float)screenWidth*scale))*0.5f),
-                    static_cast<int>(-((float)GetScreenHeight() - ((float)screenHeight*scale))*0.5f));
-        SetMouseScale(1/scale, 1/scale);
+        float scale = MIN((float)GetScreenWidth()/screenWidth, (float)GetScreenHeight()/screenHeight);
+        float renderWidth = screenWidth * scale;
+        float renderHeight = screenHeight * scale;
+        float offsetX = (GetScreenWidth() - renderWidth) * 0.5f;
+        float offsetY = (GetScreenHeight() - renderHeight) * 0.5f;
 
 
         BeginTextureMode(m_target);
-
-            ClearBackground(BLACK); 
-
-            // Update
-
+            ClearBackground(BLUE);
             DrawText("Hello World", 100, 100, 120, WHITE);
-
         EndTextureMode();
 
+        
+        BeginTextureMode(targetFinal);
+            ClearBackground(BLANK);
+            BeginShaderMode(m_shader);
+                DrawTextureRec(m_target.texture, 
+                             Rectangle{0, 0, (float)m_target.texture.width, (float)-m_target.texture.height},
+                             Vector2{0, 0}, 
+                             WHITE);
+            EndShaderMode();
+        EndTextureMode();
 
         BeginDrawing();
-
-            ClearBackground(BLACK); 
-
-            DrawTexturePro(m_target.texture, Rectangle{ 0.0f, 0.0f, (float)m_target.texture.width, (float)-m_target.texture.height }, 
-                        Rectangle{((float)GetScreenWidth() - ((float)screenWidth*scale))*0.5f,
-                                    ((float)GetScreenHeight() - ((float)screenHeight*scale))*0.5f,
-                                    (float)screenWidth*scale, (float)screenHeight*scale},
-                                    Vector2Zero(), 0.0f, WHITE);
-    
+            ClearBackground(BLACK);
+            DrawTexturePro(targetFinal.texture,
+                         Rectangle{0, 0, (float)screenWidth, (float)-screenHeight},
+                         Rectangle{offsetX, offsetY, renderWidth, renderHeight},
+                         Vector2{0, 0},
+                         0.0f,
+                         WHITE);
         EndDrawing();
     }
+    
+    UnloadRenderTexture(targetFinal);
+    UnloadTexture(whiteTex);
 }
