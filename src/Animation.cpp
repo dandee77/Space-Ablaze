@@ -55,7 +55,7 @@ void Animation::Draw(Rectangle dest, bool flipX, Color tint) {
     float rotation = 0;
     
     if (flipX) {
-        source.width *= -1; // Flip the source rectangle
+        source.width *= -1; 
     }
     
     DrawTexturePro(spriteSheet, source, dest, origin, rotation, tint);

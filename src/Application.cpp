@@ -1,6 +1,7 @@
 #include "Application.hpp"
 #include "Animation.hpp"
 #include "raymath.h"
+#include <memory>
 
 #define MIN(a,b) (((a)<(b))?(a):(b))
 
@@ -46,7 +47,10 @@ void Application::Run()
     int timeLoc = GetShaderLocation(m_shader, "time");
 
     Texture2D bg = LoadTexture("assets/textures/game_background_texture.png");
-    Animation bgAnim = Animation(bg, bg.width / 3, bg.height / 3, 0.1f, true);
+    auto bgAnim = std::make_shared<Animation>(bg, bg.width / 3, bg.height / 3, 0.1f, true);
+
+    m_animator.AddAnimation("bg", bgAnim);
+    m_animator.Play("bg");
 
     while (!WindowShouldClose())
     {
@@ -64,8 +68,10 @@ void Application::Run()
 
         BeginTextureMode(m_target);
             ClearBackground(BLUE);
-            bgAnim.Update();
-            bgAnim.Draw(Rectangle{0, 0, screenWidth, screenHeight}, false, WHITE);
+
+            m_animator.Update();
+            m_animator.Draw(Rectangle{0, 0, (float)screenWidth, (float)screenHeight}, false, WHITE);
+
         EndTextureMode();
 
         
