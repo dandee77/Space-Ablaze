@@ -2,13 +2,12 @@
 #include "Animation.hpp"
 #include "raymath.h"
 #include <memory>
+#include "ResourceManager.hpp"
 
 #define MIN(a,b) (((a)<(b))?(a):(b))
 
-
 static constexpr int screenWidth = 3840;
 static constexpr int screenHeight = 2160;
-
 
 Application::Application()
 {
@@ -28,10 +27,7 @@ Application::Application()
     m_camera.zoom = 1.0f;
 
     m_shader = LoadShader(0, "assets/shaders/shader.fs");
-
-    // Resource Manager
 }
-
 
 Application::~Application()
 {
@@ -39,16 +35,28 @@ Application::~Application()
     CloseWindow();
 }
 
-
 void Application::Run()
 {
+    ResourceManager& resourceManager = ResourceManager::GetInstance();
+    resourceManager.Load();
+    while (resourceManager.GetLoadingProgress() < 100)
+    {
+        resourceManager.ProcessLoadedResources();
+        BeginDrawing();
+            ClearBackground(BLACK);
+            DrawText("Loading...", 10, 10, 20, WHITE);
+            DrawText(TextFormat("Loading progress: %d%%", resourceManager.GetLoadingProgress()), 10, 40, 10, WHITE);
+        EndDrawing();
+    }
+
+    resourceManager.ProcessLoadedResources();
+
     int resolutionLoc = GetShaderLocation(m_shader, "resolution");
     RenderTexture targetFinal = LoadRenderTexture(screenWidth, screenHeight);
     int timeLoc = GetShaderLocation(m_shader, "time");
 
-    Texture2D bg = LoadTexture("assets/textures/game_background_texture.png");
+    Texture2D bg = resourceManager.GetTexture("game_background");
     auto bgAnim = std::make_shared<Animation>(bg, bg.width / 3, bg.height / 3, 0.1f, true);
-
     m_animator.AddAnimation("bg", bgAnim);
     m_animator.Play("bg");
 
@@ -65,16 +73,12 @@ void Application::Run()
         float offsetX = (GetScreenWidth() - renderWidth) * 0.5f;
         float offsetY = (GetScreenHeight() - renderHeight) * 0.5f;
 
-
         BeginTextureMode(m_target);
             ClearBackground(BLUE);
-
             m_animator.Update();
             m_animator.Draw(Rectangle{0, 0, (float)screenWidth, (float)screenHeight}, false, WHITE);
-
         EndTextureMode();
 
-        
         BeginTextureMode(targetFinal);
             ClearBackground(BLANK);
             BeginShaderMode(m_shader);
@@ -95,6 +99,7 @@ void Application::Run()
                          WHITE);
         EndDrawing();
     }
-    
+
     UnloadRenderTexture(targetFinal);
+    UnloadShader(m_shader);
 }

@@ -30,7 +30,6 @@ void Animator::Update() {
         }
     }
 
-    // Remove completed animations
     for (const auto& name : toRemove) {
         animations.erase(name);
     }
