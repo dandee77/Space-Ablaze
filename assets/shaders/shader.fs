@@ -22,14 +22,15 @@ void main() {
     
     vec3 oricol = texture2D(texture0, q).xyz;
     vec3 col;
+    
     float x = sin(0.3 * time + uv.y * 21.0) * sin(0.7 * time + uv.y * 29.0) * 
-              sin(0.3 + 0.33 * time + uv.y * 31.0) * 0.0017;
+              sin(0.3 + 0.33 * time + uv.y * 31.0) * 0.0005; 
 
-    col.r = texture2D(texture0, vec2(x + uv.x + 0.001, uv.y + 0.001)).x + 0.05;
-    col.g = texture2D(texture0, vec2(x + uv.x + 0.000, uv.y - 0.002)).y + 0.05;
-    col.b = texture2D(texture0, vec2(x + uv.x - 0.002, uv.y + 0.000)).z + 0.05;
+    col.r = texture2D(texture0, vec2(x + uv.x + 0.0005, uv.y + 0.0005)).x + 0.03; 
+    col.g = texture2D(texture0, vec2(x + uv.x + 0.0000, uv.y - 0.0010)).y + 0.03;
+    col.b = texture2D(texture0, vec2(x + uv.x - 0.0010, uv.y + 0.0000)).z + 0.03; 
 
-    col = clamp(col * 0.6 + 0.4 * col * col * 1.0, 0.0, 1.0);
+    col = clamp(col * 0.6 + 0.4 * col * col * 1.0, 0.0, 1.0);   
     float vig = (0.0 + 1.0 * 16.0 * uv.x * uv.y * (1.0 - uv.x) * (1.0 - uv.y));
     col *= vec3(pow(vig, 0.3));
 

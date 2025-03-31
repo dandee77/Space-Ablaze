@@ -1,4 +1,5 @@
 #include "Application.hpp"
+#include "Animation.hpp"
 #include "raymath.h"
 
 #define MIN(a,b) (((a)<(b))?(a):(b))
@@ -44,9 +45,8 @@ void Application::Run()
     RenderTexture targetFinal = LoadRenderTexture(screenWidth, screenHeight);
     int timeLoc = GetShaderLocation(m_shader, "time");
 
-    Image whitePixel = GenImageColor(1, 1, WHITE);
-    Texture2D whiteTex = LoadTextureFromImage(whitePixel);
-    UnloadImage(whitePixel);
+    Texture2D bg = LoadTexture("assets/textures/game_background_texture.png");
+    Animation bgAnim = Animation(bg, bg.width / 3, bg.height / 3, 0.1f, true);
 
     while (!WindowShouldClose())
     {
@@ -64,7 +64,8 @@ void Application::Run()
 
         BeginTextureMode(m_target);
             ClearBackground(BLUE);
-            DrawText("Hello World", 100, 100, 120, WHITE);
+            bgAnim.Update();
+            bgAnim.Draw(Rectangle{0, 0, screenWidth, screenHeight}, false, WHITE);
         EndTextureMode();
 
         
@@ -90,5 +91,4 @@ void Application::Run()
     }
     
     UnloadRenderTexture(targetFinal);
-    UnloadTexture(whiteTex);
 }
