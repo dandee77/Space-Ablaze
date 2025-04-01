@@ -7,99 +7,83 @@ ResourceManager& ResourceManager::GetInstance() {
     return instance;
 }
 
-ResourceManager::ResourceManager() {
+ResourceManager::ResourceManager(){
     texturePaths = {
         {"game_background", "assets/textures/game_background_texture.png"}
     };
 
-    totalResources = texturePaths.size() + fontPaths.size() + 
-                    soundPaths.size() + musicPaths.size() + 
-                    shaderPaths.size();
+    shaderPaths = {
+        {"shader", "assets/shaders/shader.fs"}
+    };
 }
 
-ResourceManager::~ResourceManager() { 
-    Unload(); 
-}
+ResourceManager::~ResourceManager() { Unload(); }
 
-void ResourceManager::Load() {
-    if (isLoading) return;
+void ResourceManager::LoadTextures() {
+    if (isTextureLoading || texturePaths.empty()) return;
     
-    isLoading = true;
-    loadedCount = 0;
+    isTextureLoading = true;
+    loadedTextureCount = 0;
     
     for (const auto& [name, path] : texturePaths) {
-        workerThreads.emplace_back([this, name, path]() {
+        textureThreads.emplace_back([this, name, path]() {
             if (!std::filesystem::exists(path)) {
                 std::cerr << "Texture file not found: " << path << std::endl;
-                loadedCount++;
+                loadedTextureCount++;
                 return;
             }
 
             Image img = LoadImage(path.c_str());
             if (img.data == nullptr) {
                 std::cerr << "Failed to load image: " << path << std::endl;
-                loadedCount++;
+                loadedTextureCount++;
                 return;
             }
 
-            std::lock_guard<std::mutex> lock(queueMutex);
+            std::lock_guard<std::mutex> lock(textureMutex);
             loadedImages.push({name, img});
-            loadedCount++;
+            loadedTextureCount++;
         });
-    }
-
-    for (const auto& [name, path] : fontPaths) {
-        std::lock_guard<std::mutex> lock(queueMutex);
-        fontsToLoad.push({name, path, 0});
-        loadedCount++;
     }
 }
 
-void ResourceManager::ProcessLoadedResources() {
-    {
-        std::lock_guard<std::mutex> lock(queueMutex);
-        while (!loadedImages.empty()) {
-            auto task = loadedImages.front();
-            loadedImages.pop();
+void ResourceManager::ProcessLoadedTextures() {
+    std::lock_guard<std::mutex> lock(textureMutex);
+    while (!loadedImages.empty()) {
+        auto task = loadedImages.front();
+        loadedImages.pop();
 
-            Texture2D texture = LoadTextureFromImage(task.image);
-            UnloadImage(task.image);
+        Texture2D texture = LoadTextureFromImage(task.image);
+        UnloadImage(task.image);
 
-            if (texture.id == 0) {
-                std::cerr << "Failed to create texture: " << task.name << std::endl;
-                continue;
-            }
-
-            textures[task.name] = texture;
+        if (texture.id == 0) {
+            std::cerr << "Failed to create texture: " << task.name << std::endl;
+            continue;
         }
+
+        textures[task.name] = texture;
     }
+}
 
-    {
-        std::lock_guard<std::mutex> lock(queueMutex);
-        while (!fontsToLoad.empty()) {
-            auto task = fontsToLoad.front();
-            fontsToLoad.pop();
-
-            if (!std::filesystem::exists(task.path)) {
-                std::cerr << "Font file not found: " << task.path << std::endl;
-                continue;
-            }
-
-            Font font = (task.fontSize > 0) ? LoadFontEx(task.path.c_str(), task.fontSize, nullptr, 0)
-                                          : LoadFont(task.path.c_str());
-
-            if (font.glyphs == nullptr) {
-                std::cerr << "Failed to load font: " << task.path << std::endl;
-                continue;
-            }
-
-            fonts[task.name] = font;
+void ResourceManager::LoadFonts() {
+    for (const auto& [name, path] : fontPaths) {
+        if (!std::filesystem::exists(path)) {
+            std::cerr << "Font file not found: " << path << std::endl;
+            continue;
         }
-    }
 
+        Font font = LoadFont(path.c_str());
+        if (font.glyphs == nullptr) {
+            std::cerr << "Failed to load font: " << path << std::endl;
+            continue;
+        }
+
+        fonts[name] = font;
+    }
+}
+
+void ResourceManager::LoadSounds() {
     for (const auto& [name, path] : soundPaths) {
-        if (sounds.find(name) != sounds.end()) continue;
-
         if (!std::filesystem::exists(path)) {
             std::cerr << "Sound file not found: " << path << std::endl;
             continue;
@@ -113,10 +97,10 @@ void ResourceManager::ProcessLoadedResources() {
 
         sounds[name] = sound;
     }
+}
 
+void ResourceManager::LoadMusic() {
     for (const auto& [name, path] : musicPaths) {
-        if (music.find(name) != music.end()) continue;
-
         if (!std::filesystem::exists(path)) {
             std::cerr << "Music file not found: " << path << std::endl;
             continue;
@@ -130,16 +114,16 @@ void ResourceManager::ProcessLoadedResources() {
 
         music[name] = mus;
     }
+}
 
+void ResourceManager::LoadShaders() {
     for (const auto& [name, paths] : shaderPaths) {
-        if (shaders.find(name) != shaders.end()) continue;
-
-        if (!std::filesystem::exists(paths.first) || !std::filesystem::exists(paths.second)) {
-            std::cerr << "Shader files not found: " << paths.first << " or " << paths.second << std::endl;
+        if (!std::filesystem::exists(paths)) {
+            std::cerr << "Shader file not found: " << paths << std::endl;
             continue;
         }
 
-        Shader shader = LoadShader(paths.first.c_str(), paths.second.c_str());
+        Shader shader = LoadShader(0, shaderPaths[name].c_str());
         if (shader.id == 0) {
             std::cerr << "Failed to load shader: " << name << std::endl;
             continue;
@@ -150,12 +134,13 @@ void ResourceManager::ProcessLoadedResources() {
 }
 
 void ResourceManager::Unload() {
-    for (auto& thread : workerThreads) {
+    isTextureLoading = false;
+    for (auto& thread : textureThreads) {
         if (thread.joinable()) thread.join();
     }
-    workerThreads.clear();
+    textureThreads.clear();
 
-    ProcessLoadedResources();
+    ProcessLoadedTextures();
 
     for (auto& [name, texture] : textures) UnloadTexture(texture);
     for (auto& [name, font] : fonts) UnloadFont(font);
@@ -169,24 +154,21 @@ void ResourceManager::Unload() {
     music.clear();
     shaders.clear();
     
-    loadedCount = 0;
-    isLoading = false;
+    loadedTextureCount = 0;
 }
 
-int ResourceManager::GetLoadingProgress() const {
-    if (totalResources == 0) return 100;
-    return static_cast<int>((loadedCount * 100) / totalResources);
+int ResourceManager::GetTextureLoadingProgress() const {
+    if (texturePaths.empty()) return 100;
+    return static_cast<int>((loadedTextureCount * 100) / texturePaths.size());
 }
 
 Texture2D ResourceManager::GetTexture(const std::string& name) const {
-    std::lock_guard<std::mutex> lock(resourceMutex);
+    std::lock_guard<std::mutex> lock(textureMutex);
     auto it = textures.find(name);
     return it != textures.end() ? it->second : Texture2D{};
 }
 
 Font ResourceManager::GetFont(const std::string& name, int fontSize) const {
-    std::lock_guard<std::mutex> lock(resourceMutex);
-    
     if (fontSize <= 0) {
         auto it = fonts.find(name);
         return it != fonts.end() ? it->second : Font{};
@@ -205,19 +187,16 @@ Font ResourceManager::GetFont(const std::string& name, int fontSize) const {
 }
 
 Sound ResourceManager::GetSound(const std::string& name) const {
-    std::lock_guard<std::mutex> lock(resourceMutex);
     auto it = sounds.find(name);
     return it != sounds.end() ? it->second : Sound{};
 }
 
 Music ResourceManager::GetMusic(const std::string& name) const {
-    std::lock_guard<std::mutex> lock(resourceMutex);
     auto it = music.find(name);
     return it != music.end() ? it->second : Music{};
 }
 
 Shader ResourceManager::GetShader(const std::string& name) const {
-    std::lock_guard<std::mutex> lock(resourceMutex);
     auto it = shaders.find(name);
     return it != shaders.end() ? it->second : Shader{};
 }

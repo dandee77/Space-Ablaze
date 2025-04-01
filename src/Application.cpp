@@ -26,7 +26,7 @@ Application::Application()
     m_camera.rotation = 0.0f;
     m_camera.zoom = 1.0f;
 
-    m_shader = LoadShader(0, "assets/shaders/shader.fs");
+    ResourceManager::GetInstance().LoadShaders(); 
 }
 
 Application::~Application()
@@ -38,22 +38,22 @@ Application::~Application()
 void Application::Run()
 {
     ResourceManager& resourceManager = ResourceManager::GetInstance();
-    resourceManager.Load();
-    while (resourceManager.GetLoadingProgress() < 100)
+    resourceManager.LoadTextures();
+    while (resourceManager.GetTextureLoadingProgress() < 100)
     {
-        resourceManager.ProcessLoadedResources();
+        resourceManager.ProcessLoadedTextures();
         BeginDrawing();
-            ClearBackground(BLACK);
-            DrawText("Loading...", 10, 10, 20, WHITE);
-            DrawText(TextFormat("Loading progress: %d%%", resourceManager.GetLoadingProgress()), 10, 40, 10, WHITE);
+        ClearBackground(BLACK);
+        DrawText("Loading...", 10, 10, 20, WHITE);
+        DrawText(TextFormat("Loading progress: %d%%", resourceManager.GetTextureLoadingProgress()), 10, 40, 20, WHITE);
         EndDrawing();
     }
+    
+    resourceManager.ProcessLoadedTextures();
 
-    resourceManager.ProcessLoadedResources();
-
-    int resolutionLoc = GetShaderLocation(m_shader, "resolution");
+    int resolutionLoc = GetShaderLocation(resourceManager.GetShader("shader"), "resolution");
     RenderTexture targetFinal = LoadRenderTexture(screenWidth, screenHeight);
-    int timeLoc = GetShaderLocation(m_shader, "time");
+    int timeLoc = GetShaderLocation(resourceManager.GetShader("shader"), "time");
 
     Texture2D bg = resourceManager.GetTexture("game_background");
     auto bgAnim = std::make_shared<Animation>(bg, bg.width / 3, bg.height / 3, 0.1f, true);
@@ -64,8 +64,8 @@ void Application::Run()
     {
         float time = GetTime();
         float resolution[2] = { (float)screenWidth, (float)screenHeight };
-        SetShaderValue(m_shader, resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
-        SetShaderValue(m_shader, timeLoc, &time, SHADER_UNIFORM_FLOAT);
+        SetShaderValue(resourceManager.GetShader("shader"), resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+        SetShaderValue(resourceManager.GetShader("shader"), timeLoc, &time, SHADER_UNIFORM_FLOAT);
 
         float scale = MIN((float)GetScreenWidth()/screenWidth, (float)GetScreenHeight()/screenHeight);
         float renderWidth = screenWidth * scale;
@@ -81,7 +81,7 @@ void Application::Run()
 
         BeginTextureMode(targetFinal);
             ClearBackground(BLANK);
-            BeginShaderMode(m_shader);
+            BeginShaderMode(resourceManager.GetShader("shader"));
                 DrawTextureRec(m_target.texture, 
                              Rectangle{0, 0, (float)m_target.texture.width, (float)-m_target.texture.height},
                              Vector2{0, 0}, 
@@ -101,5 +101,4 @@ void Application::Run()
     }
 
     UnloadRenderTexture(targetFinal);
-    UnloadShader(m_shader);
 }
