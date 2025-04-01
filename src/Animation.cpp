@@ -28,11 +28,12 @@ Animation::~Animation() {
     // Note: We don't unload the texture here since it might be shared
 }
 
+#include <iostream>
+
 void Animation::Update() {
-    float deltaTime = GetFrameTime();
     if (!isPlaying || complete) return;
     
-    currentTime += deltaTime;
+    currentTime += GetFrameTime();
     if (currentTime >= frameDuration) {
         currentTime = 0;
         currentFrame++;

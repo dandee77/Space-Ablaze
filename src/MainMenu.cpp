@@ -11,14 +11,14 @@ MainMenu::MainMenu()
 std::string MainMenu::update()
 {
     if (IsKeyPressed(KEY_ENTER))
-        return "Game"; 
+    return "Game"; 
     else return "MainMenu";
 }
 
 
 void MainMenu::draw()
 {
-    std::cout << "Drawing Main Menu" << std::endl;
+    // std::cout << "Drawing Main Menu" << std::endl;
     Animator::GetInstance().Update();
     Animator::GetInstance().Draw(Rectangle{0, 0, 3840, 2160}, false, WHITE);
 }
@@ -26,7 +26,23 @@ void MainMenu::draw()
 void MainMenu::onSwitch()
 {
     Texture2D background_texture = ResourceManager::GetInstance().GetTexture("game_background");
-    auto bgAnim = std::make_shared<Animation>(background_texture, background_texture.width / 3, background_texture.height / 3, 0.1f, true);
+
+    if (background_texture.id == 0) {
+        std::cerr << "ERROR: Background texture not loaded!" << std::endl;
+        return;
+    }
+
+    int frameWidth = background_texture.width / 3;
+    int frameHeight = background_texture.height / 3;
+    
+    auto bgAnim = std::make_shared<Animation>(
+        background_texture, 
+        frameWidth,
+        frameHeight,
+        0.1f,  
+        true
+    );
+    
     Animator::GetInstance().AddAnimation("bg", bgAnim);
     Animator::GetInstance().Play("bg");
 }

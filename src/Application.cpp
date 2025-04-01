@@ -59,59 +59,67 @@ void Application::Run()
 {
     ResourceManager& resourceManager = ResourceManager::GetInstance();
     
-    // Load shaders and get uniform locations
+  
     Shader mainShader = resourceManager.GetShader("shader");
     Shader barrelShader = resourceManager.GetShader("barrel_distortion");
     
     int resolutionLocMain = GetShaderLocation(mainShader, "resolution");
     int timeLocMain = GetShaderLocation(mainShader, "time");
     int resolutionLocBarrel = GetShaderLocation(barrelShader, "resolution");
-    
-    // Create render textures
+  
     RenderTexture targetFinal = LoadRenderTexture(screenWidth, screenHeight); //? with the shader applied
     RenderTexture borderTarget = LoadRenderTexture(screenWidth, screenHeight); //? the border without the shader applied
     RenderTexture borderTargetFinal = LoadRenderTexture(screenWidth, screenHeight); //? the border with the shader applied
     
-    // Set texture filters
+  
     SetTextureFilter(targetFinal.texture, TEXTURE_FILTER_BILINEAR);
     SetTextureFilter(borderTarget.texture, TEXTURE_FILTER_BILINEAR);
     SetTextureFilter(borderTargetFinal.texture, TEXTURE_FILTER_BILINEAR);
 
     while (!WindowShouldClose())
     {
-        // Update timing and resolution values
+
         float time = GetTime();
         float resolution[2] = { (float)screenWidth, (float)screenHeight };
         
-        // Set shader uniforms
+   
         SetShaderValue(mainShader, resolutionLocMain, resolution, SHADER_UNIFORM_VEC2);
         SetShaderValue(mainShader, timeLocMain, &time, SHADER_UNIFORM_FLOAT);
         SetShaderValue(barrelShader, resolutionLocBarrel, resolution, SHADER_UNIFORM_VEC2);
 
-        // Calculate scaling for different resolutions
+     
         float scale = MIN((float)GetScreenWidth()/screenWidth, (float)GetScreenHeight()/screenHeight);
         float renderWidth = screenWidth * scale;
         float renderHeight = screenHeight * scale;
         float offsetX = (GetScreenWidth() - renderWidth) * 0.5f;
         float offsetY = (GetScreenHeight() - renderHeight) * 0.5f;
 
-        // Render game content to main target
         BeginTextureMode(m_target);
             ClearBackground(BLACK);
             if (m_sceneFactory.find(m_currentScene) != m_sceneFactory.end())
             {
                 std::string nextScene = m_sceneFactory[m_currentScene]->update();
-                if (m_sceneFactory.find(nextScene) != m_sceneFactory.end())
+                if (m_currentScene != nextScene)
                 {
-                    m_sceneFactory[m_currentScene]->onExit();
-                    m_sceneFactory[nextScene]->onSwitch();
+                    if (m_sceneFactory.find(nextScene) != m_sceneFactory.end())
+                    {
+                        m_sceneFactory[m_currentScene]->onExit();
+                        m_sceneFactory[nextScene]->onSwitch();
+                    }
+                    else
+                    {
+                        std::cerr << "ERROR: Scene not found: " << nextScene << std::endl;
+                        m_sceneFactory[m_currentScene]->onExit();
+                        m_sceneFactory["MainMenu"]->onSwitch();
+                        nextScene = "MainMenu";
+                    }
                 }
                 m_currentScene = nextScene;
             }
             m_sceneFactory[m_currentScene]->draw();
         EndTextureMode();
 
-        // Apply main shader effects to game content
+    
         BeginTextureMode(targetFinal);
             ClearBackground(BLANK);
             BeginShaderMode(mainShader);
@@ -122,7 +130,7 @@ void Application::Run()
             EndShaderMode();
         EndTextureMode();
 
-        // Render border to separate target
+    
         BeginTextureMode(borderTarget);
             ClearBackground(BLANK);
             DrawTexturePro(resourceManager.GetTexture("border"),
@@ -135,7 +143,6 @@ void Application::Run()
                          WHITE);
         EndTextureMode();
 
-        // Apply barrel distortion to border
         BeginTextureMode(borderTargetFinal);
             ClearBackground(BLANK);
             BeginShaderMode(barrelShader);
@@ -146,11 +153,11 @@ void Application::Run()
             EndShaderMode();
         EndTextureMode();
 
-        // Final composition to screen
+   
         BeginDrawing();
             ClearBackground(BLACK);
             
-            // Draw game content
+       
             DrawTexturePro(targetFinal.texture,
                          Rectangle{0, 0, (float)screenWidth, (float)-screenHeight},
                          Rectangle{offsetX, offsetY, renderWidth, renderHeight},
@@ -158,7 +165,7 @@ void Application::Run()
                          0.0f,
                          WHITE);
             
-            // Draw distorted border on top
+       
             DrawTexturePro(borderTargetFinal.texture,
                          Rectangle{0, 0, (float)screenWidth, (float)-screenHeight},
                          Rectangle{offsetX, offsetY, renderWidth, renderHeight},
@@ -166,12 +173,11 @@ void Application::Run()
                          0.0f,
                          WHITE);
             
-            // Optional: Draw debug info
-            // DrawFPS(10, 10);
+            
         EndDrawing();
     }
 
-    // Cleanup
+
     UnloadRenderTexture(targetFinal);
     UnloadRenderTexture(borderTarget);
     UnloadRenderTexture(borderTargetFinal);
