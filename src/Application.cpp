@@ -89,6 +89,16 @@ void Application::Run()
 
      
         float scale = MIN((float)GetScreenWidth()/screenWidth, (float)GetScreenHeight()/screenHeight);
+        // ? Set the mouse offset and scale
+        Vector2 mouse = GetMousePosition();
+        Vector2 virtualMouse = { 0 };
+        virtualMouse.x = (mouse.x - ((float)GetScreenWidth() - ((float)screenWidth*scale))*0.5f)/scale;
+        virtualMouse.y = (mouse.y - ((float)GetScreenHeight() - ((float)screenHeight*scale))*0.5f)/scale;
+        virtualMouse = Vector2Clamp(virtualMouse, Vector2Zero(), Vector2{ (float)screenWidth, (float)screenHeight });
+        SetMouseOffset(static_cast<int>(-((float)GetScreenWidth() - ((float)screenWidth*scale))*0.5f),
+                    static_cast<int>(-((float)GetScreenHeight() - ((float)screenHeight*scale))*0.5f));
+        SetMouseScale(1/scale, 1/scale);
+        // ? Set the camera offset and scale
         float renderWidth = screenWidth * scale;
         float renderHeight = screenHeight * scale;
         float offsetX = (GetScreenWidth() - renderWidth) * 0.5f;

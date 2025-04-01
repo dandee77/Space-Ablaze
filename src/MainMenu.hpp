@@ -3,8 +3,9 @@
 #include "raylib.h"
 #include "Scene.hpp"
 #include "Animator.hpp"
+#include "Button.hpp"
 #include <string>
-
+#include <array>
 
 class MainMenu : public Scene
 {
@@ -17,4 +18,6 @@ public:
     ~MainMenu() override = default;
 
 private:
+
+    std::array<Button, 4> m_buttons;
 };
