@@ -2,6 +2,8 @@
 #include <iostream>
 #include <filesystem>
 
+// TODO: ADD EMBEDDED RESOURCES IF THE FILES ARE NOT FOUND
+
 ResourceManager& ResourceManager::GetInstance() {
     static ResourceManager instance;
     return instance;

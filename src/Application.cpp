@@ -3,6 +3,12 @@
 #include "raymath.h"
 #include <memory>
 #include "ResourceManager.hpp"
+#include <iostream>
+
+// scnenes
+#include "LoadingScreen.hpp"
+#include "MainMenu.hpp"
+
 
 #define MIN(a,b) (((a)<(b))?(a):(b))
 
@@ -27,6 +33,20 @@ Application::Application()
     m_camera.zoom = 1.0f;
 
     ResourceManager::GetInstance().LoadShaders(); 
+    ResourceManager::GetInstance().LoadFonts();
+    // ResourceManager::GetInstance().LoadMusics();
+    // ResourceManager::GetInstance().LoadSounds();
+
+
+    // Initialize the first scene
+    m_currentScene = "LoadingScreen";
+    m_sceneFactory = 
+    {
+        {"LoadingScreen", std::make_shared<LoadingScreen>()},
+        {"MainMenu", std::make_shared<MainMenu>()}
+    };
+
+    m_sceneFactory[m_currentScene]->onSwitch();
 }
 
 Application::~Application()
@@ -38,27 +58,27 @@ Application::~Application()
 void Application::Run()
 {
     ResourceManager& resourceManager = ResourceManager::GetInstance();
-    resourceManager.LoadTextures();
-    while (resourceManager.GetTextureLoadingProgress() < 100)
-    {
-        resourceManager.ProcessLoadedTextures();
-        BeginDrawing();
-        ClearBackground(BLACK);
-        DrawText("Loading...", 10, 10, 20, WHITE);
-        DrawText(TextFormat("Loading progress: %d%%", resourceManager.GetTextureLoadingProgress()), 10, 40, 20, WHITE);
-        EndDrawing();
-    }
     
-    resourceManager.ProcessLoadedTextures();
+    // while (resourceManager.GetTextureLoadingProgress() < 100)
+    // {
+    //     resourceManager.ProcessLoadedTextures();
+    //     BeginDrawing();
+    //     ClearBackground(BLACK);
+    //     DrawText("Loading...", 10, 10, 20, WHITE);
+    //     DrawText(TextFormat("Loading progress: %d%%", resourceManager.GetTextureLoadingProgress()), 10, 40, 20, WHITE);
+    //     EndDrawing();
+    // }
+    
+    // resourceManager.ProcessLoadedTextures();
 
     int resolutionLoc = GetShaderLocation(resourceManager.GetShader("shader"), "resolution");
     RenderTexture targetFinal = LoadRenderTexture(screenWidth, screenHeight);
     int timeLoc = GetShaderLocation(resourceManager.GetShader("shader"), "time");
 
-    Texture2D bg = resourceManager.GetTexture("game_background");
-    auto bgAnim = std::make_shared<Animation>(bg, bg.width / 3, bg.height / 3, 0.1f, true);
-    m_animator.AddAnimation("bg", bgAnim);
-    m_animator.Play("bg");
+    // Texture2D bg = resourceManager.GetTexture("game_background");
+    // auto bgAnim = std::make_shared<Animation>(bg, bg.width / 3, bg.height / 3, 0.1f, true);
+    // m_animator.AddAnimation("bg", bgAnim);
+    // m_animator.Play("bg");
 
     while (!WindowShouldClose())
     {
@@ -74,9 +94,22 @@ void Application::Run()
         float offsetY = (GetScreenHeight() - renderHeight) * 0.5f;
 
         BeginTextureMode(m_target);
-            ClearBackground(BLUE);
-            m_animator.Update();
-            m_animator.Draw(Rectangle{0, 0, (float)screenWidth, (float)screenHeight}, false, WHITE);
+            ClearBackground(BLACK);
+            // m_animator.Update();
+            // m_animator.Draw(Rectangle{0, 0, (float)screenWidth, (float)screenHeight}, false, WHITE);
+            if (m_sceneFactory.find(m_currentScene) != m_sceneFactory.end())
+            {
+                std::string nextScene = m_sceneFactory[m_currentScene]->update();
+                if (m_sceneFactory.find(nextScene) != m_sceneFactory.end())
+                {
+                    m_sceneFactory[m_currentScene]->onExit();
+                    m_sceneFactory[nextScene]->onSwitch();
+                }
+                m_currentScene = nextScene;
+            }
+            else std::cout << "SCENE NOT FOUNDDDDDD" << std::endl;
+            m_sceneFactory[m_currentScene]->draw();
+        
         EndTextureMode();
 
         BeginTextureMode(targetFinal);
