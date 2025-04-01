@@ -1,7 +1,10 @@
 #include "Animator.hpp"
 
-Animator::Animator() = default;
-Animator::~Animator() = default;
+// Singleton instance access
+Animator& Animator::GetInstance() {
+    static Animator instance;
+    return instance;
+}
 
 void Animator::AddAnimation(const std::string& name, 
                           std::shared_ptr<Animation> animation) {

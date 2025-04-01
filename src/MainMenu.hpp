@@ -17,6 +17,4 @@ public:
     ~MainMenu() override = default;
 
 private:
-
-    Animator m_animator; //TODO:  make it an singleton
 };

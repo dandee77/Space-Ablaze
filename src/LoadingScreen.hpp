@@ -15,5 +15,5 @@ public:
     ~LoadingScreen() override = default;
 
 private:
-
+    
 };
