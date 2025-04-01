@@ -11,11 +11,13 @@ ResourceManager& ResourceManager::GetInstance() {
 
 ResourceManager::ResourceManager(){
     texturePaths = {
-        {"game_background", "assets/textures/game_background_texture.png"}
+        {"game_background", "assets/textures/game_background_texture.png"},
+        {"border", "assets/textures/border_raw.png"}
     };
 
     shaderPaths = {
-        {"shader", "assets/shaders/shader.fs"}
+        {"shader", "assets/shaders/shader.fs"},
+        {"barrel_distortion", "assets/shaders/barrel_distortion.fs"}
     };
 }
 
