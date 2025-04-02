@@ -12,10 +12,10 @@ enum MainMenuButtons
 
 
 MainMenu::MainMenu()
-    : m_buttons{Button(Rectangle{500, 500, 700, 200}, "Play", 100, BUTTON_LEFT_SIDE), 
-        Button(Rectangle{500, 800, 700, 200}, "Settings", 100, BUTTON_LEFT_SIDE), 
-        Button(Rectangle{500, 1100, 700,200}, "Credits", 100, BUTTON_LEFT_SIDE),
-        Button(Rectangle{500, 1400, 700,200}, "Exit", 100, BUTTON_LEFT_SIDE)},
+    : m_buttons{Button(Rectangle{500, 500, 700, 200}, "> Play", 100, BUTTON_LEFT_SIDE), 
+        Button(Rectangle{500, 800, 700, 200}, "> Settings", 100, BUTTON_LEFT_SIDE), 
+        Button(Rectangle{500, 1100, 700,200}, "> Credits", 100, BUTTON_LEFT_SIDE),
+        Button(Rectangle{500, 1400, 700,200}, "> Exit", 100, BUTTON_LEFT_SIDE)},
         exitAnimationStarted(false) {}
 
 

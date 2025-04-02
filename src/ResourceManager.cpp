@@ -21,6 +21,11 @@ ResourceManager::ResourceManager(){
         {"shader", "assets/shaders/shader.fs"},
         {"barrel_distortion", "assets/shaders/barrel_distortion.fs"}
     };
+
+    fontPaths = {
+        {"primary_font", "assets/fonts/PerfectDOSVGA437.ttf"}, 
+        {"secondary_font", "assets/fonts/3270-Regular.ttf"}
+    };
 }
 
 ResourceManager::~ResourceManager() { Unload(); }
@@ -78,7 +83,7 @@ void ResourceManager::LoadFonts() {
             continue;
         }
 
-        Font font = LoadFont(path.c_str());
+        Font font = LoadFontEx(path.c_str(), 126, nullptr, 0);
         if (font.glyphs == nullptr) {
             std::cerr << "Failed to load font: " << path << std::endl;
             continue;
@@ -174,22 +179,9 @@ Texture2D ResourceManager::GetTexture(const std::string& name) const {
     return it != textures.end() ? it->second : Texture2D{};
 }
 
-Font ResourceManager::GetFont(const std::string& name, int fontSize) const {
-    if (fontSize <= 0) {
-        auto it = fonts.find(name);
-        return it != fonts.end() ? it->second : Font{};
-    }
-    
-    auto pathIt = fontPaths.find(name);
-    if (pathIt != fontPaths.end()) {
-        if (!std::filesystem::exists(pathIt->second)) {
-            std::cerr << "Font file not found: " << pathIt->second << std::endl;
-            return Font{};
-        }
-        return LoadFontEx(pathIt->second.c_str(), fontSize, nullptr, 0);
-    }
-    
-    return Font{};
+Font ResourceManager::GetFont(const std::string& name) const {
+    auto it = fonts.find(name);
+    return it != fonts.end() ? it->second : GetFontDefault();
 }
 
 Sound ResourceManager::GetSound(const std::string& name) const {
