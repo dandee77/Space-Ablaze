@@ -38,10 +38,10 @@ void Animator::Update() {
     }
 }
 
-void Animator::Draw(Rectangle dest, bool flipX, Color tint) {
+void Animator::Draw() {
     for (auto& [name, data] : animations) {
         if (data.isActive) {
-            data.animation->Draw(dest, flipX, tint);
+            data.animation->Draw();
         }
     }
 }
@@ -72,4 +72,9 @@ void Animator::Pause(const std::string& name) {
     if (it != animations.end()) {
         it->second.animation->Pause();
     }
+}
+
+bool Animator::IsCompleted(const std::string& name) const {
+    auto it = animations.find(name);
+    return it->second.animation->IsComplete();
 }

@@ -13,11 +13,12 @@ public:
     MainMenu();
     std::string update() override;
     void draw() override;
-    void onSwitch() override;
+    void onSwitch() override;   
     void onExit() override;
     ~MainMenu() override = default;
 
 private:
 
     std::array<Button, 4> m_buttons;
+    bool exitAnimationStarted;
 };

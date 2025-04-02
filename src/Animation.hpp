@@ -7,11 +7,11 @@
 class Animation 
 {
 public:
-    Animation(Texture2D spriteSheet, int frameWidth, int frameHeight, float frameDuration, bool looping = true);
+    Animation(Texture2D spriteSheet, int frameWidth, int frameHeight, float frameDuration, bool looping, Rectangle dest, bool flipX, Color tint);
     ~Animation();
     
     void Update();
-    void Draw(Rectangle dest, bool flipX, Color tint);
+    void Draw();
     void Reset();
     
     // Getters
@@ -34,6 +34,9 @@ private:
     bool isPlaying;
     bool looping;
     bool complete;
+    Rectangle dest;
+    bool flipX;
+    Color tint;
     
     std::vector<Rectangle> frames;
 };

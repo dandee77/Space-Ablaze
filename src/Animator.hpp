@@ -24,11 +24,13 @@ public:
     void StopAll();
     void PauseAll();
     void Update();
-    void Draw(Rectangle dest, bool flipX, Color tint);
+    void Draw();
 
     // Individual animation control
     void Stop(const std::string& name);
     void Pause(const std::string& name);
+
+    bool IsCompleted(const std::string& name) const;
 
 private:
     // Private constructor for singleton

@@ -1,9 +1,9 @@
 #include "Animation.hpp"
 
 Animation::Animation(Texture2D spriteSheet, int frameWidth, int frameHeight, 
-                   float frameDuration, bool looping) 
+                   float frameDuration, bool looping, Rectangle dest, bool flipX, Color tint) 
     : spriteSheet(spriteSheet), frameWidth(frameWidth), frameHeight(frameHeight),
-      frameDuration(frameDuration), looping(looping) {
+      frameDuration(frameDuration), looping(looping), dest(dest), flipX(flipX), tint(tint) {
     
     // Calculate how many frames we have
     int framesX = spriteSheet.width / frameWidth;
@@ -49,7 +49,7 @@ void Animation::Update() {
     }
 }
 
-void Animation::Draw(Rectangle dest, bool flipX, Color tint) {
+void Animation::Draw() {
     Rectangle source = frames[currentFrame];
     
     Vector2 origin = { 0, 0 };

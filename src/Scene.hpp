@@ -3,6 +3,9 @@
 #include "raylib.h"
 #include <string>
 
+#define GAME_SCREEN_WIDTH 3840
+#define GAME_SCREEN_HEIGHT 2160
+
 
 class Scene
 {

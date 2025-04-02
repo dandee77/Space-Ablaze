@@ -15,19 +15,16 @@ MainMenu::MainMenu()
     : m_buttons{Button(Rectangle{500, 500, 700, 200}, "Play", 100, BUTTON_LEFT_SIDE), 
         Button(Rectangle{500, 800, 700, 200}, "Settings", 100, BUTTON_LEFT_SIDE), 
         Button(Rectangle{500, 1100, 700,200}, "Credits", 100, BUTTON_LEFT_SIDE),
-        Button(Rectangle{500, 1400, 700,200}, "Exit", 100, BUTTON_LEFT_SIDE)} {}
+        Button(Rectangle{500, 1400, 700,200}, "Exit", 100, BUTTON_LEFT_SIDE)},
+        exitAnimationStarted(false) {}
 
 
-static void onExitButtonClick()
-{
-    exit(0);
-}
-
+#include <iostream>
 
 std::string MainMenu::update()
 {
     // ? Update the buttons
-    for (int idx = 0; idx < m_buttons.size(); ++idx)
+    for (int idx = 0; idx < m_buttons.size() && !exitAnimationStarted; ++idx)
     {
         if (m_buttons[idx].isClicked())
         {
@@ -40,12 +37,31 @@ std::string MainMenu::update()
                 case CREDITS:
                     return "Credits";
                 case QUIT:
-                    onExitButtonClick();
+                {
+                    Texture2D exit_texture = ResourceManager::GetInstance().GetTexture("exit_animation");
+                    Animator::GetInstance().AddAnimation("exit", std::make_shared<Animation>(
+                        exit_texture,
+                        exit_texture.width / 4,
+                        exit_texture.height / 7,
+                        0.01f,
+                        false,
+                        Rectangle{0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT},
+                        false,
+                        WHITE
+                    ));
+                    Animator::GetInstance().Stop("background");
+                    Animator::GetInstance().Play("exit");
+                    exitAnimationStarted = true;
+                    break;
+                }
                 default:
                     break;
             }
         }
     }
+
+
+    if (exitAnimationStarted && Animator::GetInstance().IsCompleted("exit")) exit(0);
     return "MainMenu";
 }
 
@@ -54,29 +70,30 @@ void MainMenu::draw()
 {
     // ? Draw the background texture
     Animator::GetInstance().Update();
-    Animator::GetInstance().Draw(Rectangle{0, 0, 3840, 2160}, false, WHITE);
+    Animator::GetInstance().Draw();
 
     // ? Draw the buttons
-    for (auto& button : m_buttons) button.draw();
+    if (!exitAnimationStarted)  for (auto& button : m_buttons) button.draw();
 }
 
 void MainMenu::onSwitch()
-{
-    Texture2D background_texture = ResourceManager::GetInstance().GetTexture("main_menu_background");
-
-    int frameWidth = background_texture.width / 5;
-    int frameHeight = background_texture.height / 2;
-    
-    auto bgAnim = std::make_shared<Animation>(
-        background_texture, 
-        frameWidth,
-        frameHeight,
-        0.15f,  
-        true
+{   
+    // ? Load the background animation texture
+    Texture2D backgound_texture = ResourceManager::GetInstance().GetTexture("main_menu_background");
+    int backgroundFrameWidth = backgound_texture.width / 5;
+    int backgroundFrameHeight = backgound_texture.height / 2;
+    auto exitAnim = std::make_shared<Animation>(
+        backgound_texture, // ? Texture2D sprite sheet
+        backgroundFrameWidth, // ? Frame width
+        backgroundFrameHeight, // ? Frame height
+        0.1f, // ? Frame duration
+        true, // ? Looping
+        Rectangle{0, 0, GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT}, // ? Destination rectangle
+        false, // ? Flip X
+        WHITE // ? Tint color
     );
-    
-    Animator::GetInstance().AddAnimation("bg", bgAnim);
-    Animator::GetInstance().Play("bg");
+    Animator::GetInstance().AddAnimation("background", exitAnim);
+    Animator::GetInstance().Play("background");
 }
 
 void MainMenu::onExit()
