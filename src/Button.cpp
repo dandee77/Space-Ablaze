@@ -3,7 +3,7 @@
 
 
 Button::Button(Rectangle rect, std::string text, float size, ButtonType type)
-    : m_rect(rect), m_text(text), m_size(size), m_type(type), m_color(RAYWHITE) {}
+    : m_rect(rect), m_text(text), m_size(size), m_type(type), m_color(Fade(SKYBLUE, 0.5f)) {}
 
 
 
@@ -22,7 +22,7 @@ bool Button::isClicked() const {
 
 void Button::draw()
 {
-    DrawRectangleRec(m_rect, ((isHovered()) ? RAYWHITE : BLANK));
+    DrawRectangleRec(m_rect, (isHovered()) ? Fade(m_color, 0.5f) : BLANK);
 
     switch(m_type)
     {

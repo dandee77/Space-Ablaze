@@ -29,7 +29,6 @@ public:
     // Individual animation control
     void Stop(const std::string& name);
     void Pause(const std::string& name);
-
     bool IsCompleted(const std::string& name) const;
 
 private:

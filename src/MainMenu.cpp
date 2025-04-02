@@ -2,6 +2,7 @@
 #include "ResourceManager.hpp"
 
 
+
 enum MainMenuButtons
 {
     PLAY = 0,
@@ -12,20 +13,18 @@ enum MainMenuButtons
 
 
 MainMenu::MainMenu()
-    : m_buttons{Button(Rectangle{500, 500, 700, 200}, "> Play", 100, BUTTON_LEFT_SIDE), 
-        Button(Rectangle{500, 800, 700, 200}, "> Settings", 100, BUTTON_LEFT_SIDE), 
-        Button(Rectangle{500, 1100, 700,200}, "> Credits", 100, BUTTON_LEFT_SIDE),
-        Button(Rectangle{500, 1400, 700,200}, "> Exit", 100, BUTTON_LEFT_SIDE)},
+    : m_buttons{Button(Rectangle{250, 1200, 1500, 150}, "> Play", 150, BUTTON_LEFT_SIDE), 
+        Button(Rectangle{250, 1370, 1500, 150}, "> Settings", 150, BUTTON_LEFT_SIDE), 
+        Button(Rectangle{250, 1540, 1500, 150}, "> Credits", 150, BUTTON_LEFT_SIDE),
+        Button(Rectangle{250, 1710, 1500, 150}, "> Exit", 150, BUTTON_LEFT_SIDE)},
         exitAnimationStarted(false) {}
 
-
-#include <iostream>
 
 std::string MainMenu::update()
 {
     // ? Update the buttons
-    for (int idx = 0; idx < m_buttons.size() && !exitAnimationStarted; ++idx)
-    {
+    for (size_t idx = 0; idx < m_buttons.size() && !exitAnimationStarted; ++idx)
+    {    
         if (m_buttons[idx].isClicked())
         {
             switch (idx)
@@ -73,7 +72,27 @@ void MainMenu::draw()
     Animator::GetInstance().Draw();
 
     // ? Draw the buttons
-    if (!exitAnimationStarted)  for (auto& button : m_buttons) button.draw();
+    if (!exitAnimationStarted)
+    {
+        for (auto& button : m_buttons) button.draw();
+
+        // ? Draw the title at the center top
+        // ? The "SPACE A" is color SKYBLUE while the "BLAZE" is color RED
+        Vector2 text_dimensions = MeasureTextEx(ResourceManager::GetInstance().GetFont("primary_font"), "SPACE", 400, 1.0f);
+        float text_x = (GAME_SCREEN_WIDTH - text_dimensions.x) / 2;
+        float text_y = 200;
+        DrawTextEx(ResourceManager::GetInstance().GetFont("primary_font"), "SPACE  ", (Vector2){ text_x - 80, text_y }, 400, 1.0f, Fade(SKYBLUE, 0.55f));
+        text_dimensions = MeasureTextEx(ResourceManager::GetInstance().GetFont("primary_font"), "BLAZE", 400, 1.0f);
+        text_x = (GAME_SCREEN_WIDTH - text_dimensions.x) / 2;
+        text_y = 480;
+        DrawTextEx(ResourceManager::GetInstance().GetFont("primary_font"), "BLAZE", (Vector2){ text_x + 80, text_y }, 400, 1.0f, Fade(RED, 0.55f));
+
+        // ? Draw "Equtiy Quest - 2024" at center bottom
+        text_dimensions = MeasureTextEx(ResourceManager::GetInstance().GetFont("secondary_font"), "Equity Quest - 2024", 50, 1.0f);
+        text_x = (GAME_SCREEN_WIDTH - text_dimensions.x) / 2;
+        text_y = GAME_SCREEN_HEIGHT - 200;
+        DrawTextEx(ResourceManager::GetInstance().GetFont("secondary_font"), "Equity Quest - 2024", (Vector2){ text_x, text_y }, 50, 1.0f, Fade(SKYBLUE, 0.55f));
+    }
 }
 
 void MainMenu::onSwitch()
