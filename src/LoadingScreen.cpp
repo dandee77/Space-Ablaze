@@ -23,7 +23,7 @@ void LoadingScreen::draw()
     std::cout << "Drawing Loading Screen" << std::endl;
     DrawText(TextFormat("Loading progress: %d%%", 
         ResourceManager::GetInstance().GetTextureLoadingProgress()), 
-        10, 40, 120, WHITE);
+        1200, 1800, 120, WHITE);
 }
 
 void LoadingScreen::onSwitch()

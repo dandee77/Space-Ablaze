@@ -14,7 +14,11 @@ ResourceManager::ResourceManager(){
         {"game_background", "assets/textures/game_background_texture.png"},
         {"border", "assets/textures/border_raw.png"},
         {"main_menu_background", "assets/textures/MainMenuBackground.png"},
-        {"exit_animation", "assets/textures/ExitAnimation.png"}
+        {"exit_animation", "assets/textures/ExitAnimation.png"},
+        {"background1", "assets/textures/background1.png"},
+        {"background2", "assets/textures/background2.png"},
+        {"background3", "assets/textures/background3.png"},
+        {"background4", "assets/textures/background4.png"}
     };
 
     shaderPaths = {

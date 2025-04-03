@@ -8,6 +8,7 @@
 // scnenes
 #include "LoadingScreen.hpp"
 #include "MainMenu.hpp"
+#include "Game.hpp"
 
 
 #define MIN(a,b) (((a)<(b))?(a):(b))
@@ -43,7 +44,8 @@ Application::Application()
     m_sceneFactory = 
     {
         {"LoadingScreen", std::make_shared<LoadingScreen>()},
-        {"MainMenu", std::make_shared<MainMenu>()}
+        {"MainMenu", std::make_shared<MainMenu>()},
+        {"Game", std::make_shared<Game>()}
     };
 
     m_sceneFactory[m_currentScene]->onSwitch();
@@ -132,12 +134,12 @@ void Application::Run()
     
         BeginTextureMode(targetFinal);
             ClearBackground(BLANK);
-            BeginShaderMode(mainShader);
+            // BeginShaderMode(mainShader);
                 DrawTextureRec(m_target.texture, 
                              Rectangle{0, 0, (float)m_target.texture.width, (float)-m_target.texture.height},
                              Vector2{0, 0}, 
                              WHITE);
-            EndShaderMode();
+            // EndShaderMode();
         EndTextureMode();
 
     
@@ -155,12 +157,12 @@ void Application::Run()
 
         BeginTextureMode(borderTargetFinal);
             ClearBackground(BLANK);
-            BeginShaderMode(barrelShader);
+            // BeginShaderMode(barrelShader);
                 DrawTextureRec(borderTarget.texture, 
                              Rectangle{0, 0, (float)borderTarget.texture.width, (float)-borderTarget.texture.height},
                              Vector2{0, 0}, 
                              WHITE);
-            EndShaderMode();
+            // EndShaderMode();
         EndTextureMode();
 
    
