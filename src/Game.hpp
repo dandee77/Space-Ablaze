@@ -26,7 +26,7 @@ private:
     };
     
     std::vector<BackgroundLayer> backgroundLayers;
-    float worldTileSize = 500.0f;
+    float worldTileSize;
     
     void DrawParallaxBackground();
     void DrawLayer(const BackgroundLayer& layer, const Vector2& viewCenter);

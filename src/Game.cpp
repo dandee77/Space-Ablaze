@@ -3,7 +3,7 @@
 #include <iostream>
 
 Game::Game() 
-    : player(Rectangle{0, 0, 5, 5}) // Start at center
+    : player(Rectangle{250, 250, 5, 5}), worldTileSize(500.0f)
 {
     camera = {0};
     camera.target = {player.x + player.width/2, player.y + player.height/2};
@@ -15,56 +15,49 @@ Game::Game()
 void Game::onSwitch()
 {
     backgroundLayers = {
-        {ResourceManager::GetInstance().GetTexture("background1"), 0.2f, worldTileSize}, // Foreground (moves with player)
+        {ResourceManager::GetInstance().GetTexture("background1"), 0.2f, worldTileSize}, 
         {ResourceManager::GetInstance().GetTexture("background2"), 0.4f, worldTileSize}, 
         {ResourceManager::GetInstance().GetTexture("background3"), 0.7f, worldTileSize},
-        {ResourceManager::GetInstance().GetTexture("background4"), 1.0f, worldTileSize}  // Background (moves slowest)
+        {ResourceManager::GetInstance().GetTexture("background4"), 1.0f, worldTileSize} 
     };
-
-    for (auto& layer : backgroundLayers) {
-        SetTextureFilter(layer.texture, TEXTURE_FILTER_BILINEAR);
-        SetTextureWrap(layer.texture, TEXTURE_WRAP_REPEAT);
-    }
 }
 
 std::string Game::update()
 {
     if (IsKeyPressed(KEY_ENTER)) return "MainMenu";
 
-    // Player movement
-    if (IsKeyDown(KEY_W)) player.y -= 2.0f;
-    if (IsKeyDown(KEY_S)) player.y += 2.0f;
-    if (IsKeyDown(KEY_A)) player.x -= 2.0f;
-    if (IsKeyDown(KEY_D)) player.x += 2.0f;
+    if (IsKeyDown(KEY_W)) player.y -= 5.0f;
+    if (IsKeyDown(KEY_S)) player.y += 5.0f;
+    if (IsKeyDown(KEY_A)) player.x -= 5.0f;
+    if (IsKeyDown(KEY_D)) player.x += 5.0f;
 
-    // Update camera to follow player
-    camera.target = {player.x + player.width/2, player.y + player.height/2};
+    camera.target = {player.x + (player.width/2), player.y + (player.height/2)};
     
     return "Game";
 }
 
 void Game::DrawLayer(const BackgroundLayer& layer, const Vector2& viewCenter)
 {
-    // Calculate parallax-adjusted position (like in reference code)
     Vector2 parallaxOffset = {
         viewCenter.x * (1.0f - layer.parallaxFactor),
         viewCenter.y * (1.0f - layer.parallaxFactor)
     };
 
-    // Calculate tile positions (adapted from reference code)
-    for (int y = -1; y <= 1; y++) {
-        for (int x = -1; x <= 1; x++) {
-            // Calculate tile grid position
+    for (int y = -2; y <= 2; y++) {  // changed to -2 to 2 for more tiles (it's buggin out with -1 to 1)
+        for (int x = -2; x <= 2; x++) {
             int tileX = x + static_cast<int>((viewCenter.x - parallaxOffset.x) / layer.size);
             int tileY = y + static_cast<int>((viewCenter.y - parallaxOffset.y) / layer.size);
             
-            // Calculate final render position
             Vector2 tilePos = {
                 tileX * layer.size + parallaxOffset.x,
                 tileY * layer.size + parallaxOffset.y
             };
             
-            DrawTextureV(layer.texture, tilePos, WHITE);
+            // DrawTextureV(layer.texture, tilePos, WHITE);
+            DrawTexturePro(layer.texture, 
+                Rectangle{0, 0, (float)layer.texture.width, (float)layer.texture.height}, 
+                Rectangle{tilePos.x, tilePos.y, layer.size, layer.size}, 
+                Vector2{0, 0}, 0.0f, WHITE);
         }
     }
 }
@@ -73,7 +66,6 @@ void Game::DrawParallaxBackground()
 {
     Vector2 viewCenter = camera.target;
     
-    // Draw from background to foreground
     for (const auto& layer : backgroundLayers) {
         DrawLayer(layer, viewCenter);
     }
@@ -82,18 +74,16 @@ void Game::DrawParallaxBackground()
 void Game::draw()
 {
     BeginMode2D(camera);
-    {
+
         DrawParallaxBackground();
         DrawRectangleRec(player, BLUE);
         
-        // Debug info
-        DrawText(TextFormat("Pos: (%.1f, %.1f)", player.x, player.y), 
-                -100, -50, 20, WHITE);
-    }
+        std::cout << "Player Position: (" << player.x << ", " << player.y << ")" << std::endl;
+
     EndMode2D();
 }
 
 void Game::onExit()
 {
-    // Cleanup handled by ResourceManager
+
 }
