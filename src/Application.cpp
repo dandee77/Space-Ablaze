@@ -134,12 +134,12 @@ void Application::Run()
     
         BeginTextureMode(targetFinal);
             ClearBackground(BLANK);
-            // BeginShaderMode(mainShader);
+            BeginShaderMode(mainShader);
                 DrawTextureRec(m_target.texture, 
                              Rectangle{0, 0, (float)m_target.texture.width, (float)-m_target.texture.height},
                              Vector2{0, 0}, 
                              WHITE);
-            // EndShaderMode();
+            EndShaderMode();
         EndTextureMode();
 
     
@@ -157,12 +157,12 @@ void Application::Run()
 
         BeginTextureMode(borderTargetFinal);
             ClearBackground(BLANK);
-            // BeginShaderMode(barrelShader);
+            BeginShaderMode(barrelShader);
                 DrawTextureRec(borderTarget.texture, 
                              Rectangle{0, 0, (float)borderTarget.texture.width, (float)-borderTarget.texture.height},
                              Vector2{0, 0}, 
                              WHITE);
-            // EndShaderMode();
+            EndShaderMode();
         EndTextureMode();
 
    

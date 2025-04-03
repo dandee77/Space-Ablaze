@@ -19,10 +19,9 @@ private:
     Camera2D camera;
     Rectangle player;
     
-
     struct BackgroundLayer {
         Texture2D texture;
-        float parallaxFactor; 
+        float parallaxFactor; // 0.0 (stationary) to 1.0 (moves with player)
         float size;
     };
     
@@ -30,5 +29,5 @@ private:
     float worldTileSize = 500.0f;
     
     void DrawParallaxBackground();
-    void DrawLayer(const BackgroundLayer& layer);
+    void DrawLayer(const BackgroundLayer& layer, const Vector2& viewCenter);
 };
