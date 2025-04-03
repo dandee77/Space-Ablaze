@@ -36,31 +36,28 @@ std::string Game::update()
     return "Game";
 }
 
-void Game::DrawLayer(const BackgroundLayer& layer, const Vector2& viewCenter)
+void Game::DrawLayer(const BackgroundLayer& layer, const Vector2& viewCenter) 
 {
     Vector2 parallaxOffset = {
         viewCenter.x * (1.0f - layer.parallaxFactor),
         viewCenter.y * (1.0f - layer.parallaxFactor)
     };
 
-    for (int y = -2; y <= 2; y++) {  // changed to -2 to 2 for more tiles (it's buggin out with -1 to 1)
-        for (int x = -2; x <= 2; x++) {
-            int tileX = x + static_cast<int>((viewCenter.x - parallaxOffset.x) / layer.size);
-            int tileY = y + static_cast<int>((viewCenter.y - parallaxOffset.y) / layer.size);
-            
+    int startX = static_cast<int>(std::floor((viewCenter.x - parallaxOffset.x) / layer.size));
+    int startY = static_cast<int>(std::floor((viewCenter.y - parallaxOffset.y) / layer.size));
+
+    for (int y = -1; y <= 1; y++) { 
+        for (int x = -1; x <= 1; x++) {
             Vector2 tilePos = {
-                tileX * layer.size + parallaxOffset.x,
-                tileY * layer.size + parallaxOffset.y
+                (startX + x) * layer.size + parallaxOffset.x,
+                (startY + y) * layer.size + parallaxOffset.y
             };
-            
-            // DrawTextureV(layer.texture, tilePos, WHITE);
-            DrawTexturePro(layer.texture, 
-                Rectangle{0, 0, (float)layer.texture.width, (float)layer.texture.height}, 
-                Rectangle{tilePos.x, tilePos.y, layer.size, layer.size}, 
-                Vector2{0, 0}, 0.0f, WHITE);
+
+            DrawTextureV(layer.texture, tilePos, WHITE);
         }
     }
 }
+
 
 void Game::DrawParallaxBackground()
 {
