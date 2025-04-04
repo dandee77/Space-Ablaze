@@ -4,6 +4,7 @@
 #include <string>
 #include "ResourceManager.hpp"
 #include <vector>
+#include "Player.hpp"
 
 class Game : public Scene
 {
@@ -17,8 +18,7 @@ public:
 
 private:
     Camera2D camera;
-    Rectangle player;
-    
+        
     struct BackgroundLayer {
         Texture2D texture;
         float parallaxFactor; // 0.0 (stationary) to 1.0 (moves with player)
@@ -30,4 +30,6 @@ private:
     
     void DrawParallaxBackground();
     void DrawLayer(const BackgroundLayer& layer, const Vector2& viewCenter);
+
+    Player playerEntity;
 };

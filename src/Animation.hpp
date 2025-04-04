@@ -24,6 +24,11 @@ public:
     void Pause();
     void Stop();
 
+    void SetRotation(float rotation);
+    void SetOrigin(Vector2 origin);
+    void SetTint(Color tint);
+    void SetPosition(Vector2 position);
+
 private:
     Texture2D spriteSheet;
     int frameWidth;
@@ -37,6 +42,8 @@ private:
     Rectangle dest;
     bool flipX;
     Color tint;
+    float rotation;
+    Vector2 origin;
     
     std::vector<Rectangle> frames;
 };

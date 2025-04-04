@@ -1,19 +1,23 @@
 #include "Game.hpp"
 #include <cmath>
 #include <iostream>
+#include "Animator.hpp"
+
 
 Game::Game() 
-    : player(Rectangle{250, 250, 5, 5}), worldTileSize(500.0f)
-{
-    camera = {0};
-    camera.target = {player.x + player.width/2, player.y + player.height/2};
-    camera.offset = {GAME_SCREEN_WIDTH/2.0f, GAME_SCREEN_HEIGHT/2.0f};
-    camera.rotation = 0.0f;
-    camera.zoom = 15.0f;
-}
+{}
 
 void Game::onSwitch()
 {
+    worldTileSize = 500.0f; 
+    playerEntity = Player();
+    playerEntity.init();
+    camera = {0};
+    camera.target = { playerEntity.getPosition().x + playerEntity.getSize().x/2, playerEntity.getPosition().y + playerEntity.getSize().y/2 };
+    camera.offset = {GAME_SCREEN_WIDTH/2.0f, GAME_SCREEN_HEIGHT/2.0f};
+    camera.rotation = 0.0f;
+    camera.zoom = 15.0f;
+
     backgroundLayers = {
         {ResourceManager::GetInstance().GetTexture("background1"), 0.2f, worldTileSize}, 
         {ResourceManager::GetInstance().GetTexture("background2"), 0.4f, worldTileSize}, 
@@ -26,12 +30,9 @@ std::string Game::update()
 {
     if (IsKeyPressed(KEY_ENTER)) return "MainMenu";
 
-    if (IsKeyDown(KEY_W)) player.y -= 5.0f;
-    if (IsKeyDown(KEY_S)) player.y += 5.0f;
-    if (IsKeyDown(KEY_A)) player.x -= 5.0f;
-    if (IsKeyDown(KEY_D)) player.x += 5.0f;
+    camera.target = {playerEntity.getPosition().x + (playerEntity.getSize().x/2), playerEntity.getPosition().y + (playerEntity.getSize().y/2)};
 
-    camera.target = {player.x + (player.width/2), player.y + (player.height/2)};
+    playerEntity.update();
     
     return "Game";
 }
@@ -73,9 +74,12 @@ void Game::draw()
     BeginMode2D(camera);
 
         DrawParallaxBackground();
-        DrawRectangleRec(player, BLUE);
-        
-        std::cout << "Player Position: (" << player.x << ", " << player.y << ")" << std::endl;
+        playerEntity.draw();
+
+        Animator::GetInstance().Update();
+        Animator::GetInstance().Draw(); 
+
+        std::cout << "Player Position: (" << playerEntity.getPosition().x << ", " << playerEntity.getPosition().y << ")" << std::endl;
 
     EndMode2D();
 }

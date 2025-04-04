@@ -30,6 +30,10 @@ public:
     void Stop(const std::string& name);
     void Pause(const std::string& name);
     bool IsCompleted(const std::string& name) const;
+    void SetRotation(const std::string& name, float rotation);
+    void SetOrigin(const std::string& name, Vector2 origin);
+    void SetTint(const std::string& name, Color tint);
+    void SetPosition(const std::string& name, Vector2 position);
 
 private:
     // Private constructor for singleton

@@ -11,12 +11,17 @@ void Animator::AddAnimation(const std::string& name,
     animations[name] = {animation, false};
 }
 
+#include <iostream>
+
 void Animator::Play(const std::string& name) {
     auto it = animations.find(name);
     if (it != animations.end()) {
         it->second.animation->Reset();
         it->second.animation->Play();
         it->second.isActive = true;
+    } 
+    else {
+        std::cerr << "Animation " << name << " not found!" << std::endl;
     }
 }
 
@@ -64,6 +69,34 @@ void Animator::Stop(const std::string& name) {
     if (it != animations.end()) {
         it->second.animation->Stop();
         it->second.isActive = false;
+    }
+}
+
+void Animator::SetRotation(const std::string& name, float rotation) {
+    auto it = animations.find(name);
+    if (it != animations.end()) {
+        it->second.animation->SetRotation(rotation);
+    }
+}
+
+void Animator::SetOrigin(const std::string& name, Vector2 origin) {
+    auto it = animations.find(name);
+    if (it != animations.end()) {
+        it->second.animation->SetOrigin(origin);
+    }
+}
+
+void Animator::SetTint(const std::string& name, Color tint) {
+    auto it = animations.find(name);
+    if (it != animations.end()) {
+        it->second.animation->SetTint(tint);
+    }
+}
+
+void Animator::SetPosition(const std::string& name, Vector2 position) {
+    auto it = animations.find(name);
+    if (it != animations.end()) {
+        it->second.animation->SetPosition(position);
     }
 }
 

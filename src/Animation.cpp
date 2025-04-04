@@ -3,7 +3,7 @@
 Animation::Animation(Texture2D spriteSheet, int frameWidth, int frameHeight, 
                    float frameDuration, bool looping, Rectangle dest, bool flipX, Color tint) 
     : spriteSheet(spriteSheet), frameWidth(frameWidth), frameHeight(frameHeight),
-      frameDuration(frameDuration), looping(looping), dest(dest), flipX(flipX), tint(tint) {
+      frameDuration(frameDuration), looping(looping), dest(dest), flipX(flipX), tint(tint), rotation(0), origin({0, 0}) {
     
     // Calculate how many frames we have
     int framesX = spriteSheet.width / frameWidth;
@@ -51,15 +51,29 @@ void Animation::Update() {
 
 void Animation::Draw() {
     Rectangle source = frames[currentFrame];
-    
-    Vector2 origin = { 0, 0 };
-    float rotation = 0;
-    
+        
     if (flipX) {
         source.width *= -1; 
     }
     
     DrawTexturePro(spriteSheet, source, dest, origin, rotation, tint);
+}
+
+void Animation::SetRotation(float rotation) {
+    this->rotation = rotation;
+}
+
+void Animation::SetOrigin(Vector2 origin) {
+    this->origin = origin;
+}
+
+void Animation::SetTint(Color tint) {
+    this->tint = tint;
+}
+
+void Animation::SetPosition(Vector2 position) {
+    dest.x = position.x;
+    dest.y = position.y;
 }
 
 void Animation::Reset() {
