@@ -11,6 +11,7 @@ protected:
     Texture2D texture;
     Rectangle rect;
     float rotation;
+    Vector2 velocity;
 
 public:
     Entity() = default;

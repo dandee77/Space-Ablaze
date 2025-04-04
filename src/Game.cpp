@@ -26,8 +26,6 @@ void Game::onSwitch()
     };
 }
 
-#include "raymath.h"
-
 
 std::string Game::update() 
 {
@@ -93,7 +91,7 @@ void Game::draw()
         Animator::GetInstance().Update();
         Animator::GetInstance().Draw(); 
 
-        std::cout << "Player Position: (" << playerEntity.getPosition().x << ", " << playerEntity.getPosition().y << ")" << std::endl;
+        // std::cout << "Player Position: (" << playerEntity.getPosition().x << ", " << playerEntity.getPosition().y << ")" << std::endl;
 
     EndMode2D();
 }
