@@ -13,10 +13,10 @@ void Game::onSwitch()
     playerEntity = Player();
     playerEntity.init();
     camera = {0};
-    camera.target = { playerEntity.getPosition().x + playerEntity.getSize().x/2, playerEntity.getPosition().y + playerEntity.getSize().y/2 };
+    camera.target = { playerEntity.getPosition().x, playerEntity.getPosition().y };
     camera.offset = {GAME_SCREEN_WIDTH/2.0f, GAME_SCREEN_HEIGHT/2.0f};
     camera.rotation = 0.0f;
-    camera.zoom = 15.0f;
+    camera.zoom = 150.0f;
 
     backgroundLayers = {
         {ResourceManager::GetInstance().GetTexture("background1"), 0.2f, worldTileSize}, 
@@ -26,14 +26,28 @@ void Game::onSwitch()
     };
 }
 
-std::string Game::update()
+#include "raymath.h"
+
+
+std::string Game::update() 
 {
     if (IsKeyPressed(KEY_ENTER)) return "MainMenu";
 
-    camera.target = {playerEntity.getPosition().x + (playerEntity.getSize().x/2), playerEntity.getPosition().y + (playerEntity.getSize().y/2)};
+
+#pragma region StartAnimation
+
+    float zoomLerpSpeed = 7.5f; // Higher = faster decay
+    float deltaTime = GetFrameTime();
+    camera.zoom += (20.0f - camera.zoom) * (1.0f - expf(-zoomLerpSpeed * deltaTime));
+    // float zoomSpeed = 5.0f;
+    // camera.zoom = Lerp(camera.zoom, 20.0f, zoomSpeed * GetFrameTime());
+
+#pragma endregion
+
 
     playerEntity.update();
-    
+    camera.target = {playerEntity.getPosition().x, playerEntity.getPosition().y};
+
     return "Game";
 }
 

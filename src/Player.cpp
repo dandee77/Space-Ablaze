@@ -14,8 +14,8 @@ Player::Player() {};
 
 void Player::init() {
     // Initialize player properties here if needed
-    rect = {250, 250, 10, 10};
-    speed = 5.0f;
+    rect = {250, 250, 5, 5};
+    speed = 2.0f;
     health = 100.0f;
     damage = 10.0f;
     texture = ResourceManager::GetInstance().GetTexture("player_acceleration");
@@ -32,22 +32,18 @@ void Player::init() {
         WHITE
     ));
 
-    Animator::GetInstance().SetOrigin("accelerating", {5, 5});
+    Animator::GetInstance().SetOrigin("accelerating", {2.5f, 2.5f});
     Animator::GetInstance().Play("accelerating");
 };
 
 
 bool Player::update() {
 
-    Vector2 movement = {0, 0};
-    if (IsKeyDown(KEY_W)) movement.y -= speed;
-    if (IsKeyDown(KEY_S)) movement.y += speed;
-    if (IsKeyDown(KEY_A)) movement.x -= speed;
-    if (IsKeyDown(KEY_D)) movement.x += speed;
 
-    rect.x += movement.x;
-    rect.y += movement.y;
-
+    if (IsKeyDown(KEY_W)) rect.y -= speed;
+    if (IsKeyDown(KEY_S)) rect.y += speed;
+    if (IsKeyDown(KEY_A)) rect.x -= speed;
+    if (IsKeyDown(KEY_D)) rect.x += speed;
 
     // Handle player rotation based on mouse position
     Vector2 screenCenter = { GAME_SCREEN_WIDTH / 2.0f, GAME_SCREEN_HEIGHT / 2.0f };
