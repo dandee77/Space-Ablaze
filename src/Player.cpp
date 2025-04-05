@@ -4,6 +4,7 @@
 #include <memory>
 #include <iostream>
 #include "raymath.h"
+#include <cmath>
 
 #define GAME_SCREEN_WIDTH 3840
 #define GAME_SCREEN_HEIGHT 2160
@@ -15,7 +16,7 @@
 Player::Player() {};
 
 
-void Player::init() {
+void Player::init() {   
     // Initialize player properties here if needed
     rect = {250, 250, 5, 5};
     speed = PLAYER_SPEED;

@@ -1,6 +1,16 @@
 #pragma once
 #include "Entity.hpp"
 #include "raylib.h"
+#include "Timer.hpp"
+
+
+enum PlayerState
+{
+    PLAYER_DEFAULT = 0,
+    PLAYER_STUNNED,
+    PLAYER_IFRAME,
+    PLAYER_DEAD
+};
 
 
 class Player : public Entity
@@ -13,4 +23,6 @@ public:
 
 private:
     bool playerAccelerating;
+    PlayerState playerState;
+    Cooldown playerAttackCooldown;
 };
