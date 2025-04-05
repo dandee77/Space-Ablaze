@@ -8,8 +8,8 @@
 #define GAME_SCREEN_WIDTH 3840
 #define GAME_SCREEN_HEIGHT 2160
 
-#define PLAYER_SPEED 200.0f
-#define PLAYER_MAX_ACCELERATION 750.0f
+#define PLAYER_SPEED 100.0f
+#define PLAYER_MAX_ACCELERATION 600.0f
 
 
 Player::Player() {};
@@ -24,7 +24,11 @@ void Player::init() {
     texture = ResourceManager::GetInstance().GetTexture("player_acceleration");
     rotation = 0.0f;
     velocity = {0, 0};
+    playerAccelerating = false;
 
+
+    // ? We animate two textures, one for acceleration and one for deacceleration
+    // ? Then hide the deacceleration animation until we need it
     Animator::GetInstance().AddAnimation("accelerating", std::make_shared<Animation>(
         texture,
         texture.width / 4,
@@ -35,13 +39,27 @@ void Player::init() {
         false,
         WHITE
     ));
-
     Animator::GetInstance().SetOrigin("accelerating", {2.5f, 2.5f});
-    Animator::GetInstance().Play("accelerating");
+
+    texture = ResourceManager::GetInstance().GetTexture("player_deacceleration");
+    Animator::GetInstance().AddAnimation("deaccelerating", std::make_shared<Animation>(
+        texture,
+        texture.width / 3,
+        texture.height,
+        0.1f,
+        true,
+        rect,
+        false,
+        WHITE
+    ));
+    Animator::GetInstance().SetOrigin("deaccelerating", {2.5f, 2.5f});
+    Animator::GetInstance().Play("deaccelerating");
 };
 
 
 bool Player::update() {
+
+#pragma region PlayerRotation
 
     // Handle player rotation based on mouse position
     Vector2 screenCenter = { GAME_SCREEN_WIDTH / 2.0f, GAME_SCREEN_HEIGHT / 2.0f };
@@ -56,7 +74,7 @@ bool Player::update() {
     float deltaAngle = targetRotation - rotation;
     deltaAngle = fmodf(deltaAngle + 540.0f, 360.0f) - 180.0f; // shortest path
 
-    // Calculate rotation speed based on velocity (minimum 5.0f, scales up)
+    // Calculate rotation speed based on velocity (minimum 3.0f, scales up)
     float baseRotationSpeed = 3.0f;
     float maxRotationSpeed = 10.0f;
     float speedFactor = Vector2Length(velocity) / speed; // Normalize velocity (0 to 1)
@@ -65,12 +83,30 @@ bool Player::update() {
     // Apply smoothing rotation
     rotation += deltaAngle * (1.0f - expf(-rotationSpeed * GetFrameTime()));
 
-
     Animator::GetInstance().SetRotation("accelerating", rotation);
+    Animator::GetInstance().SetRotation("deaccelerating", rotation);
+
+
+#pragma endregion
+
+
+#pragma region PlayerMovement
 
     // Handle player movement based on keyboard input
     Vector2 facing_direction = Vector2Rotate((Vector2){0, -1}, rotation * DEG2RAD);
-    Vector2 target_velocity = Vector2Scale(facing_direction, (int)IsKeyDown(KEY_W) * speed);
+    Vector2 target_velocity = Vector2Scale(facing_direction, (int)(IsKeyDown(KEY_W)||IsKeyDown(KEY_SPACE)) * speed);
+
+    // 8 direction movement (WASD)
+    // Vector2 inputDirection = {0, 0};
+    // if (IsKeyDown(KEY_W)) inputDirection.y -= 1.0f;
+    // if (IsKeyDown(KEY_S)) inputDirection.y += 1.0f;
+    // if (IsKeyDown(KEY_A)) inputDirection.x -= 1.0f;
+    // if (IsKeyDown(KEY_D)) inputDirection.x += 1.0f;
+    // if (Vector2Length(inputDirection) > 0.0f) {
+    //     inputDirection = Vector2Normalize(inputDirection);
+    // }
+    // Vector2 target_velocity = Vector2Scale(inputDirection, speed);
+
     velocity = Vector2MoveTowards(velocity, target_velocity, PLAYER_MAX_ACCELERATION * GetFrameTime());
     rect.x += velocity.x * GetFrameTime();
     rect.y += velocity.y * GetFrameTime();
@@ -78,7 +114,29 @@ bool Player::update() {
 
     // update player position
     Animator::GetInstance().SetPosition("accelerating", {rect.x, rect.y}); 
+    Animator::GetInstance().SetPosition("deaccelerating", {rect.x, rect.y});
 
+
+#pragma endregion 
+
+
+#pragma region PlayerAnimation
+
+    // Handle player animation based on velocity
+    if (Vector2Length(velocity) > 95.0f) {
+        if (!playerAccelerating) {
+            Animator::GetInstance().Play("accelerating");
+            playerAccelerating = true;
+        }
+    } else {
+        if (playerAccelerating) {
+            Animator::GetInstance().Stop("accelerating");
+            playerAccelerating = false;
+        }
+    }
+
+
+#pragma endregion
 
     return false; // No shooting logic for now
 };

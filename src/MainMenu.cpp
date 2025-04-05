@@ -1,7 +1,7 @@
 #include "MainMenu.hpp"
 #include "ResourceManager.hpp"
 
-
+// TODO: ADD PARALLAX BACKGROUND THAT MOVES WITH MOUSE (SEE TEXTURES AT SOON)
 
 enum MainMenuButtons
 {

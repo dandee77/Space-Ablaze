@@ -20,7 +20,7 @@ ResourceManager::ResourceManager(){
         {"background3", "assets/textures/background3.png"},
         {"background4", "assets/textures/background4.png"},
         {"player_acceleration", "assets/textures/player_accelerating.png"},
-        {"player_deceleration", "assets/textures/player_deaccelerating.png"}
+        {"player_deacceleration", "assets/textures/player_deaccelerating.png"}
     };
 
     shaderPaths = {

@@ -20,9 +20,9 @@ void Game::onSwitch()
 
     backgroundLayers = {
         {ResourceManager::GetInstance().GetTexture("background1"), 0.2f, worldTileSize}, 
-        {ResourceManager::GetInstance().GetTexture("background2"), 0.4f, worldTileSize}, 
-        {ResourceManager::GetInstance().GetTexture("background3"), 0.7f, worldTileSize},
-        {ResourceManager::GetInstance().GetTexture("background4"), 1.0f, worldTileSize} 
+        {ResourceManager::GetInstance().GetTexture("background3"), 0.4f, worldTileSize}, 
+        {ResourceManager::GetInstance().GetTexture("background4"), 0.7f, worldTileSize},
+        {ResourceManager::GetInstance().GetTexture("background2"), 1.0f, worldTileSize} 
     };
 }
 
@@ -66,7 +66,7 @@ void Game::DrawLayer(const BackgroundLayer& layer, const Vector2& viewCenter)
                 (startY + y) * layer.size + parallaxOffset.y
             };
 
-            DrawTextureV(layer.texture, tilePos, WHITE);
+            DrawTextureV(layer.texture, tilePos, WHITE); // TODO: MAKE IT RED WHEN THE BOSS APPEARS
         }
     }
 }

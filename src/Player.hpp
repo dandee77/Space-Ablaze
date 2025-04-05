@@ -10,4 +10,7 @@ public:
     void init();
     bool update() override;
     void draw() override;
+
+private:
+    bool playerAccelerating;
 };
