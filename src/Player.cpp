@@ -58,17 +58,19 @@ void Player::init() {
 };
 
 
-bool Player::update() {
+bool Player::update(Camera2D& camera) {
 
 #pragma region PlayerRotation
 
-    // Handle player rotation based on mouse position
-    Vector2 screenCenter = { GAME_SCREEN_WIDTH / 2.0f, GAME_SCREEN_HEIGHT / 2.0f };
-    Vector2 mousePos = GetMousePosition();
-    Vector2 direction = Vector2Subtract(mousePos, screenCenter);
+    // Get mouse world position relative to camera
+    Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), camera); // Pass camera here
+    Vector2 playerPos = { rect.x, rect.y };
+
+    Vector2 direction = Vector2Subtract(mouseWorldPos, playerPos);
 
     if (Vector2Length(direction) == 0.0f) direction = {1, 0};
     else direction = Vector2Normalize(direction);
+
     float targetRotation = atan2(direction.y, direction.x) * RAD2DEG + 90.0f;
 
     // Normalize angles to avoid abrupt jumps
@@ -87,8 +89,8 @@ bool Player::update() {
     Animator::GetInstance().SetRotation("accelerating", rotation);
     Animator::GetInstance().SetRotation("deaccelerating", rotation);
 
-
 #pragma endregion
+
 
 
 #pragma region PlayerMovement
@@ -138,6 +140,7 @@ bool Player::update() {
 
 
 #pragma endregion
+
 
     return false; // No shooting logic for now
 };

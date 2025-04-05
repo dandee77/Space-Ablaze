@@ -16,9 +16,11 @@ protected:
 public:
     Entity() = default;
 
-    virtual bool update() = 0; // returns true if should shoot bullet
+    virtual bool update(Camera2D& camera) = 0; // returns true if should shoot bullet
     virtual void draw() = 0;
     virtual ~Entity() = default;
     inline Vector2 getPosition() const { return {rect.x, rect.y}; }
     inline Vector2 getSize() const { return {rect.width, rect.height}; }
+    inline float getRotation() const { return rotation; }
+    inline Vector2 getVelocity() const { return velocity; }
 };

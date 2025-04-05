@@ -26,28 +26,49 @@ void Game::onSwitch()
     };
 }
 
+#include "raymath.h" // For Vector2 functions
+
 
 std::string Game::update() 
 {
     if (IsKeyPressed(KEY_ENTER)) return "MainMenu";
-
 
 #pragma region StartAnimation
 
     float zoomLerpSpeed = 7.5f; // Higher = faster decay
     float deltaTime = GetFrameTime();
     camera.zoom += (20.0f - camera.zoom) * (1.0f - expf(-zoomLerpSpeed * deltaTime));
-    // float zoomSpeed = 5.0f;
-    // camera.zoom = Lerp(camera.zoom, 20.0f, zoomSpeed * GetFrameTime());
 
 #pragma endregion
 
 
-    playerEntity.update();
-    camera.target = {playerEntity.getPosition().x, playerEntity.getPosition().y};
+
+#pragma region CameraMovement
+    // Update player logic
+    playerEntity.update(camera);
+
+    // Get player position and velocity
+    Vector2 playerPos = playerEntity.getPosition();
+    Vector2 playerVelocity = playerEntity.getVelocity();
+
+    // Calculate lead offset based on velocity
+    float leadStrength = 0.35f; // Tweak for how far ahead the camera looks
+    Vector2 leadOffset = Vector2Scale(playerVelocity, leadStrength);
+
+    // Target position is ahead of the player in movement direction
+    Vector2 desiredCameraTarget = Vector2Add(playerPos, leadOffset);
+
+    // Smooth camera follow with exponential smoothing
+    float cameraLerpSpeed = 5.0f; // Higher = faster catch-up
+    camera.target.x += (desiredCameraTarget.x - camera.target.x) * (1.0f - expf(-cameraLerpSpeed * deltaTime));
+    camera.target.y += (desiredCameraTarget.y - camera.target.y) * (1.0f - expf(-cameraLerpSpeed * deltaTime));
+
+#pragma endregion
 
     return "Game";
 }
+
+
 
 void Game::DrawLayer(const BackgroundLayer& layer, const Vector2& viewCenter) 
 {

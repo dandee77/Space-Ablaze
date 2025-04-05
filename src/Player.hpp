@@ -18,7 +18,7 @@ class Player : public Entity
 public:
     Player();
     void init();
-    bool update() override;
+    bool update(Camera2D& camera);
     void draw() override;
 
 private:
