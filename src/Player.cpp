@@ -18,7 +18,7 @@ Player::Player() {};
 
 void Player::init() {   
     // Initialize player properties here if needed
-    rect = {250, 250, 5, 5};
+    rect = {250, 250, 8, 8};
     speed = PLAYER_SPEED;
     health = 100.0f;
     damage = 10.0f;
@@ -40,7 +40,7 @@ void Player::init() {
         false,
         WHITE
     ));
-    Animator::GetInstance().SetOrigin("accelerating", {2.5f, 2.5f});
+    Animator::GetInstance().SetOrigin("accelerating", {rect.width / 2.0f, rect.height / 2.0f});
 
     texture = ResourceManager::GetInstance().GetTexture("player_deacceleration");
     Animator::GetInstance().AddAnimation("deaccelerating", std::make_shared<Animation>(
@@ -53,7 +53,7 @@ void Player::init() {
         false,
         WHITE
     ));
-    Animator::GetInstance().SetOrigin("deaccelerating", {2.5f, 2.5f});
+    Animator::GetInstance().SetOrigin("deaccelerating", {rect.width / 2.0f, rect.height / 2.0f});
     Animator::GetInstance().Play("deaccelerating");
 };
 
@@ -96,7 +96,7 @@ bool Player::update(Camera2D& camera) {
 #pragma region PlayerMovement
 
     // Handle player movement based on keyboard input
-    Vector2 facing_direction = Vector2Rotate((Vector2){0, -1}, rotation * DEG2RAD);
+    facing_direction = Vector2Rotate((Vector2){0, -1}, rotation * DEG2RAD);
     Vector2 target_velocity = Vector2Scale(facing_direction, (int)(IsKeyDown(KEY_W)||IsKeyDown(KEY_SPACE)) * speed);
 
     // 8 direction movement (WASD)
@@ -142,7 +142,7 @@ bool Player::update(Camera2D& camera) {
 #pragma endregion
 
 
-    return false; // No shooting logic for now
+    return IsMouseButtonPressed(MOUSE_BUTTON_LEFT); // No shooting logic for now
 };
 
 

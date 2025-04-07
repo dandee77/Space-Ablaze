@@ -10,27 +10,30 @@ ResourceManager& ResourceManager::GetInstance() {
 }
 
 ResourceManager::ResourceManager(){
+
+        // textureID                              filePath
     texturePaths = {
-        {"game_background", "assets/textures/game_background_texture.png"},
-        {"border", "assets/textures/border_raw.png"},
-        {"main_menu_background", "assets/textures/MainMenuBackground.png"},
-        {"exit_animation", "assets/textures/ExitAnimation.png"},
-        {"background1", "assets/textures/background1.png"},
-        {"background2", "assets/textures/background2.png"},
-        {"background3", "assets/textures/background3.png"},
-        {"background4", "assets/textures/background4.png"},
-        {"player_acceleration", "assets/textures/player_accelerating.png"},
-        {"player_deacceleration", "assets/textures/player_deaccelerating.png"}
+        {"game_background",                     "assets/textures/game_background_texture.png"},
+        {"border",                              "assets/textures/border_raw.png"},
+        {"main_menu_background",                "assets/textures/MainMenuBackground.png"},
+        {"exit_animation",                      "assets/textures/ExitAnimation.png"},
+        {"background1",                         "assets/textures/background1.png"},
+        {"background2",                         "assets/textures/background2.png"},
+        {"background3",                         "assets/textures/background3.png"},
+        {"background4",                         "assets/textures/background4.png"},
+        {"player_acceleration",                 "assets/textures/player_accelerating.png"},
+        {"player_deacceleration",               "assets/textures/player_deaccelerating.png"},
+        {"player_bullet",                       "assets/textures/player_bullet.png"}
     };
 
     shaderPaths = {
-        {"shader", "assets/shaders/shader.fs"},
-        {"barrel_distortion", "assets/shaders/barrel_distortion.fs"}
+        {"shader",                              "assets/shaders/shader.fs"},
+        {"barrel_distortion",                   "assets/shaders/barrel_distortion.fs"}
     };
 
     fontPaths = {
-        {"primary_font", "assets/fonts/PerfectDOSVGA437.ttf"}, 
-        {"secondary_font", "assets/fonts/3270-Regular.ttf"}
+        {"primary_font",                        "assets/fonts/PerfectDOSVGA437.ttf"}, 
+        {"secondary_font",                      "assets/fonts/3270-Regular.ttf"}
     };
 }
 

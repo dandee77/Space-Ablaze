@@ -2,6 +2,7 @@
 #include <cmath>
 #include <iostream>
 #include "Animator.hpp"
+#include "Bullet.hpp"
 
 
 Game::Game() 
@@ -24,6 +25,9 @@ void Game::onSwitch()
         {ResourceManager::GetInstance().GetTexture("background4"), 0.7f, worldTileSize},
         {ResourceManager::GetInstance().GetTexture("background2"), 1.0f, worldTileSize} 
     };
+
+    bulletTexture = ResourceManager::GetInstance().GetTexture("player_bullet");
+    bulletManager = BulletManager();
 }
 
 #include "raymath.h" // For Vector2 functions
@@ -31,7 +35,7 @@ void Game::onSwitch()
 
 std::string Game::update() 
 {
-    if (IsKeyPressed(KEY_ENTER)) return "MainMenu";
+    if (IsKeyPressed(KEY_ENTER)) return "MainMenu"; 
 
 #pragma region StartAnimation
 
@@ -41,11 +45,25 @@ std::string Game::update()
 
 #pragma endregion
 
+    // handle playr shooting
+
+#pragma region UpdatePlayer
+
+    bool shouldShoot = playerEntity.update(camera);
+
+    if (shouldShoot) {
+        Bullet bullet = Bullet(playerEntity.getPosition(), playerEntity.getDirection(), false);
+        bulletManager.addBullet(bullet);
+    }
+
+    bulletManager.update(GetFrameTime(), playerEntity.getPosition());
+
+#pragma endregion
 
 
 #pragma region CameraMovement
-    // Update player logic
-    playerEntity.update(camera);
+
+    // playerEntity.update(camera);
 
     // Get player position and velocity
     Vector2 playerPos = playerEntity.getPosition();
@@ -107,6 +125,7 @@ void Game::draw()
     BeginMode2D(camera);
 
         DrawParallaxBackground();
+        bulletManager.draw(bulletTexture);
         playerEntity.draw();
 
         Animator::GetInstance().Update();

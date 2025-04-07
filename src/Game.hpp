@@ -5,6 +5,7 @@
 #include "ResourceManager.hpp"
 #include <vector>
 #include "Player.hpp"
+#include "BulletManager.hpp"
 
 class Game : public Scene
 {
@@ -32,4 +33,7 @@ private:
     void DrawLayer(const BackgroundLayer& layer, const Vector2& viewCenter);
 
     Player playerEntity;
+
+    BulletManager bulletManager;
+    Texture2D bulletTexture;
 };

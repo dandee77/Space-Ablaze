@@ -17,6 +17,7 @@ class Player : public Entity
 {
 public:
     Player();
+    Vector2 getDirection() const { return facing_direction; }
     void init();
     bool update(Camera2D& camera);
     void draw() override;
@@ -25,4 +26,5 @@ private:
     bool playerAccelerating;
     PlayerState playerState;
     Cooldown playerAttackCooldown;
+    Vector2 facing_direction;
 };
