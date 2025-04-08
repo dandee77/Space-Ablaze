@@ -55,6 +55,10 @@ void Player::init() {
     ));
     Animator::GetInstance().SetOrigin("deaccelerating", {rect.width / 2.0f, rect.height / 2.0f});
     Animator::GetInstance().Play("deaccelerating");
+
+
+    playerAttackCooldown = Cooldown(0.2f); 
+    autoShoot = false;
 };
 
 
@@ -142,7 +146,13 @@ bool Player::update(Camera2D& camera) {
 #pragma endregion
 
 
-    return IsMouseButtonPressed(MOUSE_BUTTON_LEFT); // No shooting logic for now
+    if (IsKeyPressed(KEY_E)) autoShoot = !autoShoot;
+
+    if ((IsMouseButtonDown(MOUSE_BUTTON_LEFT) || autoShoot) && !playerAttackCooldown.isOnCooldown())
+    {
+        playerAttackCooldown.startCooldown();
+        return true;
+    } else return false;
 };
 
 

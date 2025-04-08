@@ -27,4 +27,5 @@ private:
     PlayerState playerState;
     Cooldown playerAttackCooldown;
     Vector2 facing_direction;
+    bool autoShoot;
 };
