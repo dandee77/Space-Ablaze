@@ -3,6 +3,7 @@
 #include <iostream>
 
 #define ENEMY_MAX_DISTANCE 1000.0f
+#define ENEMY_MAX_RANGE 100.0f
 
 void EnemyManager::update(float deltaTime, Vector2 playerPos, BulletManager& bulletManager)
 {
@@ -30,9 +31,7 @@ void EnemyManager::update(float deltaTime, Vector2 playerPos, BulletManager& bul
         }
 
         enemies[i].getPlayerPosition(playerPos); 
-        // todo: add condition if the enemy is in the player's fov
-        // todo: check if enemy is on upper side or sideways
-        if (enemies[i].update() && dist <= 100) // make sure the enemy is in player's fov
+        if (enemies[i].update() && dist <= ENEMY_MAX_RANGE) // make sure the enemy is in player's fov
         {
             Bullet b(enemies[i].getPosition(), enemies[i].getViewDirection(), true);
             b.setBulletSpeed(enemies[i].getBulletSpeed());
@@ -65,7 +64,7 @@ void EnemyManager::spawnEnemy(Vector2 playerPos)
 
     ShootingEnemy enemy(spawnPos);
   
-    enemy.setSpeed(GetRandomValue(25, 75)); 
+    enemy.setSpeed(GetRandomValue(25, 50)); 
     enemy.setTurnSpeed(1.5f + GetRandomValue(0, 1000) / 1000.0f); 
     enemy.getCooldown().updateCooldownDuration(0.5f + GetRandomValue(0, 750) / 1000.0f); 
     // enemy.getCooldown().updateCooldownDuration(0.01f);

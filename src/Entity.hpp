@@ -12,6 +12,7 @@ protected:
     Rectangle rect;
     float rotation;
     Vector2 velocity;
+    
 
 public:
     Entity() = default;
