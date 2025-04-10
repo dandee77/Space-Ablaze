@@ -11,6 +11,7 @@ public:
     Vector2 getPosition() const { return position; }
     Vector2 getDirection() const { return fireDirection; }
     bool isEnemyBullet() const { return enemyBullet; }
+    void setBulletSpeed(float s) { speed = s; }
 
 private:
     Vector2 position;

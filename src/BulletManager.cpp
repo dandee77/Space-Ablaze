@@ -17,11 +17,11 @@ void BulletManager::update(float deltaTime, Vector2 playerPos) {
 
 #include <iostream>
 
-void BulletManager::draw(Texture2D bulletTexture) {
+void BulletManager::draw(const Texture2D& playerBulletTexture, const Texture2D& enemyBulletTexture) const {
     for (auto& bullet : bullets) {
-        bullet.draw(bulletTexture);
-
-        std::cout << "Number of bullets: " << bullets.size() << std::endl;
+        if (bullet.isEnemyBullet()) 
+            bullet.draw(enemyBulletTexture);
+        else bullet.draw(playerBulletTexture);
     }
 }
 

@@ -23,7 +23,9 @@ ResourceManager::ResourceManager(){
         {"background4",                         "assets/textures/background4.png"},
         {"player_acceleration",                 "assets/textures/player_accelerating.png"},
         {"player_deacceleration",               "assets/textures/player_deaccelerating.png"},
-        {"player_bullet",                       "assets/textures/player_bullet.png"}
+        {"player_bullet",                       "assets/textures/player_bullet.png"},
+        {"enemy",                               "assets/textures/enemy.png"},
+        {"enemy_bullet",                        "assets/textures/enemy_bullet.png"}
     };
 
     shaderPaths = {

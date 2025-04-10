@@ -3,6 +3,7 @@
 #include <iostream>
 #include "Animator.hpp"
 #include "Bullet.hpp"
+#include "raymath.h" 
 
 
 Game::Game() 
@@ -20,17 +21,16 @@ void Game::onSwitch()
     camera.zoom = 150.0f;
 
     backgroundLayers = {
-        {ResourceManager::GetInstance().GetTexture("background1"), 0.2f, worldTileSize}, 
-        {ResourceManager::GetInstance().GetTexture("background3"), 0.4f, worldTileSize}, 
-        {ResourceManager::GetInstance().GetTexture("background4"), 0.7f, worldTileSize},
-        {ResourceManager::GetInstance().GetTexture("background2"), 1.0f, worldTileSize} 
+        {ResourceManager::GetInstance().GetTexture("background1"), 0.0f, worldTileSize},  // 0.2
+        {ResourceManager::GetInstance().GetTexture("background3"), 0.2f, worldTileSize},  // 0.4
+        {ResourceManager::GetInstance().GetTexture("background4"), 0.4f, worldTileSize},  // 0.7
+        {ResourceManager::GetInstance().GetTexture("background2"), 0.7f, worldTileSize}   // 1.0
     };
 
-    bulletTexture = ResourceManager::GetInstance().GetTexture("player_bullet");
+    playerBulletTexture = ResourceManager::GetInstance().GetTexture("player_bullet");
+    enemyBulletTexture = ResourceManager::GetInstance().GetTexture("enemy_bullet");
     bulletManager = BulletManager();
 }
-
-#include "raymath.h" // For Vector2 functions
 
 
 std::string Game::update() 
@@ -83,6 +83,8 @@ std::string Game::update()
 
 #pragma endregion
 
+    EnemyManager::GetInstance().update(GetFrameTime(), playerEntity.getPosition(), bulletManager);
+
     return "Game";
 }
 
@@ -125,8 +127,10 @@ void Game::draw()
     BeginMode2D(camera);
 
         DrawParallaxBackground();
-        bulletManager.draw(bulletTexture);
-        playerEntity.draw();
+        bulletManager.draw(playerBulletTexture, enemyBulletTexture); 
+        // ? no draw function for the player as it is handled in the animator class
+
+        EnemyManager::GetInstance().draw(ResourceManager::GetInstance().GetTexture("enemy"));
 
         Animator::GetInstance().Update();
         Animator::GetInstance().Draw(); 

@@ -58,6 +58,7 @@ void Player::init() {
 
 
     playerAttackCooldown = Cooldown(0.2f); 
+    playerAttackCooldown.startCooldown(); // ? prevents accidental shooting at the start of the game
     autoShoot = false;
 };
 
@@ -80,6 +81,7 @@ bool Player::update(Camera2D& camera) {
     // Normalize angles to avoid abrupt jumps
     float deltaAngle = targetRotation - rotation;
     deltaAngle = fmodf(deltaAngle + 540.0f, 360.0f) - 180.0f; // shortest path
+    deltaAngle = Clamp(deltaAngle, -180.0f, 180.0f); // resolves the issue of the angle jumping from 180 to -180
 
     // Calculate rotation speed based on velocity (minimum 3.0f, scales up)
     float baseRotationSpeed = 3.0f;
@@ -153,10 +155,4 @@ bool Player::update(Camera2D& camera) {
         playerAttackCooldown.startCooldown();
         return true;
     } else return false;
-};
-
-
-void Player::draw() {
-
-
 };

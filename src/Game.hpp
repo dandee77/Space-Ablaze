@@ -6,6 +6,7 @@
 #include <vector>
 #include "Player.hpp"
 #include "BulletManager.hpp"
+#include "EnemyManager.hpp"
 
 class Game : public Scene
 {
@@ -35,5 +36,6 @@ private:
     Player playerEntity;
 
     BulletManager bulletManager;
-    Texture2D bulletTexture;
+    Texture2D playerBulletTexture; 
+    Texture2D enemyBulletTexture;
 };

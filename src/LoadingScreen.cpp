@@ -20,7 +20,6 @@ std::string LoadingScreen::update()
 #include <iostream>
 void LoadingScreen::draw()
 {
-    std::cout << "Drawing Loading Screen" << std::endl;
     DrawText(TextFormat("Loading progress: %d%%", 
         ResourceManager::GetInstance().GetTextureLoadingProgress()), 
         1200, 1800, 120, WHITE);

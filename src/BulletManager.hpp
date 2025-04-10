@@ -8,7 +8,7 @@
 class BulletManager {
 public:
     void update(float deltaTime, Vector2 playerPos);
-    void draw(Texture2D bulletTexture);
+    void draw(const Texture2D& playerBulletTexture, const Texture2D& enemyBulletTexture) const;
 
     void addBullet(const Bullet& bullet);
 

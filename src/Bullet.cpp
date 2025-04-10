@@ -15,8 +15,7 @@ void Bullet::update(float deltaTime)
 
 void Bullet::draw(const Texture2D &texture) const
 {
-
-    Vector2 size = {5.0f, 3.0f};
+    Vector2 size = isEnemyBullet() ? Vector2{4.0f, 4.0f} : Vector2{7.0f, 4.0f};
     Vector2 drawPos = position;
 
     DrawTexturePro(
