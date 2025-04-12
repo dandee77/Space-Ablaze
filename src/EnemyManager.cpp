@@ -13,23 +13,22 @@ void EnemyManager::update(float deltaTime, Vector2 playerPos, BulletManager& bul
         spawnCooldown -= deltaTime;
         spawnCooldown = GetRandomValue(1, 6); 
 
+        // ? could spawn 1 or 3 enemies at once
         int spawns = 1 + (GetRandomValue(0, 2) == 0 ? 2 : 0); 
-
         for (int i = 0; i < spawns; ++i)
             spawnEnemy(playerPos);
-        
     }
 
     for (int i = 0; i < enemies.size(); i++)
     {
         float dist = Vector2Distance(enemies[i].getPosition(), playerPos);
-        if (dist > ENEMY_MAX_DISTANCE)
-        {
-            enemies.erase(enemies.begin() + i);
-            i--;
-            continue;
-        }
-
+        // ! deletes anemies that are out of range
+        // if (dist > ENEMY_MAX_DISTANCE)
+        // {
+        //     enemies.erase(enemies.begin() + i);
+        //     i--;
+        //     continue;
+        // }
         enemies[i].getPlayerPosition(playerPos); 
         if (enemies[i].update() && dist <= ENEMY_MAX_RANGE) // make sure the enemy is in player's fov
         {
@@ -55,14 +54,15 @@ void EnemyManager::draw(Texture2D enemyTexture)
 
 void EnemyManager::spawnEnemy(Vector2 playerPos)
 {
-    Vector2 offset = {100.0f, 0.0f};
+    Vector2 offset = Vector2Zero();
 
     float angle = DEG2RAD * (float)GetRandomValue(0, 359);
     offset = Vector2Rotate(offset, angle);
 
     Vector2 spawnPos = Vector2Add(playerPos, offset);
 
-    ShootingEnemy enemy(spawnPos);
+    ShootingEnemy enemy = ShootingEnemy(spawnPos);
+    enemy.getPlayerPosition(playerPos);
   
     enemy.setSpeed(GetRandomValue(25, 50)); 
     enemy.setTurnSpeed(1.5f + GetRandomValue(0, 1000) / 1000.0f); 
