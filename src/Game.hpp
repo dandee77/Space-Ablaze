@@ -5,7 +5,6 @@
 #include "ResourceManager.hpp"
 #include <vector>
 #include "Player.hpp"
-#include "BulletManager.hpp"
 #include "EnemyManager.hpp"
 
 class Game : public Scene
@@ -18,9 +17,7 @@ public:
     void onExit() override;
     ~Game() override = default;
 
-private:
-    Camera2D camera;
-        
+private:        
     struct BackgroundLayer {
         Texture2D texture;
         float parallaxFactor; // 0.0 (stationary) to 1.0 (moves with player)
@@ -35,7 +32,6 @@ private:
 
     Player playerEntity;
 
-    BulletManager bulletManager;
     Texture2D playerBulletTexture; 
     Texture2D enemyBulletTexture;
 };

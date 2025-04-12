@@ -12,15 +12,17 @@ protected:
     Rectangle rect;
     float rotation;
     Vector2 velocity;
+    Vector2 position;
+    Vector2 origin;
     
 
 public:
     Entity() = default;
 
-    virtual bool update() {  return false; }; 
-    virtual void draw(Texture2D entityTexture) {};
+    virtual void update() = 0;
+    virtual void draw(const Texture2D& entityTexture) = 0;
     virtual ~Entity() = default;
-    virtual Vector2 getPosition() const { return {rect.x, rect.y}; }
+    inline Vector2 getPosition() const { return position; }
     inline Vector2 getSize() const { return {rect.width, rect.height}; }
     inline float getRotation() const { return rotation; }
     inline Vector2 getVelocity() const { return velocity; }

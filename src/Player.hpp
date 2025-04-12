@@ -2,6 +2,7 @@
 #include "Entity.hpp"
 #include "raylib.h"
 #include "Timer.hpp"
+#include "BulletManager.hpp"
 
 
 enum PlayerState
@@ -18,13 +19,13 @@ class Player : public Entity
 public:
     Player();
     void init();
-    bool update(Camera2D& camera);
-    Vector2 getDirection() const { return facing_direction; }
+    void update() override;
+    void draw(const Texture2D& texture) override;
 
 private:
+    Camera2D camera;
     bool playerAccelerating;
     PlayerState playerState;
     Cooldown playerAttackCooldown;
-    Vector2 facing_direction;
     bool autoShoot;
 };

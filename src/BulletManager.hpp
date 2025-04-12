@@ -5,15 +5,21 @@
 
 #define BULLET_DESPAWN_DISTANCE 150.0f
 
+
 class BulletManager {
 public:
-    void update(float deltaTime, Vector2 playerPos);
+
+    static BulletManager& GetInstance() {
+        static BulletManager instance;
+        return instance;
+    }
+
+    void update(Vector2 position);
     void draw(const Texture2D& playerBulletTexture, const Texture2D& enemyBulletTexture) const;
-
-    void addBullet(const Bullet& bullet);
-
-    void clear(); // optional: clears all bullets
+    void addBullet(Bullet bullet);
+    void clear(); 
 
 private:
+    BulletManager() = default;
     std::vector<Bullet> bullets;
 };

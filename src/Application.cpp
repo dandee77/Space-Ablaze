@@ -168,7 +168,7 @@ void Application::Run()
    
         BeginDrawing();
             ClearBackground(BLACK);
-            
+            DrawFPS(10, 10);
        
             DrawTexturePro(targetFinal.texture,
                          Rectangle{0, 0, (float)screenWidth, (float)-screenHeight},

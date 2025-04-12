@@ -1,9 +1,10 @@
 #pragma once
 #include <vector>
-#include "ShootingEnemy.hpp"
+#include <memory>
 #include "BulletManager.hpp"
 #include "Timer.hpp"
 #include "raylib.h"
+#include "Enemy.hpp"
 
 class EnemyManager
 {
@@ -14,14 +15,14 @@ public:
         return instance;
     }
 
-    void update(float deltaTime, Vector2 playerPos, BulletManager& bulletManager);
-    void draw(Texture2D enemyTexture);
+    void update(Vector2 playerPos);
+    void draw();
 
 private:
     EnemyManager() = default;
     void spawnEnemy(Vector2 playerPos);
 
-    std::vector<ShootingEnemy> enemies;
+    std::vector<std::unique_ptr<Enemy>> enemies;
     float spawnCooldown = 0.0f;
 
     const int maxEnemies = 5;

@@ -2,16 +2,16 @@
 #include "raymath.h"
 
 
-void BulletManager::update(float deltaTime, Vector2 playerPos) {
+void BulletManager::update(Vector2 position) {
     for (int i = 0; i < bullets.size(); i++) {
-        float dist = Vector2Distance(bullets[i].getPosition(), playerPos);
+        float dist = Vector2Distance(bullets[i].getPosition(), position);
         if (dist > BULLET_DESPAWN_DISTANCE) {
             bullets.erase(bullets.begin() + i);
             i--;
             continue;
         }
 
-        bullets[i].update(deltaTime);
+        bullets[i].update();
     }
 }
 
@@ -25,7 +25,7 @@ void BulletManager::draw(const Texture2D& playerBulletTexture, const Texture2D& 
     }
 }
 
-void BulletManager::addBullet(const Bullet& bullet) {
+void BulletManager::addBullet(Bullet bullet) {
     bullets.push_back(bullet);
 }
 

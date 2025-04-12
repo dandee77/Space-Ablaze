@@ -7,10 +7,9 @@ Bullet::Bullet(Vector2 pos, Vector2 direction, bool isEnemy)
     angle = atan2f(fireDirection.y, fireDirection.x) * RAD2DEG;
 }
 
-void Bullet::update(float deltaTime)
+void Bullet::update()
 {
-    position.x += fireDirection.x * speed * deltaTime;
-    position.y += fireDirection.y * speed * deltaTime;
+    position = Vector2Add(Vector2Scale(fireDirection, speed * GetFrameTime()), position);
 }
 
 void Bullet::draw(const Texture2D &texture) const

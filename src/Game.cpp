@@ -4,6 +4,8 @@
 #include "Animator.hpp"
 #include "Bullet.hpp"
 #include "raymath.h" 
+#include "BulletManager.hpp"
+#include "Utils.hpp"
 
 
 Game::Game() 
@@ -14,11 +16,11 @@ void Game::onSwitch()
     worldTileSize = 500.0f; 
     playerEntity = Player();
     playerEntity.init();
-    camera = {0};
-    camera.target = { playerEntity.getPosition().x, playerEntity.getPosition().y };
-    camera.offset = {GAME_SCREEN_WIDTH/2.0f, GAME_SCREEN_HEIGHT/2.0f};
-    camera.rotation = 0.0f;
-    camera.zoom = 150.0f;
+    utils::gameCamera = {0};
+    utils::gameCamera.target = { playerEntity.getPosition().x, playerEntity.getPosition().y };
+    utils::gameCamera.offset = {GAME_SCREEN_WIDTH/2.0f, GAME_SCREEN_HEIGHT/2.0f};
+    utils::gameCamera.rotation = 0.0f;
+    utils::gameCamera.zoom = 150.0f;
 
     backgroundLayers = {
         {ResourceManager::GetInstance().GetTexture("background1"), 0.2f, worldTileSize},  // 0.2
@@ -29,7 +31,6 @@ void Game::onSwitch()
 
     playerBulletTexture = ResourceManager::GetInstance().GetTexture("player_bullet");
     enemyBulletTexture = ResourceManager::GetInstance().GetTexture("enemy_bullet");
-    bulletManager = BulletManager();
 }
 
 
@@ -41,7 +42,7 @@ std::string Game::update()
 
     float zoomLerpSpeed = 7.5f; // Higher = faster decay
     float deltaTime = GetFrameTime();
-    camera.zoom += (20.0f - camera.zoom) * (1.0f - expf(-zoomLerpSpeed * deltaTime));
+    utils::gameCamera.zoom += (20.0f - utils::gameCamera.zoom) * (1.0f - expf(-zoomLerpSpeed * deltaTime));
 
 #pragma endregion
 
@@ -49,14 +50,9 @@ std::string Game::update()
 
 #pragma region UpdatePlayer
 
-    bool shouldShoot = playerEntity.update(camera);
-
-    if (shouldShoot) {
-        Bullet bullet = Bullet(playerEntity.getPosition(), playerEntity.getDirection(), false);
-        bulletManager.addBullet(bullet);
-    }
-
-    bulletManager.update(GetFrameTime(), playerEntity.getPosition());
+    playerEntity.update();
+    // ?  the enemies bullet shares the same bullet max range since it is relative to the player
+    BulletManager::GetInstance().update(playerEntity.getPosition()); // ?  it only gets player position to calculate the distance to the bullets
 
 #pragma endregion
 
@@ -78,12 +74,12 @@ std::string Game::update()
 
     // Smooth camera follow with exponential smoothing
     float cameraLerpSpeed = 5.0f; // Higher = faster catch-up
-    camera.target.x += (desiredCameraTarget.x - camera.target.x) * (1.0f - expf(-cameraLerpSpeed * deltaTime));
-    camera.target.y += (desiredCameraTarget.y - camera.target.y) * (1.0f - expf(-cameraLerpSpeed * deltaTime));
+    utils::gameCamera.target.x += (desiredCameraTarget.x - utils::gameCamera.target.x) * (1.0f - expf(-cameraLerpSpeed * deltaTime));
+    utils::gameCamera.target.y += (desiredCameraTarget.y - utils::gameCamera.target.y) * (1.0f - expf(-cameraLerpSpeed * deltaTime));
 
 #pragma endregion
 
-    EnemyManager::GetInstance().update(GetFrameTime(), playerEntity.getPosition(), bulletManager);
+    EnemyManager::GetInstance().update(playerEntity.getPosition()); //! <<***********************
 
     return "Game";
 }
@@ -115,7 +111,7 @@ void Game::DrawLayer(const BackgroundLayer& layer, const Vector2& viewCenter)
 
 void Game::DrawParallaxBackground()
 {
-    Vector2 viewCenter = camera.target;
+    Vector2 viewCenter = utils::gameCamera.target;
     
     for (const auto& layer : backgroundLayers) {
         DrawLayer(layer, viewCenter);
@@ -124,13 +120,14 @@ void Game::DrawParallaxBackground()
 
 void Game::draw()
 {
-    BeginMode2D(camera);
+    BeginMode2D(utils::gameCamera);
 
         DrawParallaxBackground();
-        bulletManager.draw(playerBulletTexture, enemyBulletTexture); 
+        BulletManager::GetInstance().draw(playerBulletTexture, enemyBulletTexture);
+
         // ? no draw function for the player as it is handled in the animator class
 
-        EnemyManager::GetInstance().draw(ResourceManager::GetInstance().GetTexture("enemy"));
+        EnemyManager::GetInstance().draw();
 
         Animator::GetInstance().Update();
         Animator::GetInstance().Draw(); 
