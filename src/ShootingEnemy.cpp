@@ -54,7 +54,6 @@ bool ShootingEnemy::update()
     viewDirection = Vector2Normalize(newDir);
     newLength = Clamp(newLength, 0.1f, 3.0f);
 
-    // Apply velocity-based movement
     Vector2 desiredVelocity = Vector2Scale(viewDirection, speed);
     velocity = Vector2MoveTowards(velocity, desiredVelocity, ENEMY_MAX_ACCELERATION * deltaTime);
     position = Vector2Add(position, Vector2Scale(velocity, deltaTime));

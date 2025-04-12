@@ -21,10 +21,10 @@ void Game::onSwitch()
     camera.zoom = 150.0f;
 
     backgroundLayers = {
-        {ResourceManager::GetInstance().GetTexture("background1"), 0.0f, worldTileSize},  // 0.2
-        {ResourceManager::GetInstance().GetTexture("background3"), 0.2f, worldTileSize},  // 0.4
-        {ResourceManager::GetInstance().GetTexture("background4"), 0.4f, worldTileSize},  // 0.7
-        {ResourceManager::GetInstance().GetTexture("background2"), 0.7f, worldTileSize}   // 1.0
+        {ResourceManager::GetInstance().GetTexture("background1"), 0.2f, worldTileSize},  // 0.2
+        {ResourceManager::GetInstance().GetTexture("background3"), 0.4f, worldTileSize},  // 0.4
+        {ResourceManager::GetInstance().GetTexture("background4"), 0.7f, worldTileSize},  // 0.7
+        {ResourceManager::GetInstance().GetTexture("background2"), 1.0f, worldTileSize}   // 1.0
     };
 
     playerBulletTexture = ResourceManager::GetInstance().GetTexture("player_bullet");
