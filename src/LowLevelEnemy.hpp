@@ -12,7 +12,7 @@ private:
     const std::string textureName;
 
 public:
-    LowLevelEnemy(EnemyType type, Vector2 spawnPos, Vector2 playerPos);
+    LowLevelEnemy(std::string enemyID, EnemyType type, Vector2 spawnPos, Vector2 playerPos);
     void update() override;
     void draw() override;
 };

@@ -4,6 +4,7 @@
 #include "LowLevelEnemy.hpp"
 #include <iostream>
 
+
 #define ENEMY_MAX_DISTANCE 1000.0f
 #define ENEMY_MAX_RANGE 100.0f
 
@@ -39,7 +40,7 @@ void EnemyManager::update(Vector2 playerPos)
         // }
     }
 
-    std::cout << "Enemy count: " << enemies.size() << std::endl;
+    // std::cout << "Enemy count: " << enemies.size() << std::endl;
 }
 
 
@@ -64,8 +65,11 @@ void EnemyManager::spawnEnemy(Vector2 playerPos)
     offset = Vector2Rotate(offset, angle);
     Vector2 spawnPos = Vector2Add(playerPos, offset);
     
-    enemies.push_back(std::make_unique<LowLevelEnemy>(LOW_LEVEL_ENEMY, spawnPos, playerPos));
+    std::string enemyID = "enemy_" + std::to_string(enemyCounter++);
+    enemies.push_back(std::make_unique<LowLevelEnemy>(enemyID, LOW_LEVEL_ENEMY, spawnPos, playerPos));
 
+    std::cout << enemyID << std::endl;
+    
     // ShootingEnemy enemy = ShootingEnemy(spawnPos);
     // enemy.getPlayerPosition(playerPos);
   

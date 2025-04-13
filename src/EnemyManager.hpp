@@ -5,10 +5,13 @@
 #include "Timer.hpp"
 #include "raylib.h"
 #include "Enemy.hpp"
+#include <string>
+
 
 class EnemyManager
 {
 public:
+
     static EnemyManager& GetInstance()
     {
         static EnemyManager instance;
@@ -19,10 +22,12 @@ public:
     void draw();
 
 private:
+
     EnemyManager() = default;
     void spawnEnemy(Vector2 playerPos);
 
+    int enemyCounter = 0; // ? would serve as a unique ID for the enemy
     std::vector<std::unique_ptr<Enemy>> enemies;
-    Cooldown enemySpawnCooldown{1.0f}; 
-    const int maxEnemies = 500;
+    Cooldown enemySpawnCooldown{0.001f}; 
+    const int maxEnemies = 1'000;
 };

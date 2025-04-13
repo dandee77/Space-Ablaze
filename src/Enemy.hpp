@@ -2,6 +2,7 @@
 
 #include "raylib.h"
 #include "Entity.hpp"
+#include <string>
 
 enum EnemyType
 {
@@ -16,8 +17,9 @@ class Enemy : public Entity
 {
 public:
 
-    Enemy(EnemyType type, Vector2 spawnPos, Vector2 playerPos)
+    Enemy(std::string enemyID, EnemyType type, Vector2 spawnPos, Vector2 playerPos)
     {
+        this->enemyID = enemyID;
         enemyType = type;
         position = spawnPos;
         playerPosition = playerPos;
@@ -30,6 +32,7 @@ public:
 
 protected:
 
+    std::string enemyID;
     EnemyType enemyType;
     Vector2 viewDirection;
     Vector2 playerPosition;
