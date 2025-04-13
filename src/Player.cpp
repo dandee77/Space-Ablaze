@@ -76,26 +76,28 @@ void Player::update() {
     if (Vector2Length(direction) == 0.0f) direction = {1, 0};
     else direction = Vector2Normalize(direction);
 
-    float rotation = atan2f(direction.y, direction.x) * RAD2DEG + 90.0f; 
-
+    // ? standard rotation
+    // float rotation = atan2f(direction.y, direction.x) * RAD2DEG + 90.0f; 
 
     // ! SMOOTHING ROTATION WAS BUGGED ASF
-    // float targetRotation = atan2(direction.y, direction.x) * RAD2DEG + 90.0f;
+    // ? IT WORKS NOW? SOMEHOW IDEK
+    float targetRotation = atan2(direction.y, direction.x) * RAD2DEG + 90.0f;
 
-    // // Normalize angles to avoid abrupt jumps
-    // float deltaAngle = targetRotation - rotation;
+    // Normalize angles to avoid abrupt jumps
+    float deltaAngle = targetRotation - rotation;
+    deltaAngle = fmodf(deltaAngle + 180.0f, 360.0f) - 180.0f;
     // deltaAngle = fmodf(deltaAngle + 540.0f, 360.0f) - 180.0f; // shortest path
     // // ! PLAYER STILL JUMPS FROM 180 TO -180
     // deltaAngle = Clamp(deltaAngle, -179.0f, 179.0f); // resolves the issue of the angle jumping from 180 to -180
 
-    // // Calculate rotation speed based on velocity (minimum 3.0f, scales up) 
-    // float baseRotationSpeed = 3.0f;
-    // float maxRotationSpeed = 10.0f;
-    // float speedFactor = Vector2Length(velocity) / speed; // Normalize velocity (0 to 1)
-    // float rotationSpeed = baseRotationSpeed + speedFactor * (maxRotationSpeed - baseRotationSpeed);
+    // Calculate rotation speed based on velocity (minimum 3.0f, scales up) 
+    float baseRotationSpeed = 5.0f;
+    float maxRotationSpeed = 10.0f;
+    float speedFactor = Vector2Length(velocity) / speed; // Normalize velocity (0 to 1)
+    float rotationSpeed = baseRotationSpeed + speedFactor * (maxRotationSpeed - baseRotationSpeed);
 
-    // // Apply smoothing rotation
-    // rotation += deltaAngle * (1.0f - expf(-rotationSpeed * GetFrameTime()));
+    // Apply smoothing rotation
+    rotation += deltaAngle * (1.0f - expf(-rotationSpeed * GetFrameTime()));
 
     Animator::GetInstance().SetRotation("accelerating", rotation);
     Animator::GetInstance().SetRotation("deaccelerating", rotation);
