@@ -23,7 +23,6 @@ private:
     void spawnEnemy(Vector2 playerPos);
 
     std::vector<std::unique_ptr<Enemy>> enemies;
-    float spawnCooldown = 0.0f;
-
-    const int maxEnemies = 5;
+    Cooldown enemySpawnCooldown{1.0f}; 
+    const int maxEnemies = 500;
 };

@@ -17,12 +17,14 @@ enum PlayerState
 class Player : public Entity
 {
 public:
+
     Player();
     void init();
     void update() override;
     void draw(const Texture2D& texture) override;
 
 private:
+
     Camera2D camera;
     bool playerAccelerating;
     PlayerState playerState;

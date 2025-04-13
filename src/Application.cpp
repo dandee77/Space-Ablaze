@@ -78,7 +78,7 @@ void Application::Run()
     SetTextureFilter(borderTarget.texture, TEXTURE_FILTER_BILINEAR);
     SetTextureFilter(borderTargetFinal.texture, TEXTURE_FILTER_BILINEAR);
 
-    while (!WindowShouldClose())
+        while (!WindowShouldClose())
     {
 
         float time = GetTime();
@@ -168,23 +168,24 @@ void Application::Run()
    
         BeginDrawing();
             ClearBackground(BLACK);
-            DrawFPS(10, 10);
-       
+            
             DrawTexturePro(targetFinal.texture,
-                         Rectangle{0, 0, (float)screenWidth, (float)-screenHeight},
-                         Rectangle{offsetX, offsetY, renderWidth, renderHeight},
-                         Vector2{0, 0},
-                         0.0f,
-                         WHITE);
-            
-       
+                Rectangle{0, 0, (float)screenWidth, (float)-screenHeight},
+                // Rectangle{offsetX + 40, offsetY + 35, renderWidth - 80, renderHeight - 70},
+                Rectangle{offsetX, offsetY, renderWidth, renderHeight},
+                Vector2{0, 0},
+                0.0f,
+                WHITE);
+                
+                
             DrawTexturePro(borderTargetFinal.texture,
-                         Rectangle{0, 0, (float)screenWidth, (float)-screenHeight},
-                         Rectangle{offsetX, offsetY, renderWidth, renderHeight},
-                         Vector2{0, 0},
-                         0.0f,
-                         WHITE);
-            
+                Rectangle{0, 0, (float)screenWidth, (float)-screenHeight},
+                Rectangle{offsetX, offsetY, renderWidth, renderHeight},
+                Vector2{0, 0},
+                0.0f,
+                WHITE);
+                    
+            DrawFPS(10, 10);
             
         EndDrawing();
     }

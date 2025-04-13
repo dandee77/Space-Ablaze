@@ -8,6 +8,8 @@ class LowLevelEnemy : public Enemy
 {
 private:
 
+    Vector2 currentDirection;
+    float turnSpeed;
 
 public:
 

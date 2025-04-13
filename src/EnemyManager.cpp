@@ -10,15 +10,13 @@
 void EnemyManager::update(Vector2 playerPos)
 {
 
-    if (enemies.size() < maxEnemies)
+    if (enemies.size() < maxEnemies && !enemySpawnCooldown.isOnCooldown())
     {
-        // spawnCooldown -= GetFrameTime(); 
-        // spawnCooldown = GetRandomValue(1, 6); 
-
         // ? could spawn 1 or 3 enemies at once
         int spawns = 1 + (GetRandomValue(0, 2) == 0 ? 2 : 0); 
         for (int i = 0; i < spawns; i++)
             spawnEnemy(playerPos);
+        enemySpawnCooldown.startCooldown();
     }
 
     for (int i = 0; i < enemies.size(); i++)
@@ -31,7 +29,7 @@ void EnemyManager::update(Vector2 playerPos)
         //     i--;
         //     continue;
         // }
-        enemies[i]->setPlayerPositionForEnemy(playerPos); 
+        enemies[i]->getPlayerPositionForEnemy(playerPos); 
         enemies[i]->update(); 
         // if (enemies[i].update() && dist <= ENEMY_MAX_RANGE) // make sure the enemy is in player's fov
         // {
@@ -62,7 +60,7 @@ void EnemyManager::draw()
 
 void EnemyManager::spawnEnemy(Vector2 playerPos)
 {
-    Vector2 offset = Vector2Zero();
+    Vector2 offset = {150.0f, 0.0f};
     float angle = DEG2RAD * (float)GetRandomValue(0, 359);
     offset = Vector2Rotate(offset, angle);
     Vector2 spawnPos = Vector2Add(playerPos, offset);

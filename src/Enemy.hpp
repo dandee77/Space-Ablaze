@@ -25,7 +25,7 @@ public:
     };
     // virtual void update() = 0;
     // virtual void draw(const Texture2D& enemyTexture) = 0;
-    inline void setPlayerPositionForEnemy(Vector2 playerPos) { this->playerPosition = playerPos; };
+    inline void getPlayerPositionForEnemy(Vector2 playerPos) { this->playerPosition = playerPos; };
     inline EnemyType getEnemyType() const { return enemyType; };
 
 protected:

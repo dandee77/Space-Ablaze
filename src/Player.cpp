@@ -81,9 +81,10 @@ void Player::update() {
     // Normalize angles to avoid abrupt jumps
     float deltaAngle = targetRotation - rotation;
     deltaAngle = fmodf(deltaAngle + 540.0f, 360.0f) - 180.0f; // shortest path
-    deltaAngle = Clamp(deltaAngle, -180.0f, 180.0f); // resolves the issue of the angle jumping from 180 to -180
+    // ! PLAYER STILL JUMPS FROM 180 TO -180
+    deltaAngle = Clamp(deltaAngle, -179.0f, 179.0f); // resolves the issue of the angle jumping from 180 to -180
 
-    // Calculate rotation speed based on velocity (minimum 3.0f, scales up)
+    // Calculate rotation speed based on velocity (minimum 3.0f, scales up) 
     float baseRotationSpeed = 3.0f;
     float maxRotationSpeed = 10.0f;
     float speedFactor = Vector2Length(velocity) / speed; // Normalize velocity (0 to 1)
