@@ -20,7 +20,7 @@ public:
     Entity() = default;
 
     virtual void update() = 0;
-    virtual void draw(const Texture2D& entityTexture) = 0;
+    virtual void draw() = 0;
     virtual ~Entity() = default;
     inline Vector2 getPosition() const { return position; }
     inline Vector2 getSize() const { return {rect.width, rect.height}; }

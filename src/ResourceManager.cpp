@@ -24,8 +24,11 @@ ResourceManager::ResourceManager(){
         {"player_acceleration",                 "assets/textures/player_accelerating.png"},
         {"player_deacceleration",               "assets/textures/player_deaccelerating.png"},
         {"player_bullet",                       "assets/textures/player_bullet.png"},
-        {"enemy",                               "assets/textures/enemy.png"},
-        {"enemy_bullet",                        "assets/textures/enemy_bullet.png"}
+        {"mid_level_enemy",                     "assets/textures/mid_level_enemy.png"},
+        {"enemy_bullet",                        "assets/textures/enemy_bullet.png"},
+        {"low_level_enemy1",                    "assets/textures/low_level_enemy1.png"},
+        {"low_level_enemy2",                    "assets/textures/low_level_enemy2.png"},
+        {"low_level_enemy3",                    "assets/textures/low_level_enemy3.png"}
     };
 
     shaderPaths = {
@@ -188,6 +191,24 @@ Texture2D ResourceManager::GetTexture(const std::string& name) const {
     std::lock_guard<std::mutex> lock(textureMutex);
     auto it = textures.find(name);
     return it != textures.end() ? it->second : Texture2D{};
+}
+
+const Texture2D& ResourceManager::GetTextureRef(const std::string& name) const {
+    static Texture2D defaultTexture{};
+    std::lock_guard<std::mutex> lock(textureMutex);
+    
+    auto it = textures.find(name);
+    if (it == textures.end()) {
+        std::cerr << "Texture not found: " << name << std::endl;
+        return defaultTexture;
+    }
+    
+    if (it->second.id == 0) {
+        std::cerr << "Texture invalid: " << name << std::endl;
+        return defaultTexture;
+    }
+    
+    return it->second;
 }
 
 Font ResourceManager::GetFont(const std::string& name) const {

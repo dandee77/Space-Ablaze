@@ -21,7 +21,7 @@ public:
     Player();
     void init();
     void update() override;
-    void draw(const Texture2D& texture) override;
+    void draw() override;
 
 private:
 

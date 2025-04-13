@@ -12,8 +12,8 @@ void EnemyManager::update(Vector2 playerPos)
 
     if (enemies.size() < maxEnemies && !enemySpawnCooldown.isOnCooldown())
     {
-        // ? could spawn 1 or 3 enemies at once
-        int spawns = 1 + (GetRandomValue(0, 2) == 0 ? 2 : 0); 
+        // ? could spawn 1 to 3 enemies at once
+        int spawns = 1 + GetRandomValue(0, 2); 
         for (int i = 0; i < spawns; i++)
             spawnEnemy(playerPos);
         enemySpawnCooldown.startCooldown();
@@ -51,7 +51,7 @@ void EnemyManager::draw()
         switch (enemy->getEnemyType())
         {
         case LOW_LEVEL_ENEMY:
-            enemy->draw(ResourceManager::GetInstance().GetTexture("enemy"));
+            enemy->draw();
             break;
         }
     }

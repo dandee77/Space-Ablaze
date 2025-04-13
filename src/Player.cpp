@@ -10,8 +10,8 @@
 #define GAME_SCREEN_WIDTH 3840
 #define GAME_SCREEN_HEIGHT 2160
 
-#define PLAYER_SPEED 100.0f
-#define PLAYER_MAX_ACCELERATION 600.0f
+#define PLAYER_SPEED 70.0f
+#define PLAYER_MAX_ACCELERATION 400.0f
 
 
 Player::Player() {};
@@ -158,7 +158,7 @@ void Player::update() {
 };
 
 
-void Player::draw(const Texture2D& texture)
+void Player::draw()
 {
     // no drawing since the animator class handles it
 };

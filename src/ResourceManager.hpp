@@ -24,6 +24,7 @@ public:
     int GetTextureLoadingProgress() const;
 
     Texture2D GetTexture(const std::string& name) const;
+    const Texture2D& GetTextureRef(const std::string& name) const;
     Font GetFont(const std::string& name) const;
     Sound GetSound(const std::string& name) const;
     Music GetMusic(const std::string& name) const;

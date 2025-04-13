@@ -1,13 +1,21 @@
 #include "LowLevelEnemy.hpp"
+#include "ResourceManager.hpp"
 #include "raymath.h"
 
 
-LowLevelEnemy::LowLevelEnemy(EnemyType type, Vector2 spawnPos, Vector2 playerPos) 
-    : Enemy(type, spawnPos, playerPos)
+static const std::string EnemyTextureNames[] = 
 {
-    spriteSize = 14.0f;
+    "low_level_enemy1",
+    "low_level_enemy2",
+    "low_level_enemy3"
+};
+
+LowLevelEnemy::LowLevelEnemy(EnemyType type, Vector2 spawnPos, Vector2 playerPos) 
+    : Enemy(type, spawnPos, playerPos), textureName(EnemyTextureNames[GetRandomValue(0, 2)])
+{
+    spriteSize = 8.0f;
     origin = {spriteSize / 2.0f, spriteSize / 2.0f};
-    speed = GetRandomValue(20, 50);
+    speed = GetRandomValue(15, 30);
     turnSpeed = 5;
     currentDirection = {0, 0};
 }
@@ -19,24 +27,19 @@ void LowLevelEnemy::update()
     
     if (distance > 0.0f) 
     {
-        // Smoothly rotate towards the player
         desiredDirection = Vector2Normalize(desiredDirection);
         currentDirection = Vector2Lerp(currentDirection, desiredDirection, turnSpeed * GetFrameTime());
         currentDirection = Vector2Normalize(currentDirection);
-        
-        // Move towards player with smooth movement
         position = Vector2MoveTowards(position, playerPosition, speed * GetFrameTime());
-        
-        // Or use this alternative if you want more control:
-        // position = Vector2Add(position, Vector2Scale(currentDirection, speed * GetFrameTime()));
-        
         viewDirection = currentDirection;
     }
 }
 
 
-void LowLevelEnemy::draw(const Texture2D& enemyTexture)
+void LowLevelEnemy::draw()
 {
+    const Texture2D& enemyTexture = ResourceManager::GetInstance().GetTextureRef(textureName);
+    
     Rectangle source = {0, 0, (float)enemyTexture.width, (float)enemyTexture.height};
     rect = {position.x, position.y, spriteSize, spriteSize};
     float rotation = atan2f(viewDirection.y, viewDirection.x) * RAD2DEG;
@@ -44,5 +47,3 @@ void LowLevelEnemy::draw(const Texture2D& enemyTexture)
     
     DrawTexturePro(enemyTexture, source, rect, origin, rotation, WHITE);
 }
-
- 
