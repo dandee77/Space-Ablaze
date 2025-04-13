@@ -39,8 +39,7 @@ void EnemyManager::update(Vector2 playerPos)
         // }
     }
 
-    std::cout << "Enemy count: " << enemies.size() << std::endl; // Debugging line
-
+    std::cout << "Enemy count: " << enemies.size() << std::endl;
 }
 
 

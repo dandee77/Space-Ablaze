@@ -14,7 +14,7 @@ void Bullet::update()
 
 void Bullet::draw(const Texture2D &texture) const
 {
-    Vector2 size = isEnemyBullet() ? Vector2{4.0f, 4.0f} : Vector2{7.0f, 4.0f};
+    Vector2 size = isEnemyBullet() ? Vector2{4.0f, 4.0f} : Vector2{8.0f, 5.0f};
     Vector2 drawPos = position;
 
     DrawTexturePro(
