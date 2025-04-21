@@ -26,16 +26,50 @@ LowLevelEnemy::LowLevelEnemy(std::string enemyID, EnemyType type, Vector2 spawnP
 
 
     //! INEFFICIENT WAY TO PASS TEXTURES, BUT IT WORKS FOR NOW
-    Animator::GetInstance().AddAnimation(enemyID, std::make_shared<Animation>(
-        ResourceManager::GetInstance().GetTextureRef("low_level_enemy1"),
-        ResourceManager::GetInstance().GetTexture("low_level_enemy1").width / 5,
-        ResourceManager::GetInstance().GetTexture("low_level_enemy1").height,
-        0.1f,
-        true,
-        rect,
-        false,
-        WHITE
-    ));
+    int rand = GetRandomValue(0, 2);
+    switch (rand) 
+    {
+    case 0:
+        Animator::GetInstance().AddAnimation(enemyID, std::make_shared<Animation>(
+            ResourceManager::GetInstance().GetTextureRef("low_level_enemy1"),
+            ResourceManager::GetInstance().GetTexture("low_level_enemy1").width / 10,
+            ResourceManager::GetInstance().GetTexture("low_level_enemy1").height,
+            0.1f,
+            true,
+            rect,
+            false,
+            WHITE
+        ));
+        break;
+    case 1:
+        Animator::GetInstance().AddAnimation(enemyID, std::make_shared<Animation>(
+            ResourceManager::GetInstance().GetTextureRef("low_level_enemy2"),
+            ResourceManager::GetInstance().GetTexture("low_level_enemy2").width / 5,
+            ResourceManager::GetInstance().GetTexture("low_level_enemy2").height,
+            0.1f,
+            true,
+            rect,
+            false,
+            WHITE
+        ));
+    break;
+    case 2:
+        Animator::GetInstance().AddAnimation(enemyID, std::make_shared<Animation>(
+            ResourceManager::GetInstance().GetTextureRef("low_level_enemy3"),
+            ResourceManager::GetInstance().GetTexture("low_level_enemy3").width / 5,
+            ResourceManager::GetInstance().GetTexture("low_level_enemy3").height,
+            0.1f,
+            true,
+            rect,
+            false,
+            WHITE
+        ));
+        break;
+    default:
+        TraceLog(LOG_ERROR, "invalid enemy texture id: %d", rand);
+        break;
+    }
+
     Animator::GetInstance().SetOrigin(enemyID, origin);
     Animator::GetInstance().Play(enemyID);
 }
@@ -69,6 +103,6 @@ void LowLevelEnemy::draw()
     Animator::GetInstance().SetPosition(enemyID, position);
     Animator::GetInstance().SetRotation(enemyID, rotation);
 
-    // DrawRectanglePro(hitbox, origin, rotation, WHITE);
+    DrawRectanglePro(hitbox, origin, rotation, WHITE);
     // DrawTexturePro(enemyTexture, source, rect, origin, rotation, WHITE);
 }
