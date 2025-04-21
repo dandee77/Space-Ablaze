@@ -11,7 +11,7 @@ ResourceManager& ResourceManager::GetInstance() {
 
 ResourceManager::ResourceManager(){
 
-        // textureID                              filePath
+    // textureID                                filePath
     texturePaths = {
         {"game_background",                     "assets/textures/game_background_texture.png"},
         {"border",                              "assets/textures/border_raw.png"},
@@ -28,8 +28,7 @@ ResourceManager::ResourceManager(){
         {"enemy_bullet",                        "assets/textures/enemy_bullet.png"},
         {"low_level_enemy1",                    "assets/textures/low_level_enemy1.png"},
         {"low_level_enemy2",                    "assets/textures/low_level_enemy2.png"},
-        {"low_level_enemy3",                    "assets/textures/low_level_enemy3.png"},
-        {"low_level_enemy4",                    "assets/textures/low_level_enemy4.png"}
+        {"low_level_enemy3",                    "assets/textures/low_level_enemy3.png"}
     };
 
     shaderPaths = {

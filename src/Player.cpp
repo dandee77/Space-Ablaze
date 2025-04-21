@@ -24,7 +24,6 @@ void Player::init()
     speed = PLAYER_SPEED;
     health = 100.0f;
     damage = 10.0f;
-    texture = ResourceManager::GetInstance().GetTexture("player_acceleration");
     rotation = 0.0f;
     velocity = {0, 0};
     playerAccelerating = false;
@@ -34,9 +33,9 @@ void Player::init()
     // ? We animate two textures, one for acceleration and one for deacceleration
     // ? Then hide the deacceleration animation until we need it
     Animator::GetInstance().AddAnimation("accelerating", std::make_shared<Animation>(
-        texture,
-        texture.width / 4,
-        texture.height,
+        ResourceManager::GetInstance().GetTextureRef("player_acceleration"),
+        ResourceManager::GetInstance().GetTextureRef("player_acceleration").width / 4,
+        ResourceManager::GetInstance().GetTextureRef("player_acceleration").height,
         0.1f,
         true,
         rect,
@@ -44,12 +43,10 @@ void Player::init()
         WHITE
     ));
     Animator::GetInstance().SetOrigin("accelerating", origin);
-
-    texture = ResourceManager::GetInstance().GetTexture("player_deacceleration");
     Animator::GetInstance().AddAnimation("deaccelerating", std::make_shared<Animation>(
-        texture,
-        texture.width / 3,
-        texture.height,
+        ResourceManager::GetInstance().GetTextureRef("player_deacceleration"),
+        ResourceManager::GetInstance().GetTextureRef("player_deacceleration").width / 3,
+        ResourceManager::GetInstance().GetTextureRef("player_deacceleration").height,
         0.1f,
         true,
         rect,

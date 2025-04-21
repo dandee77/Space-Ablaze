@@ -29,6 +29,7 @@ public:
     // virtual void draw(const Texture2D& enemyTexture) = 0;
     inline void getPlayerPositionForEnemy(Vector2 playerPos) { this->playerPosition = playerPos; };
     inline EnemyType getEnemyType() const { return enemyType; };
+    inline Rectangle getHitbox() const { return hitbox; };
 
 protected:
 
@@ -36,6 +37,7 @@ protected:
     EnemyType enemyType;
     Vector2 viewDirection;
     Vector2 playerPosition;
+    Rectangle hitbox;
     float speed;
     float spriteSize;
 };

@@ -22,13 +22,14 @@ LowLevelEnemy::LowLevelEnemy(std::string enemyID, EnemyType type, Vector2 spawnP
     turnSpeed = 5;
     currentDirection = {0, 0};
     rect = {position.x, position.y, spriteSize, spriteSize};
+    hitbox = {position.x, position.y, spriteSize, spriteSize};
 
 
     //! INEFFICIENT WAY TO PASS TEXTURES, BUT IT WORKS FOR NOW
     Animator::GetInstance().AddAnimation(enemyID, std::make_shared<Animation>(
-        ResourceManager::GetInstance().GetTextureRef("low_level_enemy4"),
-        ResourceManager::GetInstance().GetTexture("low_level_enemy4").width / 5,
-        ResourceManager::GetInstance().GetTexture("low_level_enemy4").height,
+        ResourceManager::GetInstance().GetTextureRef("low_level_enemy1"),
+        ResourceManager::GetInstance().GetTexture("low_level_enemy1").width / 5,
+        ResourceManager::GetInstance().GetTexture("low_level_enemy1").height,
         0.1f,
         true,
         rect,
@@ -61,11 +62,13 @@ void LowLevelEnemy::draw()
     
     // Rectangle source = {0, 0, (float)enemyTexture.width, (float)enemyTexture.height};
     rect = {position.x, position.y, spriteSize, spriteSize};
+    // hitbox = rect;
     float rotation = atan2f(viewDirection.y, viewDirection.x) * RAD2DEG;
     rotation += 90.0f;
     
     Animator::GetInstance().SetPosition(enemyID, position);
     Animator::GetInstance().SetRotation(enemyID, rotation);
 
+    // DrawRectanglePro(hitbox, origin, rotation, WHITE);
     // DrawTexturePro(enemyTexture, source, rect, origin, rotation, WHITE);
 }

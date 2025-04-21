@@ -8,7 +8,6 @@ protected:
     int health;
     int damage;
     float speed;
-    Texture2D texture;
     Rectangle rect;
     float rotation;
     Vector2 velocity;

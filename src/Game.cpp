@@ -128,10 +128,10 @@ void Game::draw()
         // ? no draw function for the player as it is handled in the animator class
 
         EnemyManager::GetInstance().draw();
-
+        
         Animator::GetInstance().Update();
         Animator::GetInstance().Draw(); 
-
+        
         // std::cout << "Player Position: (" << playerEntity.getPosition().x << ", " << playerEntity.getPosition().y << ")" << std::endl;
 
     EndMode2D();
