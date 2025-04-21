@@ -10,7 +10,7 @@
 class Animation 
 {
 public:
-    Animation(Texture2D spriteSheet, int frameWidth, int frameHeight, float frameDuration, bool looping, Rectangle dest, bool flipX, Color tint);
+    Animation(const Texture2D& spriteSheet, int frameWidth, int frameHeight, float frameDuration, bool looping, Rectangle dest, bool flipX, Color tint);
     ~Animation();
     
     void Update();
@@ -33,7 +33,7 @@ public:
     void SetPosition(Vector2 position);
 
 private:
-    Texture2D spriteSheet;
+    const Texture2D& spriteSheet;
     int frameWidth;
     int frameHeight;
     float frameDuration;

@@ -37,7 +37,7 @@ std::string MainMenu::update()
                     return "Credits";
                 case QUIT:
                 {
-                    Texture2D exit_texture = ResourceManager::GetInstance().GetTexture("exit_animation");
+                    const Texture2D& exit_texture = ResourceManager::GetInstance().GetTextureRef("exit_animation");
                     Animator::GetInstance().AddAnimation("exit", std::make_shared<Animation>(
                         exit_texture,
                         exit_texture.width / 4,
@@ -98,7 +98,7 @@ void MainMenu::draw()
 void MainMenu::onSwitch()
 {   
     // ? Load the background animation texture
-    Texture2D backgound_texture = ResourceManager::GetInstance().GetTexture("main_menu_background");
+    const Texture2D& backgound_texture = ResourceManager::GetInstance().GetTextureRef("main_menu_background");
     int backgroundFrameWidth = backgound_texture.width / 5;
     int backgroundFrameHeight = backgound_texture.height / 2;
     auto exitAnim = std::make_shared<Animation>(

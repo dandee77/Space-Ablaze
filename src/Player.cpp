@@ -105,7 +105,6 @@ void Player::update() {
 #pragma endregion
 
 
-
 #pragma region PlayerMovement
 
     // Handle player movement based on keyboard input

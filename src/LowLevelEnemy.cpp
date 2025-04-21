@@ -26,7 +26,7 @@ LowLevelEnemy::LowLevelEnemy(std::string enemyID, EnemyType type, Vector2 spawnP
 
     //! INEFFICIENT WAY TO PASS TEXTURES, BUT IT WORKS FOR NOW
     Animator::GetInstance().AddAnimation(enemyID, std::make_shared<Animation>(
-        ResourceManager::GetInstance().GetTexture("low_level_enemy4"),
+        ResourceManager::GetInstance().GetTextureRef("low_level_enemy4"),
         ResourceManager::GetInstance().GetTexture("low_level_enemy4").width / 5,
         ResourceManager::GetInstance().GetTexture("low_level_enemy4").height,
         0.1f,

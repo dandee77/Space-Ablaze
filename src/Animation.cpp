@@ -1,6 +1,6 @@
 #include "Animation.hpp"
 
-Animation::Animation(Texture2D spriteSheet, int frameWidth, int frameHeight, 
+Animation::Animation(const Texture2D& spriteSheet, int frameWidth, int frameHeight, 
                    float frameDuration, bool looping, Rectangle dest, bool flipX, Color tint) 
     : spriteSheet(spriteSheet), frameWidth(frameWidth), frameHeight(frameHeight),
       frameDuration(frameDuration), looping(looping), dest(dest), flipX(flipX), tint(tint), rotation(0), origin({0, 0}) {
