@@ -52,7 +52,7 @@ LowLevelEnemy::LowLevelEnemy(std::string enemyID, EnemyType type, Vector2 spawnP
             false,
             WHITE
         ));
-    break;
+        break;
     case 2:
         Animator::GetInstance().AddAnimation(enemyID, std::make_shared<Animation>(
             ResourceManager::GetInstance().GetTextureRef("low_level_enemy3"),
@@ -72,6 +72,7 @@ LowLevelEnemy::LowLevelEnemy(std::string enemyID, EnemyType type, Vector2 spawnP
 
     Animator::GetInstance().SetOrigin(enemyID, origin);
     Animator::GetInstance().Play(enemyID);
+    hitbox = {position.x, position.y, spriteSize / 3.5f, spriteSize / 3.5f};
 }
 
 void LowLevelEnemy::update()
@@ -96,13 +97,15 @@ void LowLevelEnemy::draw()
     
     // Rectangle source = {0, 0, (float)enemyTexture.width, (float)enemyTexture.height};
     rect = {position.x, position.y, spriteSize, spriteSize};
-    // hitbox = rect;
+    Vector2 hitboxOrigin = {hitbox.width / 2.0f, hitbox.height / 2.0f};
+    hitbox.x = rect.x;
+    hitbox.y = rect.y;
     float rotation = atan2f(viewDirection.y, viewDirection.x) * RAD2DEG;
     rotation += 90.0f;
     
     Animator::GetInstance().SetPosition(enemyID, position);
     Animator::GetInstance().SetRotation(enemyID, rotation);
 
-    DrawRectanglePro(hitbox, origin, rotation, WHITE);
+    DrawRectanglePro(hitbox, hitboxOrigin, rotation, BLANK);
     // DrawTexturePro(enemyTexture, source, rect, origin, rotation, WHITE);
 }
