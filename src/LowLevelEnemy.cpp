@@ -10,7 +10,7 @@ static const std::string EnemyTextureNames[] =
     "low_level_enemy2",
     "low_level_enemy3"
 };
-
+//todo: make the rand to be a class var so that it will be used when the enemy dies
 //TODO: ADD OPTION FOR THE ANIMATION TO BE ON OR OFF IN THE SETTINGS
 
 LowLevelEnemy::LowLevelEnemy(std::string enemyID, EnemyType type, Vector2 spawnPos, Vector2 playerPos) 

@@ -5,7 +5,6 @@
 #include <string>
 
 
-//TODO: MAKE TEXTURE POINTER INSTEAD OF TEXTURE2D
 
 class Animation 
 {

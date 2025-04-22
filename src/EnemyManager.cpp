@@ -2,6 +2,7 @@
 #include "ResourceManager.hpp"
 #include "raymath.h"
 #include "LowLevelEnemy.hpp"
+#include "MidLevelEnemy.hpp"
 #include <iostream>
 
 
@@ -53,6 +54,9 @@ void EnemyManager::draw()
         case LOW_LEVEL_ENEMY:
             enemy->draw();
             break;
+        case MID_LEVEL_ENEMY:
+            enemy->draw();
+            break;
         }
     }
 }
@@ -66,7 +70,7 @@ void EnemyManager::spawnEnemy(Vector2 playerPos)
     Vector2 spawnPos = Vector2Add(playerPos, offset);
     
     std::string enemyID = "enemy_" + std::to_string(enemyCounter++);
-    enemies.push_back(std::make_unique<LowLevelEnemy>(enemyID, LOW_LEVEL_ENEMY, spawnPos, playerPos));
+    enemies.push_back(std::make_unique<MidLevelEnemy>(enemyID, LOW_LEVEL_ENEMY, spawnPos, playerPos));
 
     std::cout << enemyID << std::endl;
     
