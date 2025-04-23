@@ -19,7 +19,7 @@ MidLevelEnemy::MidLevelEnemy(std::string enemyID, EnemyType type, Vector2 spawnP
     currentDirection = {0, 0};
     rect = {position.x, position.y, spriteSize, spriteSize};
     hitbox = {position.x, position.y, spriteSize, spriteSize};
-    bulletSpeed = GetRandomValue(150, 200);
+    bulletSpeed = GetRandomValue(120, 150);
 
     Animator::GetInstance().AddAnimation(enemyID, std::make_shared<Animation>(
         ResourceManager::GetInstance().GetTextureRef(textureName),
@@ -33,6 +33,7 @@ MidLevelEnemy::MidLevelEnemy(std::string enemyID, EnemyType type, Vector2 spawnP
     ));
     Animator::GetInstance().SetOrigin(enemyID, origin);
     Animator::GetInstance().Play(enemyID);
+    hitbox = {position.x, position.y, spriteSize / 3.5f, spriteSize / 3.5f};
 }
 
 
@@ -84,7 +85,8 @@ void MidLevelEnemy::update()
 
 void MidLevelEnemy::draw()
 {
-    const Texture2D& enemyTexture = ResourceManager::GetInstance().GetTextureRef(textureName);
+    // const Texture2D& enemyTexture = ResourceManager::GetInstance().GetTextureRef(textureName);
+    rect = {position.x, position.y, spriteSize, spriteSize};
     Vector2 hitboxOrigin = {hitbox.width / 2.0f, hitbox.height / 2.0f};
     hitbox.x = rect.x;
     hitbox.y = rect.y;
@@ -93,5 +95,7 @@ void MidLevelEnemy::draw()
 
     Animator::GetInstance().SetPosition(enemyID, position);
     Animator::GetInstance().SetRotation(enemyID, rotation);
+
+    DrawRectanglePro(hitbox, hitboxOrigin, 0, WHITE);
 }
 

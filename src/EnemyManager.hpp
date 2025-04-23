@@ -29,5 +29,5 @@ private:
     int enemyCounter = 0; // ? would serve as a unique ID for the enemy
     std::vector<std::unique_ptr<Enemy>> enemies;
     Cooldown enemySpawnCooldown{0.5f}; 
-    const int maxEnemies = 10;
+    const int maxEnemies = 10'000;
 };

@@ -70,7 +70,12 @@ void EnemyManager::spawnEnemy(Vector2 playerPos)
     Vector2 spawnPos = Vector2Add(playerPos, offset);
     
     std::string enemyID = "enemy_" + std::to_string(enemyCounter++);
-    enemies.push_back(std::make_unique<MidLevelEnemy>(enemyID, LOW_LEVEL_ENEMY, spawnPos, playerPos));
+    
+    int rand = GetRandomValue(0, 5);
+    if (rand == 5) 
+    {
+        enemies.push_back(std::make_unique<MidLevelEnemy>(enemyID, MID_LEVEL_ENEMY, spawnPos, playerPos));
+    } else enemies.push_back(std::make_unique<LowLevelEnemy>(enemyID, LOW_LEVEL_ENEMY, spawnPos, playerPos));
 
     std::cout << enemyID << std::endl;
     
