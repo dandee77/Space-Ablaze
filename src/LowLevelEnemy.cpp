@@ -26,8 +26,8 @@ LowLevelEnemy::LowLevelEnemy(std::string enemyID, EnemyType type, Vector2 spawnP
 
 
     //! INEFFICIENT WAY TO PASS TEXTURES, BUT IT WORKS FOR NOW
-    int rand = GetRandomValue(0, 2);
-    switch (rand) 
+    randomEnemyTextureIdx = GetRandomValue(0, 2);
+    switch (randomEnemyTextureIdx) 
     {
     case 0:
         Animator::GetInstance().AddAnimation(enemyID, std::make_shared<Animation>(
@@ -97,16 +97,50 @@ void LowLevelEnemy::update()
 void LowLevelEnemy::destruct()
 {
     Animator::GetInstance().Remove(enemyID);
-    Animator::GetInstance().AddAnimation(enemyID, std::make_shared<Animation>(
-        ResourceManager::GetInstance().GetTextureRef("mid_level_enemy_destruct"),
-        ResourceManager::GetInstance().GetTexture("mid_level_enemy_destruct").width / 9,
-        ResourceManager::GetInstance().GetTexture("mid_level_enemy_destruct").height,
-        0.1f,
-        false,
-        rect,
-        false,
-        WHITE
-    ));
+    
+    switch (randomEnemyTextureIdx)
+    {
+    case 0:
+        Animator::GetInstance().AddAnimation(enemyID, std::make_shared<Animation>(
+            ResourceManager::GetInstance().GetTextureRef("low_level_enemy1_destruct"),
+            ResourceManager::GetInstance().GetTexture("low_level_enemy1_destruct").width / 8,
+            ResourceManager::GetInstance().GetTexture("low_level_enemy1_destruct").height,
+            0.1f,
+            false,
+            rect,
+            false,
+            WHITE
+        ));
+        break;
+    case 1:
+        Animator::GetInstance().AddAnimation(enemyID, std::make_shared<Animation>(
+            ResourceManager::GetInstance().GetTextureRef("low_level_enemy2_destruct"),
+            ResourceManager::GetInstance().GetTexture("low_level_enemy2_destruct").width / 8,
+            ResourceManager::GetInstance().GetTexture("low_level_enemy2_destruct").height,
+            0.1f,
+            false,
+            rect,
+            false,
+            WHITE
+        ));
+        break;
+    case 2:
+        Animator::GetInstance().AddAnimation(enemyID, std::make_shared<Animation>(
+            ResourceManager::GetInstance().GetTextureRef("low_level_enemy3_destruct"),
+            ResourceManager::GetInstance().GetTexture("low_level_enemy3_destruct").width / 7,
+            ResourceManager::GetInstance().GetTexture("low_level_enemy3_destruct").height,
+            0.1f,
+            false,
+            rect,
+            false,
+            WHITE
+        ));
+        break;
+    default:
+        TraceLog(LOG_ERROR, "invalid low level enemy texture id: %d", randomEnemyTextureIdx);
+        break;
+    }
+
     Animator::GetInstance().SetOrigin(enemyID, origin);
     Animator::GetInstance().SetPosition(enemyID, position);
     Animator::GetInstance().SetRotation(enemyID, rotation);
@@ -127,6 +161,6 @@ void LowLevelEnemy::draw()
     Animator::GetInstance().SetPosition(enemyID, position);
     Animator::GetInstance().SetRotation(enemyID, rotation);
 
-    DrawRectanglePro(hitbox, hitboxOrigin, 0, WHITE);
+    // DrawRectanglePro(hitbox, hitboxOrigin, 0, WHITE);
     // DrawTexturePro(enemyTexture, source, rect, origin, rotation, WHITE);
 }

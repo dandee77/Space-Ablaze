@@ -10,6 +10,7 @@ private:
     Vector2 currentDirection;
     float turnSpeed;
     const std::string textureName;
+    int randomEnemyTextureIdx;
 
 public:
     LowLevelEnemy(std::string enemyID, EnemyType type, Vector2 spawnPos, Vector2 playerPos);

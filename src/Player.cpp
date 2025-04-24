@@ -57,7 +57,7 @@ void Player::init()
     Animator::GetInstance().Play("deaccelerating");
 
 
-    playerAttackCooldown = Cooldown(0.2f); 
+    playerAttackCooldown = Cooldown(0.01f); 
     playerAttackCooldown.startCooldown(); // ? prevents accidental shooting at the start of the game
     autoShoot = false;
     rect.width -= 4.0f;
@@ -174,6 +174,6 @@ void Player::takeDamage()
 
 void Player::draw()
 {
-    DrawRectangleRec(rect, WHITE); // ? for debugging purposes
+    // DrawRectangleRec(rect, WHITE); // ? for debugging purposes
     // no drawing since the animator class handles it
 };

@@ -91,7 +91,7 @@ void MidLevelEnemy::destruct()
     Animator::GetInstance().Remove(enemyID);
     Animator::GetInstance().AddAnimation(enemyID, std::make_shared<Animation>(
         ResourceManager::GetInstance().GetTextureRef("mid_level_enemy_destruct"),
-        ResourceManager::GetInstance().GetTexture("mid_level_enemy_destruct").width / 9,
+        ResourceManager::GetInstance().GetTexture("mid_level_enemy_destruct").width / 7,
         ResourceManager::GetInstance().GetTexture("mid_level_enemy_destruct").height,
         0.1f,
         false,
@@ -117,6 +117,6 @@ void MidLevelEnemy::draw()
     Animator::GetInstance().SetPosition(enemyID, position);
     Animator::GetInstance().SetRotation(enemyID, rotation);
 
-    DrawRectanglePro(hitbox, hitboxOrigin, 0, WHITE);
+    // DrawRectanglePro(hitbox, hitboxOrigin, 0, WHITE);
 }
 
