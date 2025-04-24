@@ -15,7 +15,6 @@ void BulletManager::update(Vector2 position) {
     }
 }
 
-#include <iostream>
 
 void BulletManager::draw(const Texture2D& playerBulletTexture, const Texture2D& enemyBulletTexture) const {
     for (auto& bullet : bullets) {
@@ -25,9 +24,11 @@ void BulletManager::draw(const Texture2D& playerBulletTexture, const Texture2D& 
     }
 }
 
+
 void BulletManager::addBullet(Bullet bullet) {
     bullets.push_back(bullet);
 }
+
 
 void BulletManager::clear() {
     bullets.clear();

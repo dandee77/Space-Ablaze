@@ -8,6 +8,11 @@
 #include "Utils.hpp"
 
 
+static bool intersectBullet(Vector2 bulletPos, Vector2 shipPos, float shipSize)
+{
+    return Vector2Distance(bulletPos, shipPos) <= shipSize;
+}
+
 Game::Game() 
 {}
 
@@ -79,6 +84,41 @@ std::string Game::update()
 
 #pragma endregion
 
+    
+    BulletManager& bm = BulletManager::GetInstance();
+    EnemyManager& em = EnemyManager::GetInstance();
+    for (int i = 0; i < bm.getBullets().size(); i++)
+    {
+        if (!bm.getBullets()[i].isEnemyBullet()) 
+        {
+            bool breakBothLoops = false;
+            for (int e = 0; e < em.getEnemies().size(); e++)
+            {
+                if (intersectBullet(bm.getBullets()[i].getPosition(), em.getEnemies()[e]->getPosition(), em.getEnemies()[e]->getHitbox().width)) 
+                {
+                    bm.removeBullet(i);
+                    em.removeEnemy(e);
+                    i--;
+                    breakBothLoops = true;
+                    break;
+                }
+            }
+
+            if (breakBothLoops) continue;
+        }
+        else
+        {
+            if (intersectBullet(bm.getBullets()[i].getPosition(), playerEntity.getPosition(), playerEntity.getHitbox().width)) 
+            {
+                bm.removeBullet(i);
+                playerEntity.takeDamage(); 
+                i--;
+                continue;
+            }
+        }
+    }
+
+
     EnemyManager::GetInstance().update(playerEntity.getPosition()); //! <<***********************
 
     return "Game";
@@ -126,11 +166,13 @@ void Game::draw()
         BulletManager::GetInstance().draw(playerBulletTexture, enemyBulletTexture);
 
         // ? no draw function for the player as it is handled in the animator class
+        playerEntity.draw();
 
         EnemyManager::GetInstance().draw();
         
         Animator::GetInstance().Update();
         Animator::GetInstance().Draw(); 
+
         
         // std::cout << "Player Position: (" << playerEntity.getPosition().x << ", " << playerEntity.getPosition().y << ")" << std::endl;
 

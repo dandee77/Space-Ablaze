@@ -17,7 +17,9 @@ public:
     void update(Vector2 position);
     void draw(const Texture2D& playerBulletTexture, const Texture2D& enemyBulletTexture) const;
     void addBullet(Bullet bullet);
-    void clear(); 
+    void clear();   
+    std::vector<Bullet>& getBullets() { return bullets; }
+    void removeBullet(int index) { bullets.erase(bullets.begin() + index); }
 
 private:
     BulletManager() = default;

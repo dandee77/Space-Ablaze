@@ -30,6 +30,8 @@ public:
     inline void getPlayerPositionForEnemy(Vector2 playerPos) { this->playerPosition = playerPos; };
     inline EnemyType getEnemyType() const { return enemyType; };
     inline Rectangle getHitbox() const { return hitbox; };
+    std::string getEnemyID() const { return enemyID; };
+    virtual void destruct() = 0;
 
 protected:
 

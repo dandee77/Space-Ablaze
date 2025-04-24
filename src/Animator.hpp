@@ -25,6 +25,8 @@ public:
     void PauseAll();
     void Update();
     void Draw();
+    void Remove(const std::string& name);
+
 
     // Individual animation control
     void Stop(const std::string& name);

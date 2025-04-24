@@ -6,6 +6,7 @@
 #include "raylib.h"
 #include "Enemy.hpp"
 #include <string>
+#include "Animator.hpp"
 
 
 class EnemyManager
@@ -20,7 +21,8 @@ public:
 
     void update(Vector2 playerPos);
     void draw();
-
+    std::vector<std::unique_ptr<Enemy>>& getEnemies() { return enemies; }
+    void removeEnemy(int index);
 private:
 
     EnemyManager() = default;

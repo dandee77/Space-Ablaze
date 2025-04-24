@@ -80,6 +80,29 @@ void MidLevelEnemy::update()
     }
 
 #pragma endregion
+
+    rotation = atan2f(viewDirection.y, viewDirection.x) * RAD2DEG;
+    rotation += 90.0f;
+}
+
+
+void MidLevelEnemy::destruct()
+{
+    Animator::GetInstance().Remove(enemyID);
+    Animator::GetInstance().AddAnimation(enemyID, std::make_shared<Animation>(
+        ResourceManager::GetInstance().GetTextureRef("mid_level_enemy_destruct"),
+        ResourceManager::GetInstance().GetTexture("mid_level_enemy_destruct").width / 9,
+        ResourceManager::GetInstance().GetTexture("mid_level_enemy_destruct").height,
+        0.1f,
+        false,
+        rect,
+        false,
+        WHITE
+    ));
+    Animator::GetInstance().SetOrigin(enemyID, origin);
+    Animator::GetInstance().SetPosition(enemyID, position);
+    Animator::GetInstance().SetRotation(enemyID, rotation);
+    Animator::GetInstance().Play(enemyID);
 }
 
 
@@ -90,8 +113,6 @@ void MidLevelEnemy::draw()
     Vector2 hitboxOrigin = {hitbox.width / 2.0f, hitbox.height / 2.0f};
     hitbox.x = rect.x;
     hitbox.y = rect.y;
-    float rotation = atan2f(viewDirection.y, viewDirection.x) * RAD2DEG;
-    rotation += 90.0f;
 
     Animator::GetInstance().SetPosition(enemyID, position);
     Animator::GetInstance().SetRotation(enemyID, rotation);

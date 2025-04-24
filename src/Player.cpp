@@ -60,6 +60,8 @@ void Player::init()
     playerAttackCooldown = Cooldown(0.2f); 
     playerAttackCooldown.startCooldown(); // ? prevents accidental shooting at the start of the game
     autoShoot = false;
+    rect.width -= 4.0f;
+    rect.height -= 4.0f;
 };
 
 void Player::update() {
@@ -157,10 +159,21 @@ void Player::update() {
         BulletManager::GetInstance().addBullet(bullet);
         playerAttackCooldown.startCooldown();
     } 
+
+
+    rect = {position.x - rect.width / 2, position.y - rect.height / 2, rect.width, rect.height};
 };
+
+
+void Player::takeDamage()
+{
+    Animator::GetInstance().SetTint("accelerating", RED);
+    Animator::GetInstance().SetTint("deaccelerating", RED);
+}
 
 
 void Player::draw()
 {
+    DrawRectangleRec(rect, WHITE); // ? for debugging purposes
     // no drawing since the animator class handles it
 };

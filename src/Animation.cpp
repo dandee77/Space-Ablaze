@@ -3,7 +3,8 @@
 Animation::Animation(const Texture2D& spriteSheet, int frameWidth, int frameHeight, 
                    float frameDuration, bool looping, Rectangle dest, bool flipX, Color tint) 
     : spriteSheet(spriteSheet), frameWidth(frameWidth), frameHeight(frameHeight),
-      frameDuration(frameDuration), looping(looping), dest(dest), flipX(flipX), tint(tint), rotation(0), origin({0, 0}) {
+      frameDuration(frameDuration), looping(looping), dest(dest), flipX(flipX), 
+      tint(tint), rotation(0), origin({0, 0}), complete(false) {
     
     // Calculate how many frames we have
     int framesX = spriteSheet.width / frameWidth;
@@ -31,7 +32,7 @@ Animation::~Animation() {
 #include <iostream>
 
 void Animation::Update() {
-    if (!isPlaying || complete) return;
+    if (!isPlaying) return;
     
     currentTime += GetFrameTime();
     if (currentTime >= frameDuration) {

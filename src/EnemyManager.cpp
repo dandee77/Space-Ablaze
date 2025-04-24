@@ -33,6 +33,7 @@ void EnemyManager::update(Vector2 playerPos)
         // }
         enemies[i]->getPlayerPositionForEnemy(playerPos); 
         enemies[i]->update(); 
+
         // if (enemies[i].update() && dist <= ENEMY_MAX_RANGE) // make sure the enemy is in player's fov
         // {
         //     Bullet b(enemies[i].getPosition(), enemies[i].getViewDirection(), true);
@@ -49,15 +50,7 @@ void EnemyManager::draw()
 {
     for (auto& enemy : enemies)
     {
-        switch (enemy->getEnemyType())
-        {
-        case LOW_LEVEL_ENEMY:
-            enemy->draw();
-            break;
-        case MID_LEVEL_ENEMY:
-            enemy->draw();
-            break;
-        }
+        enemy->draw();
     }
 }
 
@@ -88,4 +81,13 @@ void EnemyManager::spawnEnemy(Vector2 playerPos)
     // // enemy.getCooldown().updateCooldownDuration(0.01f);
     // enemy.setBulletSpeed(GetRandomValue(150, 200)); 
     // enemies.push_back(enemy);
+}
+
+
+void EnemyManager::removeEnemy(int index)
+{
+    // Animator::GetInstance().Stop(enemies[index]->getEnemyID());
+    enemies[index]->destruct();
+    enemies.erase(enemies.begin() + index); 
+    // enemies.erase(enemies.begin() + index);  
 }

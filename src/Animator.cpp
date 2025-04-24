@@ -72,6 +72,13 @@ void Animator::Stop(const std::string& name) {
     }
 }
 
+void Animator::Remove(const std::string& name) {
+    auto it = animations.find(name);
+    if (it != animations.end()) {
+        animations.erase(it);
+    }
+}
+
 void Animator::SetRotation(const std::string& name, float rotation) {
     auto it = animations.find(name);
     if (it != animations.end()) {

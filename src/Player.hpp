@@ -22,6 +22,8 @@ public:
     void init();
     void update() override;
     void draw() override;
+    Rectangle getHitbox() const { return rect; }
+    void takeDamage();
 
 private:
 
