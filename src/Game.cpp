@@ -34,6 +34,10 @@ void Game::onSwitch()
         {ResourceManager::GetInstance().GetTexture("background2"), 1.0f, worldTileSize}   // 1.0
     };
 
+    EnemyManager::GetInstance().reset();
+    asteroidSpawnCooldown = Cooldown(0.1f); 
+    if(!asteroids.empty()) asteroids.clear();
+
     playerBulletTexture = ResourceManager::GetInstance().GetTexture("player_bullet");
     enemyBulletTexture = ResourceManager::GetInstance().GetTexture("enemy_bullet");
 }
@@ -64,21 +68,16 @@ std::string Game::update()
 
 #pragma region CameraMovement
 
-    // playerEntity.update(camera);
-
-    // Get player position and velocity
     Vector2 playerPos = playerEntity.getPosition();
     Vector2 playerVelocity = playerEntity.getVelocity();
 
-    // Calculate lead offset based on velocity
-    float leadStrength = 0.35f; // Tweak for how far ahead the camera looks
+    float leadStrength = 0.35f; 
     Vector2 leadOffset = Vector2Scale(playerVelocity, leadStrength);
 
-    // Target position is ahead of the player in movement direction
     Vector2 desiredCameraTarget = Vector2Add(playerPos, leadOffset);
 
-    // Smooth camera follow with exponential smoothing
-    float cameraLerpSpeed = 5.0f; // Higher = faster catch-up
+
+    float cameraLerpSpeed = 5.0f; 
     utils::gameCamera.target.x += (desiredCameraTarget.x - utils::gameCamera.target.x) * (1.0f - expf(-cameraLerpSpeed * deltaTime));
     utils::gameCamera.target.y += (desiredCameraTarget.y - utils::gameCamera.target.y) * (1.0f - expf(-cameraLerpSpeed * deltaTime));
 
@@ -118,6 +117,29 @@ std::string Game::update()
         }
     }
 
+
+#pragma region UpdateAsteroids
+
+    if (!asteroidSpawnCooldown.isOnCooldown()) 
+    {
+        asteroids.push_back(Asteroid(playerEntity.getPosition()));
+        asteroidSpawnCooldown.startCooldown();
+    }
+
+    for (int i = 0; i < asteroids.size(); i++)
+    {
+        asteroids[i].getPlayerPosition(playerEntity.getPosition());
+        asteroids[i].update();
+        if (!asteroids[i].active) 
+        {
+            asteroids.erase(asteroids.begin() + i);
+            i--;
+        }
+    }
+
+    TraceLog(LOG_INFO, "Asteroid count: %d", asteroids.size());
+
+#pragma end region
 
     EnemyManager::GetInstance().update(playerEntity.getPosition()); //! <<***********************
 
@@ -173,7 +195,10 @@ void Game::draw()
         Animator::GetInstance().Update();
         Animator::GetInstance().Draw(); 
 
-        
+        for (auto& asteroid : asteroids) {
+            asteroid.draw();
+        }    
+
         // std::cout << "Player Position: (" << playerEntity.getPosition().x << ", " << playerEntity.getPosition().y << ")" << std::endl;
 
     EndMode2D();

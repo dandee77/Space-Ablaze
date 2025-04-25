@@ -70,7 +70,7 @@ void EnemyManager::spawnEnemy(Vector2 playerPos)
         enemies.push_back(std::make_unique<MidLevelEnemy>(enemyID, MID_LEVEL_ENEMY, spawnPos, playerPos));
     } else enemies.push_back(std::make_unique<LowLevelEnemy>(enemyID, LOW_LEVEL_ENEMY, spawnPos, playerPos));
 
-    std::cout << enemyID << std::endl;
+    // std::cout << enemyID << std::endl;
     
     // ShootingEnemy enemy = ShootingEnemy(spawnPos);
     // enemy.getPlayerPosition(playerPos);
@@ -90,4 +90,10 @@ void EnemyManager::removeEnemy(int index)
     enemies[index]->destruct();
     enemies.erase(enemies.begin() + index); 
     // enemies.erase(enemies.begin() + index);  
+}
+
+void EnemyManager::reset()
+{
+    enemies.clear();
+    enemyCounter = 0;
 }

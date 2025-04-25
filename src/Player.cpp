@@ -16,6 +16,7 @@
 
 Player::Player() {};
 
+// TODO: MAKE BULLETS SPAWNING FRAME INDEPENDENT
 
 void Player::init() 
 {   
@@ -28,7 +29,6 @@ void Player::init()
     velocity = {0, 0};
     playerAccelerating = false;
     origin = {rect.width / 2.0f, rect.height / 2.0f};
-
 
     // ? We animate two textures, one for acceleration and one for deacceleration
     // ? Then hide the deacceleration animation until we need it
@@ -68,7 +68,7 @@ void Player::update() {
 
 #pragma region PlayerRotation
 
-    Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), utils::gameCamera); // Pass camera here
+    Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), utils::gameCamera); 
 
     Vector2 direction = Vector2Subtract(mouseWorldPos, position);
 
@@ -76,27 +76,27 @@ void Player::update() {
     else direction = Vector2Normalize(direction);
 
     // ? standard rotation
-    // float rotation = atan2f(direction.y, direction.x) * RAD2DEG + 90.0f; 
+    float rotation = atan2f(direction.y, direction.x) * RAD2DEG + 90.0f; 
 
-    // ! SMOOTHING ROTATION WAS BUGGED ASF
-    // ? IT WORKS NOW? SOMEHOW IDEK
-    float targetRotation = atan2(direction.y, direction.x) * RAD2DEG + 90.0f;
+    // // ! SMOOTHING ROTATION WAS BUGGED ASF
+    // // ? IT WORKS NOW? SOMEHOW IDEK
+    // float targetRotation = atan2(direction.y, direction.x) * RAD2DEG + 90.0f;
 
-    // Normalize angles to avoid abrupt jumps
-    float deltaAngle = targetRotation - rotation;
-    deltaAngle = fmodf(deltaAngle + 180.0f, 360.0f) - 180.0f;
-    // deltaAngle = fmodf(deltaAngle + 540.0f, 360.0f) - 180.0f; // shortest path
-    // // ! PLAYER STILL JUMPS FROM 180 TO -180
-    // deltaAngle = Clamp(deltaAngle, -179.0f, 179.0f); // resolves the issue of the angle jumping from 180 to -180
+    // // Normalize angles to avoid abrupt jumps
+    // float deltaAngle = targetRotation - rotation;
+    // deltaAngle = fmodf(deltaAngle + 180.0f, 360.0f) - 180.0f;
+    // // deltaAngle = fmodf(deltaAngle + 540.0f, 360.0f) - 180.0f; // shortest path
+    // // // ! PLAYER STILL JUMPS FROM 180 TO -180
+    // // deltaAngle = Clamp(deltaAngle, -179.0f, 179.0f); // resolves the issue of the angle jumping from 180 to -180
 
-    // Calculate rotation speed based on velocity (minimum 3.0f, scales up) 
-    float baseRotationSpeed = 5.0f;
-    float maxRotationSpeed = 10.0f;
-    float speedFactor = Vector2Length(velocity) / speed; // Normalize velocity (0 to 1)
-    float rotationSpeed = baseRotationSpeed + speedFactor * (maxRotationSpeed - baseRotationSpeed);
+    // // Calculate rotation speed based on velocity (minimum 3.0f, scales up) 
+    // float baseRotationSpeed = 5.0f;
+    // float maxRotationSpeed = 10.0f;
+    // float speedFactor = Vector2Length(velocity) / speed; 
+    // float rotationSpeed = baseRotationSpeed + speedFactor * (maxRotationSpeed - baseRotationSpeed);
 
-    // Apply smoothing rotation
-    rotation += deltaAngle * (1.0f - expf(-rotationSpeed * GetFrameTime()));
+    // // Apply smoothing rotation
+    // rotation += deltaAngle * (1.0f - expf(-rotationSpeed * GetFrameTime()));
 
     Animator::GetInstance().SetRotation("accelerating", rotation);
     Animator::GetInstance().SetRotation("deaccelerating", rotation);
@@ -106,7 +106,6 @@ void Player::update() {
 
 #pragma region PlayerMovement
 
-    // Handle player movement based on keyboard input
     Vector2 facing_direction = Vector2Rotate((Vector2){0, -1}, rotation * DEG2RAD);
     Vector2 target_velocity = Vector2Scale(facing_direction, (int)(IsKeyDown(KEY_W)||IsKeyDown(KEY_SPACE)) * speed);
 
@@ -124,7 +123,7 @@ void Player::update() {
     velocity = Vector2MoveTowards(velocity, target_velocity, PLAYER_MAX_ACCELERATION * GetFrameTime());
     position = Vector2Add(position, Vector2Scale(velocity, GetFrameTime()));
 
-    // update player position
+
     Animator::GetInstance().SetPosition("accelerating", position); 
     Animator::GetInstance().SetPosition("deaccelerating", position);
 
@@ -134,7 +133,7 @@ void Player::update() {
 
 #pragma region PlayerAnimation
 
-    // Handle player animation based on velocity
+
     if (Vector2Length(velocity) > 65.0f) {
         if (!playerAccelerating) {
             Animator::GetInstance().Play("accelerating");
@@ -144,7 +143,7 @@ void Player::update() {
         if (playerAccelerating) {
             Animator::GetInstance().Stop("accelerating");
             playerAccelerating = false;
-        }
+        }   
     }
 
 

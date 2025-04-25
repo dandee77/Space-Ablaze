@@ -32,7 +32,9 @@ ResourceManager::ResourceManager(){
         {"low_level_enemy1_destruct",           "assets/textures/low_level_enemy1_destruct.png"},
         {"low_level_enemy2_destruct",           "assets/textures/low_level_enemy2_destruct.png"},
         {"low_level_enemy3_destruct",           "assets/textures/low_level_enemy3_destruct.png"},
-        {"mid_level_enemy_destruct",            "assets/textures/mid_level_enemy_destruct.png"}
+        {"mid_level_enemy_destruct",            "assets/textures/mid_level_enemy_destruct.png"},
+        {"asteroid",                            "assets/textures/asteroid.png"},
+        {"asteroid_destruct",                   "assets/textures/asteroid_destruct.png"}
     };
 
     shaderPaths = {

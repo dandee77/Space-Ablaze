@@ -23,6 +23,7 @@ public:
     void draw();
     std::vector<std::unique_ptr<Enemy>>& getEnemies() { return enemies; }
     void removeEnemy(int index);
+    void reset();
 private:
 
     EnemyManager() = default;
