@@ -14,6 +14,10 @@ static bool intersectBullet(Vector2 bulletPos, Vector2 shipPos, float shipSize)
     return Vector2Distance(bulletPos, shipPos) <= shipSize;
 }
 
+
+// TODO: COLLISION OF ENTITIES AND PLAYER NUDGES
+
+
 Game::Game() 
 {}
 
@@ -87,6 +91,9 @@ std::string Game::update()
     BulletManager& bm = BulletManager::GetInstance();
     EnemyManager& em = EnemyManager::GetInstance();
     AsteroidManager& am = AsteroidManager::GetInstance();
+
+#pragma region UpdateBulletsCollision
+
     for (int i = 0; i < bm.getBullets().size(); i++)
     {
         if (!bm.getBullets()[i].isEnemyBullet()) 
@@ -143,6 +150,16 @@ std::string Game::update()
         }
     }
 
+#pragma endregion
+
+
+#pragma region UpdateEntitiesCollision
+
+
+
+
+
+#pragma endregion
 
 #pragma region UpdateAsteroids
 
@@ -150,7 +167,7 @@ std::string Game::update()
     am.update(playerEntity.getPosition());
     // TraceLog(LOG_INFO, "Asteroid count: %d", asteroids.size());
 
-#pragma end region
+#pragma endregion
 
     EnemyManager::GetInstance().update(playerEntity.getPosition()); //! <<***********************
 
