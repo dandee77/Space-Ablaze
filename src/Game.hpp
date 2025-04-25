@@ -7,7 +7,6 @@
 #include "Player.hpp"
 #include "EnemyManager.hpp"
 #include "Asteroid.hpp"
-#include "TImer.hpp"
 
 class Game : public Scene
 {
@@ -25,9 +24,6 @@ private:
         float parallaxFactor; // 0.0 (stationary) to 1.0 (moves with player)
         float size;
     };
-    
-    std::vector<Asteroid> asteroids; 
-    Cooldown asteroidSpawnCooldown;
 
     std::vector<BackgroundLayer> backgroundLayers;
     float worldTileSize;

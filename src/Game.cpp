@@ -6,6 +6,7 @@
 #include "raymath.h" 
 #include "BulletManager.hpp"
 #include "Utils.hpp"
+#include "AsteroidManager.hpp"
 
 
 static bool intersectBullet(Vector2 bulletPos, Vector2 shipPos, float shipSize)
@@ -35,8 +36,7 @@ void Game::onSwitch()
     };
 
     EnemyManager::GetInstance().reset();
-    asteroidSpawnCooldown = Cooldown(0.1f); 
-    if(!asteroids.empty()) asteroids.clear();
+    AsteroidManager::GetInstance().reset();
 
     playerBulletTexture = ResourceManager::GetInstance().GetTexture("player_bullet");
     enemyBulletTexture = ResourceManager::GetInstance().GetTexture("enemy_bullet");
@@ -86,6 +86,7 @@ std::string Game::update()
     
     BulletManager& bm = BulletManager::GetInstance();
     EnemyManager& em = EnemyManager::GetInstance();
+    AsteroidManager& am = AsteroidManager::GetInstance();
     for (int i = 0; i < bm.getBullets().size(); i++)
     {
         if (!bm.getBullets()[i].isEnemyBullet()) 
@@ -103,6 +104,18 @@ std::string Game::update()
                 }
             }
 
+            for (int a = 0; a < am.getAsteroids().size(); a++)
+            {
+                if (intersectBullet(bm.getBullets()[i].getPosition(), am.getAsteroids()[a]->getPosition(), am.getAsteroids()[a]->getAsteroidSize())) 
+                {
+                    bm.removeBullet(i);
+                    am.removeAsteroid(a);
+                    i--;
+                    breakBothLoops = true;
+                    break;
+                }
+            }
+
             if (breakBothLoops) continue;
         }
         else
@@ -114,30 +127,28 @@ std::string Game::update()
                 i--;
                 continue;
             }
+            else
+            {
+                for (int a = 0; a < am.getAsteroids().size(); a++)
+                {
+                    if (intersectBullet(bm.getBullets()[i].getPosition(), am.getAsteroids()[a]->getPosition(), am.getAsteroids()[a]->getAsteroidSize())) 
+                    {
+                        bm.removeBullet(i);
+                        am.removeAsteroid(a);
+                        i--;
+                        break;
+                    }
+                }
+            }
         }
     }
 
 
 #pragma region UpdateAsteroids
 
-    if (!asteroidSpawnCooldown.isOnCooldown()) 
-    {
-        asteroids.push_back(Asteroid(playerEntity.getPosition()));
-        asteroidSpawnCooldown.startCooldown();
-    }
-
-    for (int i = 0; i < asteroids.size(); i++)
-    {
-        asteroids[i].getPlayerPosition(playerEntity.getPosition());
-        asteroids[i].update();
-        if (!asteroids[i].active) 
-        {
-            asteroids.erase(asteroids.begin() + i);
-            i--;
-        }
-    }
-
-    TraceLog(LOG_INFO, "Asteroid count: %d", asteroids.size());
+   
+    am.update(playerEntity.getPosition());
+    // TraceLog(LOG_INFO, "Asteroid count: %d", asteroids.size());
 
 #pragma end region
 
@@ -191,13 +202,11 @@ void Game::draw()
         playerEntity.draw();
 
         EnemyManager::GetInstance().draw();
+        AsteroidManager::GetInstance().draw();
         
         Animator::GetInstance().Update();
         Animator::GetInstance().Draw(); 
 
-        for (auto& asteroid : asteroids) {
-            asteroid.draw();
-        }    
 
         // std::cout << "Player Position: (" << playerEntity.getPosition().x << ", " << playerEntity.getPosition().y << ")" << std::endl;
 

@@ -37,5 +37,6 @@ public:
     void getPlayerPosition(Vector2 playerPos) { this->playerPos = playerPos; };
     // std::string getAsteroidID() const { return asteroidID; }
     int getAsteroidSize() const { return (int)size * 2.5; }
+    void destruct();
     bool active;
 };

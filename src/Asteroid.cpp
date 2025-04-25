@@ -1,5 +1,5 @@
 #include "Asteroid.hpp"
-
+#include "Animator.hpp"
 
 #define ASTEROID_MAX_DISTANCE 200.0f
 
@@ -40,6 +40,8 @@ Asteroid::Asteroid(Vector2 playerPos)
     velocity = Vector2Rotate(velocity, GetRandomValue(-ASTEROID_RANDOM_ANGLE, ASTEROID_RANDOM_ANGLE));
 
     asteroidID = "asteroid_" + std::to_string(asteroidCounter++);
+
+    // TraceLog(LOG_INFO, "Asteroid ID: %s", asteroidID.c_str());
 }
 
 
@@ -64,6 +66,12 @@ void Asteroid::draw()
     (Rectangle){ position.x, position.y, float(10 * size), float(10 * size) },
     (Vector2){ float((10 * size) / 2), float((10 * size) / 2) }, rotation, WHITE);
     DrawRectanglePro((Rectangle){ position.x, position.y, getAsteroidSize(), getAsteroidSize() }, origin, rotation, WHITE);
+}
+
+
+void Asteroid::destruct()
+{
+   
 }
 
 
