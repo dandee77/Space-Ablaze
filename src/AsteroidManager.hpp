@@ -22,12 +22,12 @@ public:
     void update(Vector2 playerPos);
     void draw();
     void reset() { asteroids.clear(); };
-    void removeAsteroid(int index) { asteroids.erase(asteroids.begin() + index); };
+    void removeAsteroid(int index);
     std::vector<std::unique_ptr<Asteroid>>& getAsteroids() { return asteroids; };
     
 private:
     
     void spawnAsteroid(Vector2 playerPos);
-    AsteroidManager() = default;
-    int asteroidCounter = 0; 
+    AsteroidManager();
+    int asteroidCounter = 0;  // TODO: DOES NOT GET USED AS THE ASTEROID ITSELF HAS A COUNTER
 };

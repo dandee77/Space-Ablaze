@@ -103,6 +103,8 @@ void MidLevelEnemy::destruct()
     Animator::GetInstance().SetPosition(enemyID, position);
     Animator::GetInstance().SetRotation(enemyID, rotation);
     Animator::GetInstance().Play(enemyID);
+
+    // automatically deletes the enemy animation after the animation is done
 }
 
 
