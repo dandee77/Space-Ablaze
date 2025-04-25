@@ -9,8 +9,8 @@
 #define ASTEROID_ROT_SPEED_MIN 5
 #define ASTEROID_ROT_SPEED_MAX 240
 #define ASTEROID_RANDOM_ANGLE 30 * DEG2RAD
-#define ASTEROID_SPEED_MIN 10
-#define ASTEROID_SPEED_MAX 50
+#define ASTEROID_SPEED_MIN 5
+#define ASTEROID_SPEED_MAX 25
 
 enum AsteroidSize
 {
@@ -29,13 +29,13 @@ private:
     Vector2 playerPos;
     std::string asteroidID;
     static int asteroidCounter;
-
+    
 public:
     Asteroid(Vector2 playerPos);
     void update() override;
     void draw() override;
     void getPlayerPosition(Vector2 playerPos) { this->playerPos = playerPos; };
     // std::string getAsteroidID() const { return asteroidID; }
-    int getAsteroidSize() const { return (int)size * 10; }
+    int getAsteroidSize() const { return (int)size * 2.5; }
     bool active;
 };

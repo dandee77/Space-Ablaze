@@ -58,10 +58,12 @@ void Asteroid::update()
 
 void Asteroid::draw()
 {
+    Vector2 origin = { (getAsteroidSize()) / 2, (getAsteroidSize()) / 2 };
     const Texture2D& texture = ResourceManager::GetInstance().GetTextureRef("asteroid");
     DrawTexturePro(texture, (Rectangle){ 0, 0, (float)texture.width, (float)texture.height },
-                    (Rectangle){ position.x, position.y, float(10 * size), float(10 * size) },
-                    (Vector2){ float((10 * size) / 2), float((10 * size) / 2) }, rotation, WHITE);
+    (Rectangle){ position.x, position.y, float(10 * size), float(10 * size) },
+    (Vector2){ float((10 * size) / 2), float((10 * size) / 2) }, rotation, WHITE);
+    DrawRectanglePro((Rectangle){ position.x, position.y, getAsteroidSize(), getAsteroidSize() }, origin, rotation, WHITE);
 }
 
 
