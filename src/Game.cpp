@@ -112,6 +112,7 @@ std::string Game::update()
                                   enemy->getPosition(), 
                                   enemy->getHitbox().width)) {
                     enemiesToRemove.push_back(id);
+                    incrementKillCount();
                     break;
                 }
             }
@@ -123,6 +124,7 @@ std::string Game::update()
                                    asteroid->getPosition(),
                                    asteroid->getAsteroidSize())) {
                     asteroidsToRemove.push_back(id);
+                    incrementKillCount();
                     break; 
                 }
             }
@@ -262,6 +264,8 @@ std::string Game::update()
     
 #pragma endregion
 
+    updateKillCounterAnimation();
+
     return "Game";
 }
 
@@ -318,7 +322,11 @@ void Game::draw()
 
         // std::cout << "Player Position: (" << playerEntity.getPosition().x << ", " << playerEntity.getPosition().y << ")" << std::endl;
 
+        
+
     EndMode2D();
+
+    drawKillCounter();
 }
 
 void Game::onExit()

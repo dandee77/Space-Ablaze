@@ -20,6 +20,7 @@ public:
     bool isOnCooldown() const;
     void startCooldown();
     float remainingCooldown() const;
+    float getCooldownDuration() const { return cooldownDuration; }
     std::string remainingCooldownString() const;
     void updateCooldownDuration(float newCooldownDuration);
     void pause();
