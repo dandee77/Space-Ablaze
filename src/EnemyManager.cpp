@@ -12,35 +12,56 @@
 void EnemyManager::update(Vector2 playerPos)
 {
 
-    if (enemies.size() < maxEnemies && !enemySpawnCooldown.isOnCooldown())
-    {
-        // ? could spawn 1 to 3 enemies at once
+    // if (enemies.size() < maxEnemies && !enemySpawnCooldown.isOnCooldown())
+    // {
+    //     // ? could spawn 1 to 3 enemies at once
+    //     int spawns = 1 + GetRandomValue(0, 2); 
+    //     for (int i = 0; i < spawns; i++)
+    //         spawnEnemy(playerPos);
+    //     enemySpawnCooldown.startCooldown();
+    // }
+
+    // for (int i = 0; i < enemies.size(); i++)
+    // {
+    //     float dist = Vector2Distance(enemies[i]->getPosition(), playerPos);
+    //     // ! deletes anemies that are out of range
+    //     // if (dist > ENEMY_MAX_DISTANCE)
+    //     // {
+    //     //     enemies.erase(enemies.begin() + i);
+    //     //     i--;
+    //     //     continue;
+    //     // }
+    //     enemies[i]->getPlayerPositionForEnemy(playerPos); 
+    //     enemies[i]->update(); 
+
+    //     // if (enemies[i].update() && dist <= ENEMY_MAX_RANGE) // make sure the enemy is in player's fov
+    //     // {
+    //     //     Bullet b(enemies[i].getPosition(), enemies[i].getViewDirection(), true);
+    //     //     b.setBulletSpeed(enemies[i].getBulletSpeed());
+    //     //     BulletManager::GetInstance().addBullet(b);
+    //     // }
+    // }
+
+    if (enemies.size() < maxEnemies && !enemySpawnCooldown.isOnCooldown()) {
         int spawns = 1 + GetRandomValue(0, 2); 
         for (int i = 0; i < spawns; i++)
             spawnEnemy(playerPos);
         enemySpawnCooldown.startCooldown();
     }
 
-    for (int i = 0; i < enemies.size(); i++)
-    {
-        float dist = Vector2Distance(enemies[i]->getPosition(), playerPos);
-        // ! deletes anemies that are out of range
-        // if (dist > ENEMY_MAX_DISTANCE)
-        // {
-        //     enemies.erase(enemies.begin() + i);
-        //     i--;
-        //     continue;
-        // }
-        enemies[i]->getPlayerPositionForEnemy(playerPos); 
-        enemies[i]->update(); 
-
-        // if (enemies[i].update() && dist <= ENEMY_MAX_RANGE) // make sure the enemy is in player's fov
-        // {
-        //     Bullet b(enemies[i].getPosition(), enemies[i].getViewDirection(), true);
-        //     b.setBulletSpeed(enemies[i].getBulletSpeed());
-        //     BulletManager::GetInstance().addBullet(b);
-        // }
+    // std::vector<std::string> toRemove;
+    for (auto& [id, enemy] : enemies) {
+        float dist = Vector2Distance(enemy->getPosition(), playerPos);
+        enemy->getPlayerPositionForEnemy(playerPos);
+        enemy->update();
+        
+        // Add any other removal conditions here
+        // if (shouldRemove) toRemove.push_back(id);
     }
+
+    // for (auto& id : toRemove) {
+    //     enemies.erase(id);
+    // }
 
     // std::cout << "Enemy count: " << enemies.size() << std::endl;
 }
@@ -48,9 +69,8 @@ void EnemyManager::update(Vector2 playerPos)
 
 void EnemyManager::draw()
 {
-    for (auto& enemy : enemies)
-    {
-        enemy->draw();
+    for (auto& [id, enemy] : enemies) {
+        enemy->draw(); 
     }
 }
 
@@ -64,11 +84,11 @@ void EnemyManager::spawnEnemy(Vector2 playerPos)
     
     std::string enemyID = "enemy_" + std::to_string(enemyCounter++);
     
+    std::unique_ptr<Enemy> enemy = nullptr;
     int rand = GetRandomValue(0, 5);
-    if (rand == 5) 
-    {
-        enemies.push_back(std::make_unique<MidLevelEnemy>(enemyID, MID_LEVEL_ENEMY, spawnPos, playerPos));
-    } else enemies.push_back(std::make_unique<LowLevelEnemy>(enemyID, LOW_LEVEL_ENEMY, spawnPos, playerPos));
+    if (rand == 5) enemy = std::make_unique<MidLevelEnemy>(enemyID, MID_LEVEL_ENEMY, spawnPos, playerPos);
+    else enemy = std::make_unique<LowLevelEnemy>(enemyID, LOW_LEVEL_ENEMY, spawnPos, playerPos);
+    enemies[enemyID] = std::move(enemy);
 
     // std::cout << enemyID << std::endl;
     
@@ -84,11 +104,13 @@ void EnemyManager::spawnEnemy(Vector2 playerPos)
 }
 
 
-void EnemyManager::removeEnemy(int index)
+void EnemyManager::removeEnemy(const std::string& id)
 {
     // Animator::GetInstance().Stop(enemies[index]->getEnemyID());
-    enemies[index]->destruct();
-    enemies.erase(enemies.begin() + index); 
+    
+    enemies[id]->destruct(); 
+    enemies.erase(id);
+
     // enemies.erase(enemies.begin() + index);  
 }
 

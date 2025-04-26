@@ -5,6 +5,7 @@
 #define MEDIUM_ASTEROID 2.5f
 #define LARGE_ASTEROID 3.0f
 
+// TODO: MOVE TO ASTEROID MANAGER
 int Asteroid::asteroidCounter = 0;
 
 Asteroid::Asteroid(Vector2 playerPos)

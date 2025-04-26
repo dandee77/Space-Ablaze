@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <unordered_map>
 #include <memory>
 #include "BulletManager.hpp"
 #include "Timer.hpp"
@@ -21,16 +22,16 @@ public:
 
     void update(Vector2 playerPos);
     void draw();
-    std::vector<std::unique_ptr<Enemy>>& getEnemies() { return enemies; }
-    void removeEnemy(int index);
+    std::unordered_map<std::string, std::unique_ptr<Enemy>>& getEnemies() { return enemies; };
+    void removeEnemy(const std::string& id);
     void reset();
 private:
 
     EnemyManager() = default;
     void spawnEnemy(Vector2 playerPos);
 
-    int enemyCounter = 0; // ? would serve as a unique ID for the enemy
-    std::vector<std::unique_ptr<Enemy>> enemies;
+    int enemyCounter = 0; 
+    std::unordered_map<std::string, std::unique_ptr<Enemy>> enemies; 
     Cooldown enemySpawnCooldown{0.5f}; 
     const int maxEnemies = 10'000;
 };

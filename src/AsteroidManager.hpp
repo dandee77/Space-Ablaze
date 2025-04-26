@@ -1,14 +1,14 @@
 #pragma once
 #include "Asteroid.hpp"
 #include "Timer.hpp"
-#include <vector>
+#include <unordered_map>
 #include <memory>
 
 class AsteroidManager
 {
 private:
 
-    std::vector<std::unique_ptr<Asteroid>> asteroids;
+    std::unordered_map<std::string, std::unique_ptr<Asteroid>> asteroids;
     Cooldown asteroidSpawnCooldown;
     
 public:
@@ -22,8 +22,8 @@ public:
     void update(Vector2 playerPos);
     void draw();
     void reset() { asteroids.clear(); };
-    void removeAsteroid(int index);
-    std::vector<std::unique_ptr<Asteroid>>& getAsteroids() { return asteroids; };
+    void removeAsteroid(const std::string& id); 
+    std::unordered_map<std::string, std::unique_ptr<Asteroid>>& getAsteroids() { return asteroids; };
     
 private:
     

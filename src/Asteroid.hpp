@@ -28,7 +28,7 @@ public:
     void update() override;
     void draw() override;
     void getPlayerPosition(Vector2 playerPos) { this->playerPos = playerPos; };
-    // std::string getAsteroidID() const { return asteroidID; }
+    std::string getAsteroidID() const { return asteroidID; }
     float getAsteroidSize() const { return size * 2.5f; }
     void destruct();
 };

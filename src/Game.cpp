@@ -7,9 +7,11 @@
 #include "BulletManager.hpp"
 #include "Utils.hpp"
 #include "AsteroidManager.hpp"
+#include <algorithm>
+#include <unordered_set>
 
 
-static bool intersectBullet(Vector2 bulletPos, Vector2 shipPos, float shipSize)
+static bool CheckCollisions(Vector2 bulletPos, Vector2 shipPos, float shipSize)
 {
     return Vector2Distance(bulletPos, shipPos) <= shipSize;
 }
@@ -19,6 +21,8 @@ static bool intersectBullet(Vector2 bulletPos, Vector2 shipPos, float shipSize)
 // TODO: KILL COUNTER N SCALING
 // TODO: ENEMY PATTERN, STOP SPAWNING MOBS WHEN BOSS FIGJT
 // TODO: PLAYER STATE IFRAME
+// TODO: GLITTERS WHEN AUGMENT SELECTION
+// TODO: SPINNING COLORS ON THE RECTANGLE ON AUGMENTS BORDER
 
 
 Game::Game() 
@@ -95,74 +99,84 @@ std::string Game::update()
     EnemyManager& em = EnemyManager::GetInstance();
     AsteroidManager& am = AsteroidManager::GetInstance();
 
+
 #pragma region UpdateBulletsCollision
 
-    for (int i = 0; i < bm.getBullets().size(); i++)
-    {
-        if (!bm.getBullets()[i].isEnemyBullet()) 
-        {
-            bool breakBothLoops = false;
-            for (int e = 0; e < em.getEnemies().size(); e++)
-            {
-                if (intersectBullet(bm.getBullets()[i].getPosition(), em.getEnemies()[e]->getPosition(), em.getEnemies()[e]->getHitbox().width)) 
-                {
-                    bm.removeBullet(i);
-                    em.removeEnemy(e);
-                    i--;
-                    breakBothLoops = true;
+
+    for (int i = 0; i < bm.getBullets().size(); i++) {
+        if (!bm.getBullets()[i].isEnemyBullet()) {
+            // Player bullets vs enemies
+            std::vector<std::string> enemiesToRemove;
+            for (auto& [id, enemy] : em.getEnemies()) {
+                if (CheckCollisions(bm.getBullets()[i].getPosition(), 
+                                  enemy->getPosition(), 
+                                  enemy->getHitbox().width)) {
+                    enemiesToRemove.push_back(id);
                     break;
                 }
             }
-
-            for (int a = 0; a < am.getAsteroids().size(); a++)
-            {
-                if (intersectBullet(bm.getBullets()[i].getPosition(), am.getAsteroids()[a]->getPosition(), am.getAsteroids()[a]->getAsteroidSize())) 
-                {
-                    bm.removeBullet(i);
-                    am.removeAsteroid(a);
-                    i--;
-                    breakBothLoops = true;
-                    break;
+            
+            // Player bullets vs asteroids
+            std::vector<std::string> asteroidsToRemove;
+            for (auto& [id, asteroid] : am.getAsteroids()) {
+                if (CheckCollisions(bm.getBullets()[i].getPosition(),
+                                   asteroid->getPosition(),
+                                   asteroid->getAsteroidSize())) {
+                    asteroidsToRemove.push_back(id);
+                    break; 
                 }
             }
+    
 
-            if (breakBothLoops) continue;
-        }
-        else
-        {
-            if (intersectBullet(bm.getBullets()[i].getPosition(), playerEntity.getPosition(), playerEntity.getHitbox().width)) 
-            {
+            if (!enemiesToRemove.empty() || !asteroidsToRemove.empty()) {
                 bm.removeBullet(i);
-                playerEntity.takeDamage(GetTime()); 
-                i--;
+                i--; 
+                
+                for (auto& id : enemiesToRemove) {
+                    em.removeEnemy(id);
+                }
+                for (auto& id : asteroidsToRemove) {
+                    am.removeAsteroid(id);
+                }
+            }
+        }
+        else {
+            // Enemy bullets vs player
+            if (CheckCollisions(bm.getBullets()[i].getPosition(),
+                               playerEntity.getPosition(),
+                               playerEntity.getHitbox().width)) {
+                bm.removeBullet(i);
+                playerEntity.takeDamage(GetTime());
+                i--; 
                 continue;
             }
-            else
-            {
-                for (int a = 0; a < am.getAsteroids().size(); a++)
-                {
-                    if (intersectBullet(bm.getBullets()[i].getPosition(), am.getAsteroids()[a]->getPosition(), am.getAsteroids()[a]->getAsteroidSize())) 
-                    {
-                        bm.removeBullet(i);
-                        am.removeAsteroid(a);
-                        i--;
-                        break;
-                    }
+            
+            // Enemy bullets vs asteroids
+            std::vector<std::string> asteroidsToRemove;
+            for (auto& [id, asteroid] : am.getAsteroids()) {
+                if (CheckCollisions(bm.getBullets()[i].getPosition(),
+                                  asteroid->getPosition(),
+                                  asteroid->getAsteroidSize())) {
+                    asteroidsToRemove.push_back(id);
+                    break; 
+                }
+            }
+    
+            if (!asteroidsToRemove.empty()) {
+                bm.removeBullet(i);
+                i--;
+                
+                for (auto& id : asteroidsToRemove) {
+                    am.removeAsteroid(id);
                 }
             }
         }
     }
+    
 
 #pragma endregion
 
 
-#pragma region UpdateEntitiesCollision
-
-
-
-
-
-#pragma endregion
 
 #pragma region UpdateAsteroids
 
@@ -172,7 +186,76 @@ std::string Game::update()
 
 #pragma endregion
 
+
+
     EnemyManager::GetInstance().update(playerEntity.getPosition()); //! <<***********************
+
+
+
+#pragma region UpdateEntitiesCollision
+
+    std::vector<std::string> enemiesToRemove;
+    std::vector<std::string> asteroidsToRemove;
+ 
+    for (auto& [enemyId, enemy] : EnemyManager::GetInstance().getEnemies()) {
+     
+        if (CheckCollisions(enemy->getPosition(), playerEntity.getPosition(), playerEntity.getHitbox().width)) {
+            playerEntity.takeDamage(GetTime());
+            enemiesToRemove.push_back(enemyId);
+            continue; 
+        }
+  
+        for (auto& [asteroidId, asteroid] : AsteroidManager::GetInstance().getAsteroids()) {
+            if (CheckCollisions(enemy->getPosition(), asteroid->getPosition(), asteroid->getAsteroidSize())) {
+                enemiesToRemove.push_back(enemyId);
+                asteroidsToRemove.push_back(asteroidId);
+                break; 
+            }
+        }
+    }
+    
+ 
+    for (auto& [asteroidId, asteroid] : AsteroidManager::GetInstance().getAsteroids()) {
+        if (CheckCollisions(asteroid->getPosition(), playerEntity.getPosition(), playerEntity.getHitbox().width)) {
+            playerEntity.takeDamage(GetTime());
+            asteroidsToRemove.push_back(asteroidId);
+        }
+    }
+    
+  
+    std::unordered_set<std::string> collidedAsteroids;
+    for (auto& [id1, asteroid1] : AsteroidManager::GetInstance().getAsteroids()) {
+        if (collidedAsteroids.count(id1)) continue; 
+        
+        for (auto& [id2, asteroid2] : AsteroidManager::GetInstance().getAsteroids()) {
+            if (id1 == id2 || collidedAsteroids.count(id2)) continue;
+            
+            if (CheckCollisions(asteroid1->getPosition(), asteroid2->getPosition(), asteroid1->getAsteroidSize())) {
+                collidedAsteroids.insert(id1);
+                collidedAsteroids.insert(id2);
+                break; 
+            }
+        }
+    }
+    
+    std::sort(asteroidsToRemove.begin(), asteroidsToRemove.end());
+    asteroidsToRemove.erase(std::unique(asteroidsToRemove.begin(), asteroidsToRemove.end()), asteroidsToRemove.end());
+    
+    for (const auto& id : collidedAsteroids) {
+        if (std::find(asteroidsToRemove.begin(), asteroidsToRemove.end(), id) == asteroidsToRemove.end()) {
+            asteroidsToRemove.push_back(id);
+        }
+    }
+    
+    for (const auto& id : enemiesToRemove) {
+        em.removeEnemy(id);
+    }
+    
+    for (const auto& id : asteroidsToRemove) {
+        am.removeAsteroid(id);
+    }
+    
+#pragma endregion
 
     return "Game";
 }

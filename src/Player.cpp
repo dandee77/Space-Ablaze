@@ -31,6 +31,7 @@ Player::Player() {};
 // - Player damage
 // - Player IFRAME DURATION
 // - PLAYER BODY DAMAGE?
+// - bullet penetration
 
 void Player::init() 
 {   
