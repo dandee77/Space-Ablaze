@@ -11,19 +11,19 @@
 #include <unordered_set>
 
 
-static bool CheckCollisions(Vector2 bulletPos, Vector2 shipPos, float shipSize)
+static bool CheckCollisions(Vector2 bulletPos, Vector2 shipPos, float shipSize) // circled hitbox so edit the draw hitbox
 {
     return Vector2Distance(bulletPos, shipPos) <= shipSize;
 }
 
+// ! TODO: KILL COUNTER N SCALING
 
 // TODO: COLLISION OF ENTITIES AND PLAYER NUDGES
-// TODO: KILL COUNTER N SCALING
 // TODO: ENEMY PATTERN, STOP SPAWNING MOBS WHEN BOSS FIGJT
 // TODO: PLAYER STATE IFRAME
 // TODO: GLITTERS WHEN AUGMENT SELECTION
-// TODO: SPINNING COLORS ON THE RECTANGLE ON AUGMENTS BORDER
-
+// TODO: SPINNING COLORS ON THE RECTANGLE ON AUGMENTS BORDER]
+// todo: cursor
 
 Game::Game() 
 {}
@@ -144,9 +144,10 @@ std::string Game::update()
             // Enemy bullets vs player
             if (CheckCollisions(bm.getBullets()[i].getPosition(),
                                playerEntity.getPosition(),
-                               playerEntity.getHitbox().width)) {
+                               playerEntity.getHitbox().width) &&
+                               playerEntity.getPlayerState() == PLAYER_DEFAULT) {
                 bm.removeBullet(i);
-                playerEntity.takeDamage(GetTime());
+                playerEntity.takeDamage(GetTime(), bm.getBullets()[i].getPosition(), 3.0f);
                 i--; 
                 continue;
             }
@@ -198,13 +199,16 @@ std::string Game::update()
     std::vector<std::string> asteroidsToRemove;
  
     for (auto& [enemyId, enemy] : EnemyManager::GetInstance().getEnemies()) {
-     
-        if (CheckCollisions(enemy->getPosition(), playerEntity.getPosition(), playerEntity.getHitbox().width)) {
-            playerEntity.takeDamage(GetTime());
+        
+        // player to enemy collision
+        if (CheckCollisions(enemy->getPosition(), playerEntity.getPosition(), playerEntity.getHitbox().width)
+            && playerEntity.getPlayerState() == PLAYER_DEFAULT) {
+            playerEntity.takeDamage(GetTime(), enemy->getPosition(), enemy->getHitbox().width);
             enemiesToRemove.push_back(enemyId);
             continue; 
         }
-  
+        
+        // enemy to asteroid collision
         for (auto& [asteroidId, asteroid] : AsteroidManager::GetInstance().getAsteroids()) {
             if (CheckCollisions(enemy->getPosition(), asteroid->getPosition(), asteroid->getAsteroidSize())) {
                 enemiesToRemove.push_back(enemyId);
@@ -214,15 +218,16 @@ std::string Game::update()
         }
     }
     
- 
+    // player to asteroid collision
     for (auto& [asteroidId, asteroid] : AsteroidManager::GetInstance().getAsteroids()) {
-        if (CheckCollisions(asteroid->getPosition(), playerEntity.getPosition(), playerEntity.getHitbox().width)) {
-            playerEntity.takeDamage(GetTime());
+        if (CheckCollisions(asteroid->getPosition(), playerEntity.getPosition(), playerEntity.getHitbox().width) 
+            && playerEntity.getPlayerState() == PLAYER_DEFAULT) {
+            playerEntity.takeDamage(GetTime(), asteroid->getPosition(), asteroid->getAsteroidSize());
             asteroidsToRemove.push_back(asteroidId);
         }
     }
     
-  
+    // asteroid to asteroid collision
     std::unordered_set<std::string> collidedAsteroids;
     for (auto& [id1, asteroid1] : AsteroidManager::GetInstance().getAsteroids()) {
         if (collidedAsteroids.count(id1)) continue; 

@@ -15,6 +15,7 @@
 
 #define PLAYER_STATE_STUN_DURATION 0.2f
 #define PLAYER_STATE_IFRAME_DURATION 0.8f
+#define PLAYER_COLLISION_NUDGE 20.0f
 
 
 Player::Player() {};
@@ -229,15 +230,16 @@ void Player::update() {
 };
 
 
-void Player::takeDamage(float timeStateEntered)
+void Player::takeDamage(float timeStateEntered, Vector2 entityPosition, float entitySize) 
 {
-    if (playerState == PLAYER_DEFAULT) 
-    {
-        playerState = PLAYER_STUNNED;
-        this->timeStateEntered = timeStateEntered;
-        Animator::GetInstance().SetTint("accelerating", RED);
-        Animator::GetInstance().SetTint("deaccelerating", RED);
-    }
+
+    playerState = PLAYER_STUNNED;
+    this->timeStateEntered = timeStateEntered;
+    Vector2 nudgeDirection = Vector2Normalize(Vector2Subtract(position, entityPosition));
+    velocity = Vector2Scale(nudgeDirection, PLAYER_COLLISION_NUDGE * entitySize); 
+    Animator::GetInstance().SetTint("accelerating", RED);
+    Animator::GetInstance().SetTint("deaccelerating", RED);
+
 }
 
 

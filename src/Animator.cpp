@@ -1,6 +1,6 @@
 #include "Animator.hpp"
 
-// Singleton instance access
+
 Animator& Animator::GetInstance() {
     static Animator instance;
     return instance;

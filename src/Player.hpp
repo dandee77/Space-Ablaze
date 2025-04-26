@@ -23,7 +23,8 @@ public:
     void update() override;
     void draw() override;
     Rectangle getHitbox() const { return rect; }
-    void takeDamage(float timeStateEntered);
+    void takeDamage(float timeStateEntered, Vector2 entityPosition, float entitySize);
+    PlayerState getPlayerState() const { return playerState; }
 
 private:
 
