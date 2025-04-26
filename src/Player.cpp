@@ -13,10 +13,24 @@
 #define PLAYER_SPEED 70.0f
 #define PLAYER_MAX_ACCELERATION 400.0f
 
+#define PLAYER_STATE_STUN_DURATION 0.2f
+#define PLAYER_STATE_IFRAME_DURATION 0.8f
+
 
 Player::Player() {};
 
 // TODO: MAKE BULLETS SPAWNING FRAME INDEPENDENT
+
+
+// ** SKILLS **
+// - Player movement
+// - Player rotationSPEED ?
+// - Player shooting CD
+// - Player BULLETS MULTIPLIER
+// - Player health
+// - Player damage
+// - Player IFRAME DURATION
+// - PLAYER BODY DAMAGE?
 
 void Player::init() 
 {   
@@ -64,7 +78,57 @@ void Player::init()
     rect.height -= 4.0f;
 };
 
+
 void Player::update() {
+
+#pragma region HandlePlayerState
+
+    switch(playerState) 
+    {
+    case PLAYER_DEFAULT:
+        // no check
+        // todo: add all of update logic here
+        break;
+    case PLAYER_STUNNED:
+        if ((GetTime() - timeStateEntered) > PLAYER_STATE_STUN_DURATION) 
+        {
+            playerState = PLAYER_IFRAME;
+            timeStateEntered = GetTime();
+        }
+        break;
+    case PLAYER_IFRAME:
+        if ((GetTime() - timeStateEntered) > PLAYER_STATE_IFRAME_DURATION)
+        {
+            playerState = PLAYER_DEFAULT;
+            Animator::GetInstance().SetTint("accelerating", WHITE);
+            Animator::GetInstance().SetTint("deaccelerating", WHITE);
+        }
+        else
+        {
+            float seconds = GetTime() - timeStateEntered;
+            int value = (int)(seconds * 6.0f);
+            if (value % 2 == 0) 
+            {
+                Animator::GetInstance().SetTint("accelerating", RED);
+                Animator::GetInstance().SetTint("deaccelerating", RED);
+            } 
+            else 
+            {
+                Animator::GetInstance().SetTint("accelerating", WHITE);
+                Animator::GetInstance().SetTint("deaccelerating", WHITE);
+            }
+        }
+        break;
+    case PLAYER_DEAD:
+        // no check for now
+        // todo: pass the game over function
+        // return "GameOver";
+        break;
+    }
+
+#pragma endregion
+
+
 
 #pragma region PlayerRotation
 
@@ -164,10 +228,15 @@ void Player::update() {
 };
 
 
-void Player::takeDamage()
+void Player::takeDamage(float timeStateEntered)
 {
-    Animator::GetInstance().SetTint("accelerating", RED);
-    Animator::GetInstance().SetTint("deaccelerating", RED);
+    if (playerState == PLAYER_DEFAULT) 
+    {
+        playerState = PLAYER_STUNNED;
+        this->timeStateEntered = timeStateEntered;
+        Animator::GetInstance().SetTint("accelerating", RED);
+        Animator::GetInstance().SetTint("deaccelerating", RED);
+    }
 }
 
 

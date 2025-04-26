@@ -16,6 +16,9 @@ static bool intersectBullet(Vector2 bulletPos, Vector2 shipPos, float shipSize)
 
 
 // TODO: COLLISION OF ENTITIES AND PLAYER NUDGES
+// TODO: KILL COUNTER N SCALING
+// TODO: ENEMY PATTERN, STOP SPAWNING MOBS WHEN BOSS FIGJT
+// TODO: PLAYER STATE IFRAME
 
 
 Game::Game() 
@@ -130,7 +133,7 @@ std::string Game::update()
             if (intersectBullet(bm.getBullets()[i].getPosition(), playerEntity.getPosition(), playerEntity.getHitbox().width)) 
             {
                 bm.removeBullet(i);
-                playerEntity.takeDamage(); 
+                playerEntity.takeDamage(GetTime()); 
                 i--;
                 continue;
             }

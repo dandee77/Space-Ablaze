@@ -23,7 +23,7 @@ public:
     void update() override;
     void draw() override;
     Rectangle getHitbox() const { return rect; }
-    void takeDamage();
+    void takeDamage(float timeStateEntered);
 
 private:
 
@@ -32,4 +32,5 @@ private:
     PlayerState playerState;
     Cooldown playerAttackCooldown;
     bool autoShoot;
+    float timeStateEntered;
 };
