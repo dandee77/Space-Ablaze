@@ -6,7 +6,7 @@
 
 AsteroidManager::AsteroidManager()
 {
-    asteroidSpawnCooldown = Cooldown(0.01f); 
+    asteroidSpawnCooldown = Cooldown(0.5f); 
 }
 
 void AsteroidManager::update(Vector2 playerPos)

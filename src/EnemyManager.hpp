@@ -32,6 +32,6 @@ private:
 
     int enemyCounter = 0; 
     std::unordered_map<std::string, std::unique_ptr<Enemy>> enemies; 
-    Cooldown enemySpawnCooldown{0.5f}; 
+    Cooldown enemySpawnCooldown{0.2f}; 
     const int maxEnemies = 10'000;
 };
