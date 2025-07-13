@@ -45,6 +45,7 @@ void Game::onSwitch()
 
     EnemyManager::GetInstance().reset();
     AsteroidManager::GetInstance().reset();
+    BulletManager::GetInstance().reset();
 
     playerBulletTexture = ResourceManager::GetInstance().GetTexture("player_bullet");
     enemyBulletTexture = ResourceManager::GetInstance().GetTexture("enemy_bullet");

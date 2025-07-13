@@ -20,6 +20,7 @@ public:
     void clear();   
     std::vector<Bullet>& getBullets() { return bullets; }
     void removeBullet(int index) { bullets.erase(bullets.begin() + index); }
+    void reset() { bullets.clear(); }
 
 private:
     BulletManager() = default;
