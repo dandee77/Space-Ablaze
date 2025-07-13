@@ -9,6 +9,7 @@
 #include "AsteroidManager.hpp"
 #include <algorithm>
 #include <unordered_set>
+#include <memory>
 
 
 static bool CheckCollisions(Vector2 bulletPos, Vector2 shipPos, float shipSize) // circled hitbox so edit the draw hitbox
@@ -16,11 +17,7 @@ static bool CheckCollisions(Vector2 bulletPos, Vector2 shipPos, float shipSize) 
     return Vector2Distance(bulletPos, shipPos) <= shipSize;
 }
 
-// ! TODO: KILL COUNTER N SCALING
-
-// TODO: COLLISION OF ENTITIES AND PLAYER NUDGES
 // TODO: ENEMY PATTERN, STOP SPAWNING MOBS WHEN BOSS FIGJT
-// TODO: PLAYER STATE IFRAME
 // TODO: GLITTERS WHEN AUGMENT SELECTION
 // TODO: SPINNING COLORS ON THE RECTANGLE ON AUGMENTS BORDER]
 // todo: cursor
@@ -57,6 +54,32 @@ void Game::onSwitch()
     gameTimer = GameTimer();
     gameTimer.reset();
     gameTimer.start();
+
+    //? setup control guides keyboard keys animations
+    Animator::GetInstance().AddAnimation("wasd_keys_tutorial",std::make_shared<Animation>(
+        ResourceManager::GetInstance().GetTextureRef("wasd_keys"),
+        ResourceManager::GetInstance().GetTextureRef("wasd_keys").width / 3,
+        ResourceManager::GetInstance().GetTextureRef("wasd_keys").height,
+        0.1f,
+        true,
+        Rectangle{0, 0, 16, 10},
+        false,
+        WHITE
+    ));
+
+    Animator::GetInstance().AddAnimation("e_key_tutorial", std::make_shared<Animation>(
+        ResourceManager::GetInstance().GetTextureRef("e_key"),
+        ResourceManager::GetInstance().GetTextureRef("e_key").width / 3,
+        ResourceManager::GetInstance().GetTextureRef("e_key").height,
+        0.1f,
+        true,
+        Rectangle{0, 0, 5, 5},
+        false,
+        WHITE
+    ));
+
+    Animator::GetInstance().Play("wasd_keys_tutorial");
+    Animator::GetInstance().Play("e_key_tutorial");
 }
 
 
@@ -322,14 +345,62 @@ void Game::draw()
 
         EnemyManager::GetInstance().draw();
         AsteroidManager::GetInstance().draw();
-        
+
+#pragma region ControlsGuide
+
+        if (gameTimer.getElapsedTime() > 0.4f && gameTimer.getElapsedTime() < 10.0f) {
+            Vector2 wasdScreenPos = {1000, 1800}; // Top-left corner
+            Vector2 eKeyScreenPos = {2000, 1850}; // Below WASD keys
+            
+            Vector2 wasdWorldPos = GetScreenToWorld2D(wasdScreenPos, utils::gameCamera);
+            Vector2 eKeyWorldPos = GetScreenToWorld2D(eKeyScreenPos, utils::gameCamera);
+            
+            float elapsed = gameTimer.getElapsedTime();
+            float alpha = 1.0f;
+            
+            //? fade in from 0.4s to 1.4s (1 second fade in)
+            if (elapsed < 1.4f) {
+                alpha = (elapsed - 0.4f) / 1.0f; // 0.0 to 1.0
+                alpha = std::max(0.0f, std::min(1.0f, alpha));
+            }
+            //? fade out from 9.0s to 10.0s (1 second fade out)
+            else if (elapsed > 9.0f) {
+                alpha = (10.0f - elapsed) / 1.0f; // 1.0 to 0.0
+                alpha = std::max(0.0f, std::min(1.0f, alpha));
+            }
+            //? apply alpha to animations
+            Color animationTint = {255, 255, 255, (unsigned char)(alpha * 255)};
+            Animator::GetInstance().SetTint("wasd_keys_tutorial", animationTint);
+            Animator::GetInstance().SetTint("e_key_tutorial", animationTint);
+            
+            Animator::GetInstance().SetPosition("wasd_keys_tutorial", wasdWorldPos);
+            Animator::GetInstance().SetPosition("e_key_tutorial", eKeyWorldPos);
+
+            Font font = ResourceManager::GetInstance().GetFont("primary_font");
+            
+            Color textTint = {128, 128, 128, (unsigned char)(alpha * 255)}; 
+            
+            // WASD text
+            Vector2 wasdTextScreenPos = {wasdScreenPos.x + 380, wasdScreenPos.y + 50}; // Offset to the right
+            Vector2 wasdTextWorldPos = GetScreenToWorld2D(wasdTextScreenPos, utils::gameCamera);
+            DrawTextEx(font, "MOVEMENT", wasdTextWorldPos, 5, 0, textTint);
+            
+            // E key text
+            Vector2 eKeyTextScreenPos = {eKeyScreenPos.x + 160, eKeyScreenPos.y}; // Offset to the right
+            Vector2 eKeyTextWorldPos = GetScreenToWorld2D(eKeyTextScreenPos, utils::gameCamera);
+            DrawTextEx(font, "AUTO-SHOOT", eKeyTextWorldPos, 5, 0, textTint);
+        }
+        else if (gameTimer.getElapsedTime() > 10.0f) {
+            Animator::GetInstance().Stop("wasd_keys_tutorial");
+            Animator::GetInstance().Stop("e_key_tutorial");
+        }
+
+#pragma endregion ControlsGuide
+
         Animator::GetInstance().Update();
         Animator::GetInstance().Draw(); 
 
-
         // std::cout << "Player Position: (" << playerEntity.getPosition().x << ", " << playerEntity.getPosition().y << ")" << std::endl;
-
-        
 
     EndMode2D();
 
