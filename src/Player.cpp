@@ -18,7 +18,7 @@
 #define PLAYER_COLLISION_NUDGE 20.0f
 
 
-Player::Player() {};
+Player::Player() : playerState(PLAYER_DEFAULT), timeStateEntered(0.0f) {};
 
 // TODO: MAKE BULLETS SPAWNING FRAME INDEPENDENT
 
@@ -44,6 +44,8 @@ void Player::init()
     rotation = 0.0f;
     velocity = {0, 0};
     playerAccelerating = false;
+    playerState = PLAYER_DEFAULT;
+    timeStateEntered = 0.0f;
     origin = {rect.width / 2.0f, rect.height / 2.0f};
 
     // ? We animate two textures, one for acceleration and one for deacceleration
@@ -232,7 +234,6 @@ void Player::update() {
 
 void Player::takeDamage(float timeStateEntered, Vector2 entityPosition, float entitySize) 
 {
-
     playerState = PLAYER_STUNNED;
     this->timeStateEntered = timeStateEntered;
     Vector2 nudgeDirection = Vector2Normalize(Vector2Subtract(position, entityPosition));
