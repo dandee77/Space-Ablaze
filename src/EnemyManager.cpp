@@ -8,18 +8,16 @@
 
 #define ENEMY_MAX_DISTANCE 1000.0f
 #define ENEMY_MAX_RANGE 100.0f
+#define MID_LEVEL_ENEMY_SPAWN_START_TIME 300.0f // 5 mins
 
 void EnemyManager::update(Vector2 playerPos, const GameTimer& gameTimer)
 {
     float elapsed = gameTimer.getElapsedTime();
 
-    float spawnRate = 0.5f;
-    if (elapsed > 120) spawnRate = 0.45f;     
-    if (elapsed > 240) spawnRate = 0.35f;       
-    if (elapsed > 360) spawnRate = 0.25f;      
-    enemySpawnCooldown.updateCooldownDuration(spawnRate);
-
-    std::cout << "Enemy spawn cooldown: " << enemySpawnCooldown.getCooldownDuration() << std::endl;
+    //? spawn cooldown drops over time, min 0.25s at 10 mins
+    //? starts at 1.5s, drops to 0.25s over 10 minutes
+    float newCooldown = std::max(0.25f, 1.5f - (elapsed / 600.0f) * 1.25f);
+    enemySpawnCooldown.updateCooldownDuration(newCooldown);
 
     if (enemies.size() < maxEnemies && !enemySpawnCooldown.isOnCooldown()) {
         int spawns = 1 + GetRandomValue(0, 2);
@@ -29,14 +27,11 @@ void EnemyManager::update(Vector2 playerPos, const GameTimer& gameTimer)
         enemySpawnCooldown.startCooldown();
     }
 
-
     std::vector<std::string> toRemove;
-
     for (auto& [id, enemy] : enemies) {
         float dist = Vector2Distance(enemy->getPosition(), playerPos);
         enemy->getPlayerPositionForEnemy(playerPos);
         enemy->update();
-
         if (dist > ENEMY_MAX_DISTANCE) {
             toRemove.push_back(id);
         }
@@ -46,7 +41,7 @@ void EnemyManager::update(Vector2 playerPos, const GameTimer& gameTimer)
         removeEnemy(id);
     }
 
-    // std::cout << "Enemy count: " << enemies.size() << std::endl;
+    std::cout << "spawn rate: " << newCooldown << std::endl;
 }
 
 
@@ -58,7 +53,7 @@ void EnemyManager::draw()
 }
 
 
-void EnemyManager::spawnEnemy(Vector2 playerPos, float elapsedTime)
+void EnemyManager::spawnEnemy(Vector2 playerPos, float elapsed)
 {
     Vector2 offset = {150.0f, 0.0f};
     float angle = DEG2RAD * (float)GetRandomValue(0, 359);
@@ -66,17 +61,27 @@ void EnemyManager::spawnEnemy(Vector2 playerPos, float elapsedTime)
     Vector2 spawnPos = Vector2Add(playerPos, offset);
 
     std::string enemyID = "enemy_" + std::to_string(enemyCounter++);
-    std::unique_ptr<Enemy> enemy = nullptr;
 
-    // === Difficulty curve ===
-    // Use time to influence the spawn chance
-    int midLevelChance = 0;
-    if (elapsedTime > 120) midLevelChance = 10;  // 10% after 2 mins
-    if (elapsedTime > 240) midLevelChance = 25;  // 25% after 4 mins
-    if (elapsedTime > 360) midLevelChance = 40;  // 40% after 6 mins
+    // Mid-level spawn chance: Only after 5 minutes, then scales up
+    // Time	       Approx. midChance
+    // 0-300s (0-5min)    0%
+    // 360s        (6min)	11.8%
+    // 420s        (7min)	20.3%
+    // 480s        (8min)	26.3%
+    // 540s        (9min)	29.6%
+    // 600s        (10min)	31.5%
+    // 900s        (15min)	38.7%
+    // ∞	        40% (asymptotic)
+    float midChance = 0.0f;
+    if (elapsed >= MID_LEVEL_ENEMY_SPAWN_START_TIME) { //?  only spawn mid-level enemies after 5 minutes
+        float adjustedTime = elapsed - MID_LEVEL_ENEMY_SPAWN_START_TIME; //? start scaling from 0 after 5 minutes
+        midChance = 40.0f * (1.0f - expf(-adjustedTime / 180.0f));
+    }
+    float randomValue = (float)GetRandomValue(0, 9999) / 100.0f;
+    bool isMidLevel = randomValue < midChance;
 
-    int roll = GetRandomValue(1, 100);
-    if (roll <= midLevelChance) {
+    std::unique_ptr<Enemy> enemy;
+    if (isMidLevel) {
         enemy = std::make_unique<MidLevelEnemy>(enemyID, MID_LEVEL_ENEMY, spawnPos, playerPos);
     } else {
         enemy = std::make_unique<LowLevelEnemy>(enemyID, LOW_LEVEL_ENEMY, spawnPos, playerPos);
@@ -84,6 +89,9 @@ void EnemyManager::spawnEnemy(Vector2 playerPos, float elapsedTime)
 
     enemies[enemyID] = std::move(enemy);
 
+    // std::cout << "Elapsed: " << elapsed << "s, midChance: " << midChance << "%, randomValue: " << randomValue << ", isMidLevel: " << (isMidLevel ? "true" : "false") << std::endl;
+
+    // ! Don't work anymore, as enemy class don't have this implementations
     // std::cout << enemyID << std::endl;
     
     // ShootingEnemy enemy = ShootingEnemy(spawnPos);

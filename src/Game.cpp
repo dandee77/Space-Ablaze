@@ -155,8 +155,9 @@ std::string Game::update()
                                playerEntity.getPosition(),
                                playerEntity.getHitbox().width) &&
                                playerEntity.getPlayerState() == PLAYER_DEFAULT) {
+                Vector2 bulletPosition = bm.getBullets()[i].getPosition(); 
                 bm.removeBullet(i);
-                playerEntity.takeDamage(GetTime(), bm.getBullets()[i].getPosition(), 3.0f);
+                playerEntity.takeDamage(GetTime(), bulletPosition, 3.0f);
                 i--; 
                 continue;
             }
