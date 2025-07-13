@@ -11,37 +11,6 @@
 
 void EnemyManager::update(Vector2 playerPos)
 {
-
-    // if (enemies.size() < maxEnemies && !enemySpawnCooldown.isOnCooldown())
-    // {
-    //     // ? could spawn 1 to 3 enemies at once
-    //     int spawns = 1 + GetRandomValue(0, 2); 
-    //     for (int i = 0; i < spawns; i++)
-    //         spawnEnemy(playerPos);
-    //     enemySpawnCooldown.startCooldown();
-    // }
-
-    // for (int i = 0; i < enemies.size(); i++)
-    // {
-    //     float dist = Vector2Distance(enemies[i]->getPosition(), playerPos);
-    //     // ! deletes anemies that are out of range
-    //     // if (dist > ENEMY_MAX_DISTANCE)
-    //     // {
-    //     //     enemies.erase(enemies.begin() + i);
-    //     //     i--;
-    //     //     continue;
-    //     // }
-    //     enemies[i]->getPlayerPositionForEnemy(playerPos); 
-    //     enemies[i]->update(); 
-
-    //     // if (enemies[i].update() && dist <= ENEMY_MAX_RANGE) // make sure the enemy is in player's fov
-    //     // {
-    //     //     Bullet b(enemies[i].getPosition(), enemies[i].getViewDirection(), true);
-    //     //     b.setBulletSpeed(enemies[i].getBulletSpeed());
-    //     //     BulletManager::GetInstance().addBullet(b);
-    //     // }
-    // }
-
     if (enemies.size() < maxEnemies && !enemySpawnCooldown.isOnCooldown()) {
         int spawns = 1 + GetRandomValue(0, 2); 
         for (int i = 0; i < spawns; i++)
@@ -54,16 +23,13 @@ void EnemyManager::update(Vector2 playerPos)
         float dist = Vector2Distance(enemy->getPosition(), playerPos);
         enemy->getPlayerPositionForEnemy(playerPos);
         enemy->update();
-        
-        // Add any other removal conditions here
-        // if (shouldRemove) toRemove.push_back(id);
+
+        if (dist > ENEMY_MAX_DISTANCE) {
+            removeEnemy(id);
+        }
     }
 
-    // for (auto& id : toRemove) {
-    //     enemies.erase(id);
-    // }
-
-    // std::cout << "Enemy count: " << enemies.size() << std::endl;
+    std::cout << "Enemy count: " << enemies.size() << std::endl;
 }
 
 
@@ -107,11 +73,8 @@ void EnemyManager::spawnEnemy(Vector2 playerPos)
 void EnemyManager::removeEnemy(const std::string& id)
 {
     // Animator::GetInstance().Stop(enemies[index]->getEnemyID());
-    
     enemies[id]->destruct(); 
     enemies.erase(id);
-
-    // enemies.erase(enemies.begin() + index);  
 }
 
 void EnemyManager::reset()
