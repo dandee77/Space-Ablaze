@@ -110,6 +110,7 @@ std::string Game::update()
 
 
     for (int i = 0; i < bm.getBullets().size(); i++) {
+
         if (!bm.getBullets()[i].isEnemyBullet()) {
             // Player bullets vs enemies
             std::vector<std::string> enemiesToRemove;
@@ -197,7 +198,7 @@ std::string Game::update()
 
 
 
-    EnemyManager::GetInstance().update(playerEntity.getPosition()); //! <<***********************
+    EnemyManager::GetInstance().update(playerEntity.getPosition(), gameTimer); //! <<***********************
 
 
 

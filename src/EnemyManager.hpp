@@ -8,7 +8,7 @@
 #include "Enemy.hpp"
 #include <string>
 #include "Animator.hpp"
-
+#include "GameTimer.hpp"
 
 class EnemyManager
 {
@@ -20,7 +20,7 @@ public:
         return instance;
     }
 
-    void update(Vector2 playerPos);
+    void update(Vector2 playerPos, const GameTimer& gameTimer);
     void draw();
     std::unordered_map<std::string, std::unique_ptr<Enemy>>& getEnemies() { return enemies; };
     void removeEnemy(const std::string& id);
@@ -28,10 +28,10 @@ public:
 private:
 
     EnemyManager() = default;
-    void spawnEnemy(Vector2 playerPos);
+    void spawnEnemy(Vector2 playerPos, float elapsedTime);
 
     int enemyCounter = 0; 
     std::unordered_map<std::string, std::unique_ptr<Enemy>> enemies; 
-    Cooldown enemySpawnCooldown{0.2f}; 
+    Cooldown enemySpawnCooldown{0.5f}; 
     const int maxEnemies = 10'000;
 };

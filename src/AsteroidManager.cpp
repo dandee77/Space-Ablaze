@@ -32,7 +32,7 @@ void AsteroidManager::update(Vector2 playerPos)
         asteroids.erase(id);
     }
 
-    TraceLog(LOG_INFO, "Asteroid count: %d", asteroids.size());
+    // TraceLog(LOG_INFO, "Asteroid count: %d", asteroids.size());
 }
 
 void AsteroidManager::draw()
