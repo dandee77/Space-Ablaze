@@ -39,7 +39,7 @@ void AsteroidManager::update(Vector2 playerPos, const GameTimer& gameTimer)
         asteroids.erase(id);
     }
 
-    TraceLog(LOG_INFO, "Asteroid spawn rate: %f", newCooldown);
+    // TraceLog(LOG_INFO, "Asteroid spawn rate: %f", newCooldown);
 }
 
 void AsteroidManager::draw()

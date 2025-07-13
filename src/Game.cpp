@@ -301,7 +301,6 @@ std::string Game::update()
 }
 
 
-
 void Game::DrawLayer(const BackgroundLayer& layer, const Vector2& viewCenter) 
 {
     Vector2 parallaxOffset = {

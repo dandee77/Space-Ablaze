@@ -11,6 +11,8 @@ ResourceManager& ResourceManager::GetInstance() {
 
 ResourceManager::ResourceManager(){
 
+    InitAudioDevice();
+
     // textureID                                filePath
     texturePaths = {
         {"game_background",                     "assets/textures/game_background_texture.png"},
@@ -47,6 +49,10 @@ ResourceManager::ResourceManager(){
     fontPaths = {
         {"primary_font",                        "assets/fonts/PerfectDOSVGA437.ttf"}, 
         {"secondary_font",                      "assets/fonts/3270-Regular.ttf"}
+    };
+
+    soundPaths = {
+        {"player_shoot",                        "assets/sounds/player_atk_sound.mp3"},
     };
 }
 

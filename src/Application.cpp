@@ -22,6 +22,7 @@ Application::Application()
     const int windowHeight = 720;
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT); 
     InitWindow(windowWidth, windowHeight, "Space Ablaze");
+    // InitAudioDevice();
     SetTargetFPS(60);
 
     m_target = LoadRenderTexture(screenWidth, screenHeight);
@@ -36,7 +37,7 @@ Application::Application()
     ResourceManager::GetInstance().LoadShaders(); 
     ResourceManager::GetInstance().LoadFonts();
     // ResourceManager::GetInstance().LoadMusics();
-    // ResourceManager::GetInstance().LoadSounds();
+    ResourceManager::GetInstance().LoadSounds();
 
 
     // Initialize the first scene
@@ -78,7 +79,7 @@ void Application::Run()
     SetTextureFilter(borderTarget.texture, TEXTURE_FILTER_BILINEAR);
     SetTextureFilter(borderTargetFinal.texture, TEXTURE_FILTER_BILINEAR);
 
-        while (!WindowShouldClose())
+    while (!WindowShouldClose())
     {
 
         float time = GetTime();

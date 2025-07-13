@@ -225,6 +225,9 @@ void Player::update() {
         Bullet bullet = Bullet(position, facing_direction, false);
         BulletManager::GetInstance().addBullet(bullet);
         playerAttackCooldown.startCooldown();
+        
+        Sound shootSound = ResourceManager::GetInstance().GetSound("player_shoot");
+        PlaySound(shootSound);
     } 
 
 
