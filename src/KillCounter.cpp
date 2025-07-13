@@ -14,6 +14,13 @@ void KillCounter::update() {
     updateAnimation();
 }
 
+void KillCounter::reset() {
+    count = 0;
+    tilt = 0.0f;
+    scale = 1.0f;
+    cooldown.updateCooldownDuration(0.3f);
+}
+
 void KillCounter::updateAnimation() {
     if (cooldown.isOnCooldown()) {
         float progress = 1.0f - (cooldown.remainingCooldown() / cooldown.getCooldownDuration());

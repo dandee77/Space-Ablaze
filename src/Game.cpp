@@ -53,6 +53,7 @@ void Game::onSwitch()
     enemyBulletTexture = ResourceManager::GetInstance().GetTexture("enemy_bullet");
 
     killCounter = KillCounter();
+    killCounter.reset();
     gameTimer = GameTimer();
     gameTimer.reset();
     gameTimer.start();

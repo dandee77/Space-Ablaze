@@ -11,6 +11,7 @@ public:
     void increment();
     void update();
     void draw();
+    void reset();
 
 private:
     int count;

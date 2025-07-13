@@ -53,7 +53,7 @@ std::string GameTimer::getElapsedTimeString() const {
 
 void GameTimer::draw(int screenWidth) {
     const int fontSize = 80;
-    const float padding = 220.0f;
+    const float padding = 150.0f;
 
     Vector2 screenPos = {screenWidth / 2.0f, padding};
 
@@ -71,8 +71,9 @@ void GameTimer::draw(int screenWidth) {
         textSize.y + 10
     };
 
-    DrawRectangleRounded(textRect, 0.3f, 5, Fade(BLACK, 0.6f));
-
+    // bg tint
+    // DrawRectangleRounded(textRect, 0.3f, 5, Fade(BLACK, 0.6f));
+    
     DrawTextEx(
         font,
         timeText.c_str(),
@@ -82,5 +83,6 @@ void GameTimer::draw(int screenWidth) {
         WHITE
     );
 
-    DrawRectangleRoundedLines(textRect, 0.3f, 5, Fade(WHITE, 0.8f));
+    // border
+    // DrawRectangleRoundedLines(textRect, 0.3f, 5, Fade(WHITE, 0.8f));
 }
