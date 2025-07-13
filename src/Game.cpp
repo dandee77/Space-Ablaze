@@ -192,11 +192,10 @@ std::string Game::update()
 #pragma region UpdateAsteroids
 
    
-    am.update(playerEntity.getPosition());
+    am.update(playerEntity.getPosition(), gameTimer); 
     // TraceLog(LOG_INFO, "Asteroid count: %d", asteroids.size());
 
 #pragma endregion
-
 
 
     EnemyManager::GetInstance().update(playerEntity.getPosition(), gameTimer); //! <<***********************

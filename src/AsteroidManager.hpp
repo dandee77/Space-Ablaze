@@ -3,6 +3,7 @@
 #include "Timer.hpp"
 #include <unordered_map>
 #include <memory>
+#include "GameTimer.hpp"
 
 class AsteroidManager
 {
@@ -19,7 +20,7 @@ public:
         return instance;
     }
     
-    void update(Vector2 playerPos);
+    void update(Vector2 playerPos, const GameTimer& gameTimer);
     void draw();
     void reset() { asteroids.clear(); };
     void removeAsteroid(const std::string& id); 

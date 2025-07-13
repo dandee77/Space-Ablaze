@@ -6,11 +6,18 @@
 
 AsteroidManager::AsteroidManager()
 {
-    asteroidSpawnCooldown = Cooldown(0.5f); 
+    asteroidSpawnCooldown = Cooldown(1.5f); 
 }
 
-void AsteroidManager::update(Vector2 playerPos)
+void AsteroidManager::update(Vector2 playerPos, const GameTimer& gameTimer)
 {
+    float elapsed = gameTimer.getElapsedTime();
+
+    //? spawn cooldown drops over time, min 0.25s at 10 mins
+    //? starts at 1.5s, drops to 0.25s over 10 minutes
+    float newCooldown = std::max(0.25f, 1.5f - (elapsed / 600.0f) * 1.25f);
+    asteroidSpawnCooldown.updateCooldownDuration(newCooldown);
+
     if (!asteroidSpawnCooldown.isOnCooldown()) {
         int spawns = 1 + GetRandomValue(0, 2); 
         for (int i = 0; i < spawns; i++)
@@ -32,7 +39,7 @@ void AsteroidManager::update(Vector2 playerPos)
         asteroids.erase(id);
     }
 
-    // TraceLog(LOG_INFO, "Asteroid count: %d", asteroids.size());
+    TraceLog(LOG_INFO, "Asteroid spawn rate: %f", newCooldown);
 }
 
 void AsteroidManager::draw()
