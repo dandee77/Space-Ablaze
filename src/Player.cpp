@@ -173,18 +173,18 @@ void Player::update() {
 #pragma region PlayerMovement
 
     Vector2 facing_direction = Vector2Rotate((Vector2){0, -1}, rotation * DEG2RAD);
-    Vector2 target_velocity = Vector2Scale(facing_direction, (int)(IsKeyDown(KEY_W)||IsKeyDown(KEY_SPACE)) * speed);
+    // Vector2 target_velocity = Vector2Scale(facing_direction, (int)(IsKeyDown(KEY_W)||IsKeyDown(KEY_SPACE)) * speed);
 
-    // 8 direction movement (WASD)
-    // Vector2 inputDirection = {0, 0};
-    // if (IsKeyDown(KEY_W)) inputDirection.y -= 1.0f;
-    // if (IsKeyDown(KEY_S)) inputDirection.y += 1.0f;
-    // if (IsKeyDown(KEY_A)) inputDirection.x -= 1.0f;
-    // if (IsKeyDown(KEY_D)) inputDirection.x += 1.0f;
-    // if (Vector2Length(inputDirection) > 0.0f) {
-    //     inputDirection = Vector2Normalize(inputDirection);
-    // }
-    // Vector2 target_velocity = Vector2Scale(inputDirection, speed);
+    // 8 direction movement 
+    Vector2 inputDirection = {0, 0};
+    if (IsKeyDown(KEY_W)) inputDirection.y -= 1.0f;
+    if (IsKeyDown(KEY_S)) inputDirection.y += 1.0f;
+    if (IsKeyDown(KEY_A)) inputDirection.x -= 1.0f;
+    if (IsKeyDown(KEY_D)) inputDirection.x += 1.0f;
+    if (Vector2Length(inputDirection) > 0.0f) {
+        inputDirection = Vector2Normalize(inputDirection);
+    }
+    Vector2 target_velocity = Vector2Scale(inputDirection, speed);
 
     velocity = Vector2MoveTowards(velocity, target_velocity, PLAYER_MAX_ACCELERATION * GetFrameTime());
     position = Vector2Add(position, Vector2Scale(velocity, GetFrameTime()));
@@ -239,7 +239,6 @@ void Player::takeDamage(float timeStateEntered, Vector2 entityPosition, float en
     velocity = Vector2Scale(nudgeDirection, PLAYER_COLLISION_NUDGE * entitySize); 
     Animator::GetInstance().SetTint("accelerating", RED);
     Animator::GetInstance().SetTint("deaccelerating", RED);
-
 }
 
 

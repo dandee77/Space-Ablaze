@@ -51,6 +51,7 @@ void Game::onSwitch()
 
     playerBulletTexture = ResourceManager::GetInstance().GetTexture("player_bullet");
     enemyBulletTexture = ResourceManager::GetInstance().GetTexture("enemy_bullet");
+
 }
 
 
@@ -112,7 +113,7 @@ std::string Game::update()
                                   enemy->getPosition(), 
                                   enemy->getHitbox().width)) {
                     enemiesToRemove.push_back(id);
-                    incrementKillCount();
+                    killCounter.increment();
                     break;
                 }
             }
@@ -124,7 +125,7 @@ std::string Game::update()
                                    asteroid->getPosition(),
                                    asteroid->getAsteroidSize())) {
                     asteroidsToRemove.push_back(id);
-                    incrementKillCount();
+                    killCounter.increment();
                     break; 
                 }
             }
@@ -200,7 +201,7 @@ std::string Game::update()
     std::vector<std::string> enemiesToRemove;
     std::vector<std::string> asteroidsToRemove;
  
-    for (auto& [enemyId, enemy] : EnemyManager::GetInstance().getEnemies()) {
+    for (auto& [enemyId, enemy] : EnemyManager::GetInstance().getEnemies()) {   
         
         // player to enemy collision
         if (CheckCollisions(enemy->getPosition(), playerEntity.getPosition(), playerEntity.getHitbox().width)
@@ -264,7 +265,7 @@ std::string Game::update()
     
 #pragma endregion
 
-    updateKillCounterAnimation();
+    killCounter.update();
 
     return "Game";
 }
@@ -326,7 +327,7 @@ void Game::draw()
 
     EndMode2D();
 
-    drawKillCounter();
+    killCounter.draw();
 }
 
 void Game::onExit()
