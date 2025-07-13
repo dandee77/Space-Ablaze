@@ -52,6 +52,10 @@ void Game::onSwitch()
     playerBulletTexture = ResourceManager::GetInstance().GetTexture("player_bullet");
     enemyBulletTexture = ResourceManager::GetInstance().GetTexture("enemy_bullet");
 
+    killCounter = KillCounter();
+    gameTimer = GameTimer();
+    gameTimer.reset();
+    gameTimer.start();
 }
 
 
@@ -328,6 +332,7 @@ void Game::draw()
     EndMode2D();
 
     killCounter.draw();
+    gameTimer.draw(GAME_SCREEN_WIDTH);
 }
 
 void Game::onExit()

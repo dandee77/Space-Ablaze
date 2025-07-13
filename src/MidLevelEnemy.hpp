@@ -2,7 +2,7 @@
 #include "raylib.h"
 #include "Enemy.hpp"
 #include <string>
-#include "TImer.hpp"
+#include "Timer.hpp"
 
 class MidLevelEnemy : public Enemy
 {

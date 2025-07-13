@@ -8,6 +8,7 @@
 #include "EnemyManager.hpp"
 #include "Asteroid.hpp"
 #include "KillCounter.hpp"
+#include "GameTimer.hpp"
 
 class Game : public Scene
 {
@@ -38,4 +39,5 @@ private:
     Texture2D enemyBulletTexture;
 
     KillCounter killCounter;
+    GameTimer gameTimer;
 };
