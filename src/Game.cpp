@@ -167,8 +167,19 @@ std::string Game::update()
                             break;
                         }
                     }
-                    enemiesToRemove.push_back(id);
                     killCounter.increment();
+                    switch (enemy->getEnemyType()) {
+                    case LOW_LEVEL_ENEMY:
+                        playerEntity.addScore(10);
+                        break;
+                    case MID_LEVEL_ENEMY:
+                        playerEntity.addScore(50);
+                        break;
+                    default:
+                        playerEntity.addScore(5);
+                        break;
+                    }
+                    enemiesToRemove.push_back(id);
                     break;
                 }
             }
@@ -185,8 +196,9 @@ std::string Game::update()
                             break;
                         }
                     }
-                    asteroidsToRemove.push_back(id);
                     killCounter.increment();
+                    playerEntity.addScore(5);
+                    asteroidsToRemove.push_back(id);
                     break; 
                 }
             }
@@ -239,6 +251,8 @@ std::string Game::update()
         }
     }
     
+
+    std::cout << "Player Score: " << playerEntity.getScore() << std::endl;
 
 #pragma endregion
 

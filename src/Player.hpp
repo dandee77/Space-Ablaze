@@ -27,9 +27,12 @@ public:
     Rectangle getHitbox() const { return rect; }
     void takeDamage(float timeStateEntered, Vector2 entityPosition, float entitySize);
     PlayerState getPlayerState() const { return playerState; }
+    void addScore(int score) { playerScore += score; }
+    int getScore() const { return playerScore; }
 
 private:
 
+    int playerScore;
     Camera2D camera;
     bool playerAccelerating;
     PlayerState playerState;
