@@ -17,7 +17,6 @@
 #define PLAYER_STATE_IFRAME_DURATION 0.8f
 #define PLAYER_COLLISION_NUDGE 20.0f
 
-
 Player::Player() : playerState(PLAYER_DEFAULT), timeStateEntered(0.0f) {};
 
 // TODO: MAKE BULLETS SPAWNING FRAME INDEPENDENT
@@ -80,6 +79,12 @@ void Player::init()
     autoShoot = false;
     rect.width -= 4.0f;
     rect.height -= 4.0f;
+
+    //? we have to load one by one because raylib uses a single sound instance
+    //? and it doesn't support multiple instances of the same sound
+    for (int i = 0; i < MAX_SHOOTING_SOUND_INSTANCES; i++) {
+        shootingSounds[i] = LoadSound("assets/sounds/player_atk_sound.mp3");
+    }
 };
 
 
@@ -218,6 +223,8 @@ void Player::update() {
 #pragma endregion
 
 
+#pragma region PlayerShoot
+
     if (IsKeyPressed(KEY_E)) autoShoot = !autoShoot;
 
     if ((IsMouseButtonDown(MOUSE_BUTTON_LEFT) || autoShoot) && !playerAttackCooldown.isOnCooldown())
@@ -226,10 +233,15 @@ void Player::update() {
         BulletManager::GetInstance().addBullet(bullet);
         playerAttackCooldown.startCooldown();
         
-        Sound shootSound = ResourceManager::GetInstance().GetSound("player_shoot");
-        PlaySound(shootSound);
+        for (int i = 0; i < MAX_SHOOTING_SOUND_INSTANCES; i++) {
+            if (!IsSoundPlaying(shootingSounds[i])) {
+                PlaySound(shootingSounds[i]);
+                break;
+            }
+        }
     } 
 
+#pragma endregion PlayerShoot
 
     rect = {position.x - rect.width / 2, position.y - rect.height / 2, rect.width, rect.height};
 };

@@ -22,7 +22,7 @@ Application::Application()
     const int windowHeight = 720;
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT); 
     InitWindow(windowWidth, windowHeight, "Space Ablaze");
-    // InitAudioDevice();
+    InitAudioDevice();
     SetTargetFPS(60);
 
     m_target = LoadRenderTexture(screenWidth, screenHeight);

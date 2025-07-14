@@ -11,8 +11,6 @@ ResourceManager& ResourceManager::GetInstance() {
 
 ResourceManager::ResourceManager(){
 
-    InitAudioDevice();
-
     // textureID                                filePath
     texturePaths = {
         {"game_background",                     "assets/textures/game_background_texture.png"},

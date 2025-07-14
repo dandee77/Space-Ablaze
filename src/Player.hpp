@@ -3,7 +3,9 @@
 #include "raylib.h"
 #include "Timer.hpp"
 #include "BulletManager.hpp"
+#include <array>
 
+#define MAX_SHOOTING_SOUND_INSTANCES 10
 
 enum PlayerState
 {
@@ -34,4 +36,5 @@ private:
     Cooldown playerAttackCooldown;
     bool autoShoot;
     float timeStateEntered;
+    std::array<Sound, MAX_SHOOTING_SOUND_INSTANCES> shootingSounds;
 };
