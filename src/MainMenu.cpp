@@ -22,6 +22,8 @@ MainMenu::MainMenu()
 
 std::string MainMenu::update()
 {
+    UpdateMusicStream(homeMusic);
+
     // ? Update the buttons
     for (size_t idx = 0; idx < m_buttons.size() && !exitAnimationStarted; ++idx)
     {    
@@ -113,10 +115,14 @@ void MainMenu::onSwitch()
     );
     Animator::GetInstance().AddAnimation("background", exitAnim);
     Animator::GetInstance().Play("background");
+
+    homeMusic = ResourceManager::GetInstance().GetMusic("home_music");
+    PlayMusicStream(homeMusic);
 }
 
 void MainMenu::onExit()
 {
     Animator::GetInstance().StopAll();
+    StopMusicStream(homeMusic);
 }
 

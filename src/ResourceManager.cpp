@@ -50,7 +50,14 @@ ResourceManager::ResourceManager(){
     };
 
     soundPaths = {
-        {"player_shoot",                        "assets/sounds/player_atk_sound.mp3"},
+        // {"player_shoot",                        "assets/sounds/player_atk_sound.mp3"},
+        {"button_click",                    "assets/sounds/button_click.wav"},
+    };
+
+    // TODO: ADD MUSIC DIR
+    musicPaths = {
+        {"home_music",                     "assets/sounds/home_music.mp3"},
+        {"game_music",                     "assets/sounds/HeatleyBros - HeatleyBros VI - Luminare.mp3"},
     };
 }
 
@@ -136,7 +143,7 @@ void ResourceManager::LoadSounds() {
     }
 }
 
-void ResourceManager::LoadMusic() {
+void ResourceManager::LoadMusics() {
     for (const auto& [name, path] : musicPaths) {
         if (!std::filesystem::exists(path)) {
             std::cerr << "Music file not found: " << path << std::endl;

@@ -33,6 +33,7 @@ private:
     void DrawParallaxBackground();
     void DrawLayer(const BackgroundLayer& layer, const Vector2& viewCenter);
 
+    Music gameMusic;
     Player playerEntity;
 
     Texture2D playerBulletTexture; 

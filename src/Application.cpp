@@ -36,7 +36,7 @@ Application::Application()
 
     ResourceManager::GetInstance().LoadShaders(); 
     ResourceManager::GetInstance().LoadFonts();
-    // ResourceManager::GetInstance().LoadMusics();
+    ResourceManager::GetInstance().LoadMusics();
     ResourceManager::GetInstance().LoadSounds();
 
 

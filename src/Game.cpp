@@ -43,6 +43,9 @@ void Game::onSwitch()
         {ResourceManager::GetInstance().GetTexture("background2"), 1.0f, worldTileSize}   // 1.0
     };
 
+    gameMusic = ResourceManager::GetInstance().GetMusic("game_music");
+    PlayMusicStream(gameMusic);
+
     EnemyManager::GetInstance().reset();
     AsteroidManager::GetInstance().reset();
     BulletManager::GetInstance().reset();
@@ -87,6 +90,7 @@ void Game::onSwitch()
 std::string Game::update() 
 {
     if (IsKeyPressed(KEY_ENTER)) return "MainMenu"; 
+    UpdateMusicStream(gameMusic);
 
 #pragma region StartAnimation
 
@@ -410,5 +414,6 @@ void Game::draw()
 
 void Game::onExit()
 {
-
+    Animator::GetInstance().StopAll();
+    StopMusicStream(gameMusic);
 }

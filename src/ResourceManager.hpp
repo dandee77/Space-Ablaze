@@ -15,7 +15,7 @@ public:
     void LoadTextures();
     void LoadFonts();
     void LoadSounds();
-    void LoadMusic();
+    void LoadMusics();
     void LoadShaders();
     
     void ProcessLoadedTextures();

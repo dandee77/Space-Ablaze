@@ -21,4 +21,5 @@ private:
 
     std::array<Button, 4> m_buttons;
     bool exitAnimationStarted;
+    Music homeMusic;
 };
