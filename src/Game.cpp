@@ -84,6 +84,21 @@ void Game::onSwitch()
 
     Animator::GetInstance().Play("wasd_keys_tutorial");
     Animator::GetInstance().Play("e_key_tutorial");
+
+    // scoreSounds[0] = LoadSound("assets/sounds/button_click.wav");
+    // scoreSounds[1] = LoadSound("assets/sounds/Click_02.wav");
+    // scoreSounds[2] = LoadSound("assets/sounds/Confirm_01.wav");
+    // scoreSounds[3] = LoadSound("assets/sounds/Confirm_04.wav");
+    // scoreSounds[4] = LoadSound("assets/sounds/button_hover.wav");
+    // scoreSounds[5] = LoadSound("assets/sounds/button_click.wav");
+    // scoreSounds[6] = LoadSound("assets/sounds/Click_02.wav");
+    // scoreSounds[7] = LoadSound("assets/sounds/Confirm_01.wav");
+    // scoreSounds[8] = LoadSound("assets/sounds/Confirm_04.wav");
+    // scoreSounds[9] = LoadSound("assets/sounds/button_hover.wav");
+
+    for (int i = 0; i < MAX_SOUND_INSTANCES; i++) {
+        scoreSounds[i] = LoadSound("assets/sounds/score_sound.wav");
+    }
 }
 
 
@@ -146,6 +161,12 @@ std::string Game::update()
                 if (CheckCollisions(bm.getBullets()[i].getPosition(), 
                                   enemy->getPosition(), 
                                   enemy->getHitbox().width)) {
+                    for (int j = 0; j < MAX_SOUND_INSTANCES; j++) {
+                        if (!IsSoundPlaying(scoreSounds[j])) {
+                            PlaySound(scoreSounds[j]);
+                            break;
+                        }
+                    }
                     enemiesToRemove.push_back(id);
                     killCounter.increment();
                     break;
@@ -158,6 +179,12 @@ std::string Game::update()
                 if (CheckCollisions(bm.getBullets()[i].getPosition(),
                                    asteroid->getPosition(),
                                    asteroid->getAsteroidSize())) {
+                    for (int j = 0; j < MAX_SOUND_INSTANCES; j++) {
+                        if (!IsSoundPlaying(scoreSounds[j])) {
+                            PlaySound(scoreSounds[j]);
+                            break;
+                        }
+                    }
                     asteroidsToRemove.push_back(id);
                     killCounter.increment();
                     break; 

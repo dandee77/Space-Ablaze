@@ -9,6 +9,9 @@
 #include "Asteroid.hpp"
 #include "KillCounter.hpp"
 #include "GameTimer.hpp"
+#include <array>
+
+#define MAX_SOUND_INSTANCES 10
 
 class Game : public Scene
 {
@@ -38,6 +41,8 @@ private:
 
     Texture2D playerBulletTexture; 
     Texture2D enemyBulletTexture;
+
+    std::array<Sound, MAX_SOUND_INSTANCES> scoreSounds;
 
     KillCounter killCounter;
     GameTimer gameTimer;

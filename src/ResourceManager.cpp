@@ -51,13 +51,13 @@ ResourceManager::ResourceManager(){
 
     soundPaths = {
         // {"player_shoot",                        "assets/sounds/player_atk_sound.mp3"},
-        {"button_click",                    "assets/sounds/button_click.wav"},
-    };
+        {"button_click",                        "assets/sounds/button_click.wav"},
+    };      
 
     // TODO: ADD MUSIC DIR
     musicPaths = {
-        {"home_music",                     "assets/sounds/home_music.mp3"},
-        {"game_music",                     "assets/sounds/HeatleyBros - HeatleyBros VI - Luminare.mp3"},
+        {"home_music",                          "assets/sounds/home_music.mp3"},
+        {"game_music",                          "assets/sounds/HeatleyBros - HeatleyBros VI - Luminare.mp3"},
     };
 }
 
