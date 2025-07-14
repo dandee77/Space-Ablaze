@@ -39,7 +39,7 @@ void Player::init()
     rect = {250, 250, 8, 8};
     position = {rect.x, rect.y};
     speed = PLAYER_SPEED;
-    health = 100.0f;
+    health = 100;
     damage = 10.0f;
     rotation = 0.0f;
     velocity = {0, 0};
@@ -250,6 +250,7 @@ void Player::update() {
 
 void Player::takeDamage(float timeStateEntered, Vector2 entityPosition, float entitySize) 
 {
+    health -= 10; 
     playerState = PLAYER_STUNNED;
     this->timeStateEntered = timeStateEntered;
     Vector2 nudgeDirection = Vector2Normalize(Vector2Subtract(position, entityPosition));

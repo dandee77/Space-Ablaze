@@ -22,6 +22,7 @@ static bool CheckCollisions(Vector2 bulletPos, Vector2 shipPos, float shipSize) 
 // TODO: SPINNING COLORS ON THE RECTANGLE ON AUGMENTS BORDER]
 // todo: cursor
 
+
 Game::Game() 
 {}
 
@@ -252,8 +253,6 @@ std::string Game::update()
     }
     
 
-    std::cout << "Player Score: " << playerEntity.getScore() << std::endl;
-
 #pragma endregion
 
 
@@ -341,6 +340,8 @@ std::string Game::update()
 #pragma endregion
 
     killCounter.update();
+
+    // std:: cout << "Player Health: " << playerEntity.getHealth() << std::endl;
 
     return "Game";
 }
@@ -448,6 +449,28 @@ void Game::draw()
         // std::cout << "Player Position: (" << playerEntity.getPosition().x << ", " << playerEntity.getPosition().y << ")" << std::endl;
 
     EndMode2D();
+
+
+#pragma region HealtBar
+
+        const Texture2D& healthbarTexture = ResourceManager::GetInstance().GetTextureRef("health_bar");
+        DrawTexturePro(healthbarTexture,
+                       Rectangle{0, 0, (float)healthbarTexture.width, (float)healthbarTexture.height},
+                       Rectangle{GAME_SCREEN_WIDTH - 1200, 150, 1000, 150},
+                       Vector2{0, 0},
+                       0.0f,
+                       Fade(WHITE, 1.0f));
+
+        const Texture2D& healthTexture = ResourceManager::GetInstance().GetTextureRef("health");
+        float healthBarWidth = 1000.0f * (static_cast<float>(playerEntity.getHealth()) / 100.0f);
+        DrawTexturePro(healthTexture,
+                        Rectangle{0, 0, (float)healthTexture.width, (float)healthTexture.height},
+                        Rectangle{GAME_SCREEN_WIDTH - 1200, 150, healthBarWidth, 150},
+                        Vector2{0, 0},
+                        0.0f,
+                        Fade(WHITE, 1.0f));
+
+#pragma endregion HealtBar
 
     killCounter.draw();
     gameTimer.draw(GAME_SCREEN_WIDTH);

@@ -37,6 +37,8 @@ ResourceManager::ResourceManager(){
         {"asteroid_destruct",                   "assets/textures/asteroid_destruct.png"},
         {"wasd_keys",                           "assets/textures/wasd_keys.png"},
         {"e_key",                               "assets/textures/e_key.png"},
+        {"health",                              "assets/textures/health.png"},
+        {"health_bar",                          "assets/textures/healthBar.png"},
     };
 
     shaderPaths = {

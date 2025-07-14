@@ -25,4 +25,5 @@ public:
     inline Vector2 getSize() const { return {rect.width, rect.height}; }
     inline float getRotation() const { return rotation; }
     inline Vector2 getVelocity() const { return velocity; }
+    inline int getHealth() const { return health; }
 };
