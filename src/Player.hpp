@@ -30,6 +30,14 @@ public:
     void addScore(int score) { playerScore += score; }
     int getScore() const { return playerScore; }
 
+    // void setPlayerAttackSpeed(float attackSpeed);
+    // void setPlayerFireRate(int fireRate);
+    // void setPlayerMovementSpeed(float movementSpeed);
+    // void setPlayerHealth(int health);
+    // void setPlayerBulletPierce(int piercePower);
+    // void setPlayerIframeDuration(float duration);
+    // void setPlayerRotationSpeed(float rotationSpeed);
+
 private:
 
     int playerScore;
