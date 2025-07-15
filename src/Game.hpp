@@ -10,6 +10,8 @@
 #include "KillCounter.hpp"
 #include "GameTimer.hpp"
 #include <array>
+#include "Card.hpp"
+#include <vector>
 
 #define MAX_SOUND_INSTANCES 10
 
@@ -46,4 +48,6 @@ private:
 
     KillCounter killCounter;
     GameTimer gameTimer;
+
+    std::vector<Card> augmentCards;
 };

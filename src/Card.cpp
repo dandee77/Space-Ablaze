@@ -260,7 +260,13 @@ void Card::drawAnimatedBorder() const {
 }
 
 void Card::drawCardContent() const {
+    // Hide content during exit animation
     if (isExitPlaying) {
+        return;
+    }
+    
+    // Hide content during intro animation for first 0.2 seconds
+    if (isIntroPlaying && introAnimationTime < 0.2f) {
         return;
     }
     

@@ -102,11 +102,35 @@ void Game::onSwitch()
     }
 }
 
-
 std::string Game::update() 
 {
     if (IsKeyPressed(KEY_ENTER)) return "MainMenu"; 
     UpdateMusicStream(gameMusic);
+
+    std::cout << "Game Timer: " << (int)gameTimer.getElapsedTime() << " seconds" << std::endl;
+
+    if (!augmentCards.empty()) {
+        for (auto& card : augmentCards) {
+            card.update();
+            if (card.isIntroComplete() && card.isClicked()) {
+                card.startExitAnimation();
+            }
+            if (card.isExitComplete()) {
+                augmentCards.clear();
+            }
+        }   
+    } 
+    else {
+        if ((int)gameTimer.getElapsedTime() % 10 == 0) {
+            augmentCards.push_back(Card({1000, 500}, {1800, 300}, "Rapid Fire", "Increases attack\nspeed by 50%"));
+            augmentCards.push_back(Card({1000, 900}, {1800, 300}, "Piercing Shot", "Bullets pierce through\nenemies"));
+            augmentCards.push_back(Card({1000, 1300}, {1800, 300}, "Shield", "Grants a shield that\nabsorbs damage"));
+            for (auto& card : augmentCards) {
+                card.startIntroAnimation();
+            }
+        }
+    }
+    
 
 #pragma region StartAnimation
 
@@ -450,6 +474,11 @@ void Game::draw()
 
     EndMode2D();
 
+    if (!augmentCards.empty()) {
+        for (auto& card : augmentCards) {
+            card.draw();
+        }
+    }
 
 #pragma region HealtBar
 

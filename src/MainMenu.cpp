@@ -61,18 +61,6 @@ std::string MainMenu::update()
         }
     }
 
-    augmentCard.update();
-    if (augmentCard.isIntroComplete() && augmentCard.isClicked())
-    {
-        augmentCard.startExitAnimation();
-    }
-
-    if (augmentCard.isExitComplete())
-    {
-        augmentCard.setPosition({-500, -500});
-        augmentCard.setSize({0, 0});
-    }
-
     if (exitAnimationStarted && Animator::GetInstance().IsCompleted("exit")) exit(0);
     return "MainMenu";
 }
@@ -84,7 +72,6 @@ void MainMenu::draw()
     Animator::GetInstance().Update();
     Animator::GetInstance().Draw();
 
-    augmentCard.draw(); 
 
     // ? Draw the buttons
     if (!exitAnimationStarted)
@@ -131,8 +118,6 @@ void MainMenu::onSwitch()
 
     homeMusic = ResourceManager::GetInstance().GetMusic("home_music");
     PlayMusicStream(homeMusic);
-
-    augmentCard.startIntroAnimation();
 }
 
 void MainMenu::onExit()
