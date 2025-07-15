@@ -29,6 +29,7 @@ Game::Game()
 
 void Game::onSwitch()
 {
+    gameState = GAME_RUNNING;
     worldTileSize = 500.0f; 
     playerEntity = Player();
     playerEntity.init();
@@ -92,29 +93,46 @@ void Game::onSwitch()
     }
 }
 
+
+static int prevGameTimer = 0;
+
 std::string Game::update() 
 {
     if (IsKeyPressed(KEY_ENTER)) return "MainMenu"; 
     UpdateMusicStream(gameMusic);
 
+    if (IsKeyPressed(KEY_P)) {
+        if (gameState == GAME_RUNNING) {
+            gameState = GAME_PAUSED;
+        } else if (gameState == GAME_PAUSED) {
+            gameTimer.unpause();
+            gameState = GAME_RUNNING;
+        }
+    }
+
     std::cout << "Game Timer: " << (int)gameTimer.getElapsedTime() << " seconds" << std::endl;
 
-    if (!augmentCards.empty()) {
-        for (auto& card : augmentCards) {
-            card.update();
-            if (card.isIntroComplete() && card.isClicked()) {
-                card.startExitAnimation();
-            }
-            if (card.isExitComplete()) {
-                augmentCards.clear();
-            }
-        }   
-    } 
-    else {
-        if ((int)gameTimer.getElapsedTime() % 10 == 0) {
-    
+    switch (gameState) {
+    case GAME_RUNNING:
+    {
+#pragma region AugmentSelection
+
+        if ((int)gameTimer.getElapsedTime() % 3 == 0 && (int)gameTimer.getElapsedTime() > 0 && (int)gameTimer.getElapsedTime() != prevGameTimer) {
+            
             std::vector<int> usedIndices;
-            std::vector<Vector2> cardPositions = {{1000, 500}, {1000, 900}, {1000, 1300}};
+            
+            float cardWidth = 1200.0f;
+            float cardHeight = 300.0f;
+            float gap = 75.0f;
+            
+            float centerX = GAME_SCREEN_WIDTH / 2.0f - cardWidth / 2.0f;
+            float centerY = GAME_SCREEN_HEIGHT / 2.0f - cardHeight / 2.0f;
+            
+            std::vector<Vector2> cardPositions = {
+                {centerX, centerY - cardHeight - gap},   
+                {centerX, centerY},                       
+                {centerX, centerY + cardHeight + gap}     
+            };
             
             for (int i = 0; i < 3; i++) {
                 int randomIndex;
@@ -126,7 +144,7 @@ std::string Game::update()
                 
                 augmentCards.push_back(Card(
                     cardPositions[i], 
-                    {1800, 300}, 
+                    {cardWidth, cardHeight}, 
                     utils::augmentPool[randomIndex][0], 
                     utils::augmentPool[randomIndex][1]
                 ));
@@ -135,154 +153,159 @@ std::string Game::update()
             for (auto& card : augmentCards) {
                 card.startIntroAnimation();
             }
+
+            prevGameTimer = (int)gameTimer.getElapsedTime();
+            gameTimer.pause();
+            gameState = GAME_AUGMENT_SELECTION;
         }
-    }
-    
+
+#pragma endregion AugmentSelection
 
 #pragma region StartAnimation
 
-    float zoomLerpSpeed = 7.5f; // Higher = faster decay
-    float deltaTime = GetFrameTime();
-    utils::gameCamera.zoom += (20.0f - utils::gameCamera.zoom) * (1.0f - expf(-zoomLerpSpeed * deltaTime));
+        float zoomLerpSpeed = 7.5f; // Higher = faster decay
+        float deltaTime = GetFrameTime();
+        utils::gameCamera.zoom += (20.0f - utils::gameCamera.zoom) * (1.0f - expf(-zoomLerpSpeed * deltaTime));
 
 #pragma endregion
 
-    // handle playr shooting
+        // handle playr shooting
 
 #pragma region UpdatePlayer
 
-    playerEntity.update();
-    // ?  the enemies bullet shares the same bullet max range since it is relative to the player
-    BulletManager::GetInstance().update(playerEntity.getPosition()); // ?  it only gets player position to calculate the distance to the bullets
+        playerEntity.update();
+        // ?  the enemies bullet shares the same bullet max range since it is relative to the player
+        BulletManager::GetInstance().update(playerEntity.getPosition()); // ?  it only gets player position to calculate the distance to the bullets
 
 #pragma endregion
 
 
 #pragma region CameraMovement
 
-    Vector2 playerPos = playerEntity.getPosition();
-    Vector2 playerVelocity = playerEntity.getVelocity();
+        Vector2 playerPos = playerEntity.getPosition();
+        Vector2 playerVelocity = playerEntity.getVelocity();
 
-    float leadStrength = 0.35f; 
-    Vector2 leadOffset = Vector2Scale(playerVelocity, leadStrength);
+        float leadStrength = 0.35f; 
+        Vector2 leadOffset = Vector2Scale(playerVelocity, leadStrength);
 
-    Vector2 desiredCameraTarget = Vector2Add(playerPos, leadOffset);
+        Vector2 desiredCameraTarget = Vector2Add(playerPos, leadOffset);
 
 
-    float cameraLerpSpeed = 5.0f; 
-    utils::gameCamera.target.x += (desiredCameraTarget.x - utils::gameCamera.target.x) * (1.0f - expf(-cameraLerpSpeed * deltaTime));
-    utils::gameCamera.target.y += (desiredCameraTarget.y - utils::gameCamera.target.y) * (1.0f - expf(-cameraLerpSpeed * deltaTime));
+        float cameraLerpSpeed = 5.0f; 
+        utils::gameCamera.target.x += (desiredCameraTarget.x - utils::gameCamera.target.x) * (1.0f - expf(-cameraLerpSpeed * deltaTime));
+        utils::gameCamera.target.y += (desiredCameraTarget.y - utils::gameCamera.target.y) * (1.0f - expf(-cameraLerpSpeed * deltaTime));
 
 #pragma endregion
 
-    
-    BulletManager& bm = BulletManager::GetInstance();
-    EnemyManager& em = EnemyManager::GetInstance();
-    AsteroidManager& am = AsteroidManager::GetInstance();
+        
+        BulletManager& bm = BulletManager::GetInstance();
+        EnemyManager& em = EnemyManager::GetInstance();
+        AsteroidManager& am = AsteroidManager::GetInstance();
 
 
 #pragma region UpdateBulletsCollision
 
 
-    for (int i = 0; i < bm.getBullets().size(); i++) {
+        for (int i = 0; i < bm.getBullets().size(); i++) {
 
-        if (!bm.getBullets()[i].isEnemyBullet()) {
-            // Player bullets vs enemies
-            std::vector<std::string> enemiesToRemove;
-            for (auto& [id, enemy] : em.getEnemies()) {
-                if (CheckCollisions(bm.getBullets()[i].getPosition(), 
-                                  enemy->getPosition(), 
-                                  enemy->getHitbox().width)) {
-                    for (int j = 0; j < MAX_SOUND_INSTANCES; j++) {
-                        if (!IsSoundPlaying(scoreSounds[j])) {
-                            PlaySound(scoreSounds[j]);
+            if (!bm.getBullets()[i].isEnemyBullet()) {
+                // Player bullets vs enemies
+                std::vector<std::string> enemiesToRemove;
+                for (auto& [id, enemy] : em.getEnemies()) {
+                    if (CheckCollisions(bm.getBullets()[i].getPosition(), 
+                                    enemy->getPosition(), 
+                                    enemy->getHitbox().width)) {
+                        for (int j = 0; j < MAX_SOUND_INSTANCES; j++) {
+                            if (!IsSoundPlaying(scoreSounds[j])) {
+                                PlaySound(scoreSounds[j]);
+                                break;
+                            }
+                        }
+                        killCounter.increment();
+                        switch (enemy->getEnemyType()) {
+                        case LOW_LEVEL_ENEMY:
+                            playerEntity.addScore(10);
+                            break;
+                        case MID_LEVEL_ENEMY:
+                            playerEntity.addScore(50);
+                            break;
+                        default:
+                            playerEntity.addScore(5);
                             break;
                         }
+                        enemiesToRemove.push_back(id);
+                        break;
                     }
-                    killCounter.increment();
-                    switch (enemy->getEnemyType()) {
-                    case LOW_LEVEL_ENEMY:
-                        playerEntity.addScore(10);
-                        break;
-                    case MID_LEVEL_ENEMY:
-                        playerEntity.addScore(50);
-                        break;
-                    default:
+                }
+                
+                // Player bullets vs asteroids
+                std::vector<std::string> asteroidsToRemove;
+                for (auto& [id, asteroid] : am.getAsteroids()) {
+                    if (CheckCollisions(bm.getBullets()[i].getPosition(),
+                                    asteroid->getPosition(),
+                                    asteroid->getAsteroidSize())) {
+                        for (int j = 0; j < MAX_SOUND_INSTANCES; j++) {
+                            if (!IsSoundPlaying(scoreSounds[j])) {
+                                PlaySound(scoreSounds[j]);
+                                break;
+                            }
+                        }
+                        killCounter.increment();
                         playerEntity.addScore(5);
-                        break;
+                        asteroidsToRemove.push_back(id);
+                        break; 
                     }
-                    enemiesToRemove.push_back(id);
-                    break;
                 }
-            }
-            
-            // Player bullets vs asteroids
-            std::vector<std::string> asteroidsToRemove;
-            for (auto& [id, asteroid] : am.getAsteroids()) {
-                if (CheckCollisions(bm.getBullets()[i].getPosition(),
-                                   asteroid->getPosition(),
-                                   asteroid->getAsteroidSize())) {
-                    for (int j = 0; j < MAX_SOUND_INSTANCES; j++) {
-                        if (!IsSoundPlaying(scoreSounds[j])) {
-                            PlaySound(scoreSounds[j]);
-                            break;
-                        }
-                    }
-                    killCounter.increment();
-                    playerEntity.addScore(5);
-                    asteroidsToRemove.push_back(id);
-                    break; 
-                }
-            }
-    
+        
 
-            if (!enemiesToRemove.empty() || !asteroidsToRemove.empty()) {
-                bm.removeBullet(i);
-                i--; 
-                
-                for (auto& id : enemiesToRemove) {
-                    em.removeEnemy(id);
-                }
-                for (auto& id : asteroidsToRemove) {
-                    am.removeAsteroid(id);
+                if (!enemiesToRemove.empty() || !asteroidsToRemove.empty()) {
+                    bm.removeBullet(i);
+                    i--; 
+                    
+                    for (auto& id : enemiesToRemove) {
+                        em.removeEnemy(id);
+                    }
+                    for (auto& id : asteroidsToRemove) {
+                        am.removeAsteroid(id);
+                    }
                 }
             }
-        }
-        else {
-            // Enemy bullets vs player
-            if (CheckCollisions(bm.getBullets()[i].getPosition(),
-                               playerEntity.getPosition(),
-                               playerEntity.getHitbox().width) &&
-                               playerEntity.getPlayerState() == PLAYER_DEFAULT) {
-                Vector2 bulletPosition = bm.getBullets()[i].getPosition(); 
-                bm.removeBullet(i);
-                playerEntity.takeDamage(GetTime(), bulletPosition, 3.0f);
-                i--; 
-                continue;
-            }
-            
-            // Enemy bullets vs asteroids
-            std::vector<std::string> asteroidsToRemove;
-            for (auto& [id, asteroid] : am.getAsteroids()) {
+            else {
+                // Enemy bullets vs player
                 if (CheckCollisions(bm.getBullets()[i].getPosition(),
-                                  asteroid->getPosition(),
-                                  asteroid->getAsteroidSize())) {
-                    asteroidsToRemove.push_back(id);
-                    break; 
+                                playerEntity.getPosition(),
+                                playerEntity.getHitbox().width) &&
+                                playerEntity.getPlayerState() == PLAYER_DEFAULT) {
+                    Vector2 bulletPosition = bm.getBullets()[i].getPosition(); 
+                    bm.removeBullet(i);
+                    playerEntity.takeDamage(GetTime(), bulletPosition, 3.0f);
+                    if (playerEntity.getHealth() <= 0) gameState = GAME_OVER;
+                    i--; 
+                    continue;
                 }
-            }
-    
-            if (!asteroidsToRemove.empty()) {
-                bm.removeBullet(i);
-                i--;
                 
-                for (auto& id : asteroidsToRemove) {
-                    am.removeAsteroid(id);
+                // Enemy bullets vs asteroids
+                std::vector<std::string> asteroidsToRemove;
+                for (auto& [id, asteroid] : am.getAsteroids()) {
+                    if (CheckCollisions(bm.getBullets()[i].getPosition(),
+                                    asteroid->getPosition(),
+                                    asteroid->getAsteroidSize())) {
+                        asteroidsToRemove.push_back(id);
+                        break; 
+                    }
+                }
+        
+                if (!asteroidsToRemove.empty()) {
+                    bm.removeBullet(i);
+                    i--;
+                    
+                    for (auto& id : asteroidsToRemove) {
+                        am.removeAsteroid(id);
+                    }
                 }
             }
         }
-    }
-    
+        
 
 #pragma endregion
 
@@ -290,87 +313,125 @@ std::string Game::update()
 
 #pragma region UpdateAsteroids
 
-   
-    am.update(playerEntity.getPosition(), gameTimer); 
-    // TraceLog(LOG_INFO, "Asteroid count: %d", asteroids.size());
+    
+        am.update(playerEntity.getPosition(), gameTimer); 
+        // TraceLog(LOG_INFO, "Asteroid count: %d", asteroids.size());
 
 #pragma endregion
 
 
-    EnemyManager::GetInstance().update(playerEntity.getPosition(), gameTimer); //! <<***********************
+        EnemyManager::GetInstance().update(playerEntity.getPosition(), gameTimer); //! <<***********************
 
 
 
 #pragma region UpdateEntitiesCollision
 
-    std::vector<std::string> enemiesToRemove;
-    std::vector<std::string> asteroidsToRemove;
- 
-    for (auto& [enemyId, enemy] : EnemyManager::GetInstance().getEnemies()) {   
-        
-        // player to enemy collision
-        if (CheckCollisions(enemy->getPosition(), playerEntity.getPosition(), playerEntity.getHitbox().width)
-            && playerEntity.getPlayerState() == PLAYER_DEFAULT) {
-            playerEntity.takeDamage(GetTime(), enemy->getPosition(), enemy->getHitbox().width);
-            enemiesToRemove.push_back(enemyId);
-            continue; 
-        }
-        
-        // enemy to asteroid collision
-        for (auto& [asteroidId, asteroid] : AsteroidManager::GetInstance().getAsteroids()) {
-            if (CheckCollisions(enemy->getPosition(), asteroid->getPosition(), asteroid->getAsteroidSize())) {
-                enemiesToRemove.push_back(enemyId);
-                asteroidsToRemove.push_back(asteroidId);
-                break; 
-            }
-        }
-    }
+        std::vector<std::string> enemiesToRemove;
+        std::vector<std::string> asteroidsToRemove;
     
-    // player to asteroid collision
-    for (auto& [asteroidId, asteroid] : AsteroidManager::GetInstance().getAsteroids()) {
-        if (CheckCollisions(asteroid->getPosition(), playerEntity.getPosition(), playerEntity.getHitbox().width) 
-            && playerEntity.getPlayerState() == PLAYER_DEFAULT) {
-            playerEntity.takeDamage(GetTime(), asteroid->getPosition(), asteroid->getAsteroidSize());
-            asteroidsToRemove.push_back(asteroidId);
-        }
-    }
-    
-    // asteroid to asteroid collision
-    std::unordered_set<std::string> collidedAsteroids;
-    for (auto& [id1, asteroid1] : AsteroidManager::GetInstance().getAsteroids()) {
-        if (collidedAsteroids.count(id1)) continue; 
-        
-        for (auto& [id2, asteroid2] : AsteroidManager::GetInstance().getAsteroids()) {
-            if (id1 == id2 || collidedAsteroids.count(id2)) continue;
+        for (auto& [enemyId, enemy] : EnemyManager::GetInstance().getEnemies()) {   
             
-            if (CheckCollisions(asteroid1->getPosition(), asteroid2->getPosition(), asteroid1->getAsteroidSize())) {
-                collidedAsteroids.insert(id1);
-                collidedAsteroids.insert(id2);
-                break; 
+            // player to enemy collision
+            if (CheckCollisions(enemy->getPosition(), playerEntity.getPosition(), playerEntity.getHitbox().width)
+                && playerEntity.getPlayerState() == PLAYER_DEFAULT) {
+                playerEntity.takeDamage(GetTime(), enemy->getPosition(), enemy->getHitbox().width);
+                if (playerEntity.getHealth() <= 0) gameState = GAME_OVER;
+                enemiesToRemove.push_back(enemyId);
+                continue; 
+            }
+            
+            // enemy to asteroid collision
+            for (auto& [asteroidId, asteroid] : AsteroidManager::GetInstance().getAsteroids()) {
+                if (CheckCollisions(enemy->getPosition(), asteroid->getPosition(), asteroid->getAsteroidSize())) {
+                    enemiesToRemove.push_back(enemyId);
+                    asteroidsToRemove.push_back(asteroidId);
+                    break; 
+                }
             }
         }
-    }
-    
-    std::sort(asteroidsToRemove.begin(), asteroidsToRemove.end());
-    asteroidsToRemove.erase(std::unique(asteroidsToRemove.begin(), asteroidsToRemove.end()), asteroidsToRemove.end());
-    
-    for (const auto& id : collidedAsteroids) {
-        if (std::find(asteroidsToRemove.begin(), asteroidsToRemove.end(), id) == asteroidsToRemove.end()) {
-            asteroidsToRemove.push_back(id);
+        
+        // player to asteroid collision
+        for (auto& [asteroidId, asteroid] : AsteroidManager::GetInstance().getAsteroids()) {
+            if (CheckCollisions(asteroid->getPosition(), playerEntity.getPosition(), playerEntity.getHitbox().width) 
+                && playerEntity.getPlayerState() == PLAYER_DEFAULT) {
+                playerEntity.takeDamage(GetTime(), asteroid->getPosition(), asteroid->getAsteroidSize());
+                if (playerEntity.getHealth() <= 0) gameState = GAME_OVER;
+                asteroidsToRemove.push_back(asteroidId);
+            }
         }
-    }
-    
-    for (const auto& id : enemiesToRemove) {
-        em.removeEnemy(id);
-    }
-    
-    for (const auto& id : asteroidsToRemove) {
-        am.removeAsteroid(id);
-    }
-    
+        
+        // asteroid to asteroid collision
+        std::unordered_set<std::string> collidedAsteroids;
+        for (auto& [id1, asteroid1] : AsteroidManager::GetInstance().getAsteroids()) {
+            if (collidedAsteroids.count(id1)) continue; 
+            
+            for (auto& [id2, asteroid2] : AsteroidManager::GetInstance().getAsteroids()) {
+                if (id1 == id2 || collidedAsteroids.count(id2)) continue;
+                
+                if (CheckCollisions(asteroid1->getPosition(), asteroid2->getPosition(), asteroid1->getAsteroidSize())) {
+                    collidedAsteroids.insert(id1);
+                    collidedAsteroids.insert(id2);
+                    break; 
+                }
+            }
+        }
+        
+        std::sort(asteroidsToRemove.begin(), asteroidsToRemove.end());
+        asteroidsToRemove.erase(std::unique(asteroidsToRemove.begin(), asteroidsToRemove.end()), asteroidsToRemove.end());
+        
+        for (const auto& id : collidedAsteroids) {
+            if (std::find(asteroidsToRemove.begin(), asteroidsToRemove.end(), id) == asteroidsToRemove.end()) {
+                asteroidsToRemove.push_back(id);
+            }
+        }
+        
+        for (const auto& id : enemiesToRemove) {
+            em.removeEnemy(id);
+        }
+        
+        for (const auto& id : asteroidsToRemove) {
+            am.removeAsteroid(id);
+        }
+        
 #pragma endregion
 
-    killCounter.update();
+        killCounter.update();
+        break;
+    }
+    
+    case GAME_AUGMENT_SELECTION:
+    {
+        // Handle augment selection logic
+        for (auto& card : augmentCards) {
+            card.update();
+            if (card.isIntroComplete() && card.isClicked()) {
+                card.startExitAnimation();
+            }
+            if (card.isExitComplete()) {
+                augmentCards.clear();
+                gameTimer.unpause();
+                gameState = GAME_RUNNING; 
+            }
+        }
+        break; 
+    }
+    
+    case GAME_PAUSED:
+    {
+        gameTimer.pause();
+        break;
+    }
+    
+    case GAME_OVER:
+    {
+        // Handle game over state - play death animation, show game over screen
+        // Stop all game logic updates
+        break;
+    }
+    
+    default:
+        TraceLog(LOG_ERROR, "Unknown game state: %d", gameState);
+    }
 
     // std:: cout << "Player Health: " << playerEntity.getHealth() << std::endl;
 

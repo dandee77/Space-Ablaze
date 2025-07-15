@@ -266,7 +266,7 @@ void Card::drawCardContent() const {
     }
     
     // Hide content during intro animation for first 0.2 seconds
-    if (isIntroPlaying && introAnimationTime < 0.2f) {
+    if (isIntroPlaying && introAnimationTime < 0.3f) {
         return;
     }
     

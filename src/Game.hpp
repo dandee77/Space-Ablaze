@@ -16,6 +16,15 @@
 
 #define MAX_SOUND_INSTANCES 10
 
+
+enum GameState
+{
+    GAME_RUNNING = 0,
+    GAME_AUGMENT_SELECTION,
+    GAME_PAUSED,
+    GAME_OVER,
+};
+
 class Game : public Scene
 {
 public:
@@ -32,6 +41,8 @@ private:
         float parallaxFactor; // 0.0 (stationary) to 1.0 (moves with player)
         float size;
     };
+
+    GameState gameState;
 
     std::vector<BackgroundLayer> backgroundLayers;
     float worldTileSize;
