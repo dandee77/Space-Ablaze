@@ -12,6 +12,7 @@
 #include <array>
 #include "Card.hpp"
 #include <vector>
+#include "Utils.hpp"
 
 #define MAX_SOUND_INSTANCES 10
 

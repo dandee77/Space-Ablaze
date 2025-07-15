@@ -9,7 +9,7 @@ namespace utils
         {"Trigger Happy", "Boosts fire rate\nfor faster shooting"},
         {"Scatter Shot", "Fires bullets in\nmultiple directions"},
         {"Agility Boost", "Increases player\nmovement speed"},
-        {"Iron Core", "Increases max\nhealth capacity"},
+        {"Second Wind", "Heals a portion\nof your HP instantly"},
         {"Piercing Rounds", "Bullets pierce through\nenemies"},
         {"Phase Shift", "Extends iframe duration\nafter damage"},
         {"Gyro Control", "Increases rotation\nspeed for faster turns"}

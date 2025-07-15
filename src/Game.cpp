@@ -1,6 +1,7 @@
 #include "Game.hpp"
 #include <cmath>
 #include <iostream>
+#include <vector>
 #include "Animator.hpp"
 #include "Bullet.hpp"
 #include "raymath.h" 
@@ -86,17 +87,6 @@ void Game::onSwitch()
     Animator::GetInstance().Play("wasd_keys_tutorial");
     Animator::GetInstance().Play("e_key_tutorial");
 
-    // scoreSounds[0] = LoadSound("assets/sounds/button_click.wav");
-    // scoreSounds[1] = LoadSound("assets/sounds/Click_02.wav");
-    // scoreSounds[2] = LoadSound("assets/sounds/Confirm_01.wav");
-    // scoreSounds[3] = LoadSound("assets/sounds/Confirm_04.wav");
-    // scoreSounds[4] = LoadSound("assets/sounds/button_hover.wav");
-    // scoreSounds[5] = LoadSound("assets/sounds/button_click.wav");
-    // scoreSounds[6] = LoadSound("assets/sounds/Click_02.wav");
-    // scoreSounds[7] = LoadSound("assets/sounds/Confirm_01.wav");
-    // scoreSounds[8] = LoadSound("assets/sounds/Confirm_04.wav");
-    // scoreSounds[9] = LoadSound("assets/sounds/button_hover.wav");
-
     for (int i = 0; i < MAX_SOUND_INSTANCES; i++) {
         scoreSounds[i] = LoadSound("assets/sounds/score_sound.wav");
     }
@@ -122,9 +112,26 @@ std::string Game::update()
     } 
     else {
         if ((int)gameTimer.getElapsedTime() % 10 == 0) {
-            augmentCards.push_back(Card({1000, 500}, {1800, 300}, "Rapid Fire", "Increases attack\nspeed by 50%"));
-            augmentCards.push_back(Card({1000, 900}, {1800, 300}, "Piercing Shot", "Bullets pierce through\nenemies"));
-            augmentCards.push_back(Card({1000, 1300}, {1800, 300}, "Shield", "Grants a shield that\nabsorbs damage"));
+    
+            std::vector<int> usedIndices;
+            std::vector<Vector2> cardPositions = {{1000, 500}, {1000, 900}, {1000, 1300}};
+            
+            for (int i = 0; i < 3; i++) {
+                int randomIndex;
+                do {
+                    randomIndex = rand() % utils::augmentPool.size();
+                } while (std::find(usedIndices.begin(), usedIndices.end(), randomIndex) != usedIndices.end());
+                
+                usedIndices.push_back(randomIndex);
+                
+                augmentCards.push_back(Card(
+                    cardPositions[i], 
+                    {1800, 300}, 
+                    utils::augmentPool[randomIndex][0], 
+                    utils::augmentPool[randomIndex][1]
+                ));
+            }
+            
             for (auto& card : augmentCards) {
                 card.startIntroAnimation();
             }
