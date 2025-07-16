@@ -19,6 +19,7 @@ public:
     void addBullet(Bullet bullet);
     void clear();   
     std::vector<Bullet>& getBullets() { return bullets; }
+    Bullet& getBullet(int index) { return bullets[index]; }
     void removeBullet(int index) { bullets.erase(bullets.begin() + index); }
     void reset() { bullets.clear(); }
 

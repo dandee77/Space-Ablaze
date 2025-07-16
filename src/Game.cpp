@@ -212,6 +212,8 @@ std::string Game::update()
             if (!bm.getBullets()[i].isEnemyBullet()) {
                 // Player bullets vs enemies
                 std::vector<std::string> enemiesToRemove;
+                bool hitSomething = false;
+                
                 for (auto& [id, enemy] : em.getEnemies()) {
                     if (CheckCollisions(bm.getBullets()[i].getPosition(), 
                                     enemy->getPosition(), 
@@ -235,33 +237,43 @@ std::string Game::update()
                             break;
                         }
                         enemiesToRemove.push_back(id);
+                        hitSomething = true;
                         break;
                     }
                 }
                 
                 // Player bullets vs asteroids
                 std::vector<std::string> asteroidsToRemove;
-                for (auto& [id, asteroid] : am.getAsteroids()) {
-                    if (CheckCollisions(bm.getBullets()[i].getPosition(),
-                                    asteroid->getPosition(),
-                                    asteroid->getAsteroidSize())) {
-                        for (int j = 0; j < MAX_SOUND_INSTANCES; j++) {
-                            if (!IsSoundPlaying(scoreSounds[j])) {
-                                PlaySound(scoreSounds[j]);
-                                break;
+                if (!hitSomething) {
+                    for (auto& [id, asteroid] : am.getAsteroids()) {
+                        if (CheckCollisions(bm.getBullets()[i].getPosition(),
+                                        asteroid->getPosition(),
+                                        asteroid->getAsteroidSize())) {
+                            for (int j = 0; j < MAX_SOUND_INSTANCES; j++) {
+                                if (!IsSoundPlaying(scoreSounds[j])) {
+                                    PlaySound(scoreSounds[j]);
+                                    break;
+                                }
                             }
+                            killCounter.increment();
+                            playerEntity.addScore(5);
+                            asteroidsToRemove.push_back(id);
+                            hitSomething = true;
+                            break; 
                         }
-                        killCounter.increment();
-                        playerEntity.addScore(5);
-                        asteroidsToRemove.push_back(id);
-                        break; 
                     }
                 }
         
 
-                if (!enemiesToRemove.empty() || !asteroidsToRemove.empty()) {
-                    bm.removeBullet(i);
-                    i--; 
+                if (hitSomething) {
+                    // Reduce pierce power when hitting something
+                    bm.getBullets()[i].reducePiercePower();
+                    
+                    // Only remove bullet if it can't pierce anymore
+                    if (!bm.getBullets()[i].canPierce()) {
+                        bm.removeBullet(i);
+                        i--; 
+                    }
                     
                     for (auto& id : enemiesToRemove) {
                         em.removeEnemy(id);
@@ -416,7 +428,7 @@ std::string Game::update()
                 } else if (card.getTitle() == "Second Wind") {
                     playerEntity.increasePlayerHealth();
                 } else if (card.getTitle() == "Piercing Rounds") { // bullet pierce
-                    //none
+                    playerEntity.increasePiercingRounds();
                 } else if (card.getTitle() == "Phase Shift") {
                     playerEntity.increasePlayerIframeDuration();
                 } else if (card.getTitle() == "Gyro Control") {

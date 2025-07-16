@@ -53,14 +53,17 @@ void Player::init()
     iframeDuration = PLAYER_STATE_IFRAME_DURATION;
     rotationSpeedMultiplier = 1.0f; 
 
-    // Trigger Happy burst fire initialization
-    burstCount = 1;  // Default: single shot
+    // trigger Happy burst fire initialization
+    burstCount = 1; 
     currentBurstShot = 0;
     burstDelay = 0.1f;  // 100ms delay between burst shots
     isBurstActive = false; 
 
-    // Scatter Shot initialization
-    scatterCount = 1;  // Default: single bullet 
+    // scatter Shot initialization
+    scatterCount = 1;  
+
+    // piercing Rounds initialization
+    bulletPiercePower = 1; 
 
     // ? We animate two textures, one for acceleration and one for deacceleration
     // ? Then hide the deacceleration animation until we need it
@@ -146,10 +149,16 @@ void Player::increaseScatterShot() {
     TraceLog(LOG_INFO, "Player scatter count increased to: %d", scatterCount);
 }
 
+// increase bullet pierce power by 1
+void Player::increasePiercingRounds() {
+    bulletPiercePower++;
+    TraceLog(LOG_INFO, "Player bullet pierce power increased to: %d", bulletPiercePower);
+}
+
 
 void Player::fireScatterBullets(Vector2 baseDirection) {
     if (scatterCount == 1) {
-        Bullet bullet = Bullet(position, baseDirection, false);
+        Bullet bullet = Bullet(position, baseDirection, false, bulletPiercePower);
         BulletManager::GetInstance().addBullet(bullet);
     } else {
       
@@ -157,7 +166,7 @@ void Player::fireScatterBullets(Vector2 baseDirection) {
         float angleStep = 30.0f * DEG2RAD; 
         
         if (scatterCount % 2 == 1) {
-            Bullet centerBullet = Bullet(position, baseDirection, false);
+            Bullet centerBullet = Bullet(position, baseDirection, false, bulletPiercePower);
             BulletManager::GetInstance().addBullet(centerBullet);
             
             for (int i = 1; i <= scatterCount / 2; i++) {
@@ -167,8 +176,8 @@ void Player::fireScatterBullets(Vector2 baseDirection) {
                 Vector2 leftDir = {cos(leftAngle), sin(leftAngle)};
                 Vector2 rightDir = {cos(rightAngle), sin(rightAngle)};
                 
-                Bullet leftBullet = Bullet(position, leftDir, false);
-                Bullet rightBullet = Bullet(position, rightDir, false);
+                Bullet leftBullet = Bullet(position, leftDir, false, bulletPiercePower);
+                Bullet rightBullet = Bullet(position, rightDir, false, bulletPiercePower);
                 
                 BulletManager::GetInstance().addBullet(leftBullet);
                 BulletManager::GetInstance().addBullet(rightBullet);
@@ -181,8 +190,8 @@ void Player::fireScatterBullets(Vector2 baseDirection) {
                 Vector2 leftDir = {cos(leftAngle), sin(leftAngle)};
                 Vector2 rightDir = {cos(rightAngle), sin(rightAngle)};
                 
-                Bullet leftBullet = Bullet(position, leftDir, false);
-                Bullet rightBullet = Bullet(position, rightDir, false);
+                Bullet leftBullet = Bullet(position, leftDir, false, bulletPiercePower);
+                Bullet rightBullet = Bullet(position, rightDir, false, bulletPiercePower);
                 
                 BulletManager::GetInstance().addBullet(leftBullet);
                 BulletManager::GetInstance().addBullet(rightBullet);

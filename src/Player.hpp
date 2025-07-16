@@ -37,12 +37,12 @@ public:
     void increasePlayerRotationSpeed();
     void increaseTriggerHappyBurst();
     void increaseScatterShot();
-    // void setPlayerFireRate(int fireRate);
-    // void setPlayerBulletPierce(int piercePower);
+    void increasePiercingRounds();
+
 
 private:
     
-    // Helper function for scatter shot
+
     void fireScatterBullets(Vector2 baseDirection);
     
 // plyr attrbutes (some are on the entity class)
@@ -61,6 +61,9 @@ private:
 
  // Scatter Shot variables
     int scatterCount;
+
+// Piercing Rounds variables
+    int bulletPiercePower;
 
     int playerScore;
     Camera2D camera;

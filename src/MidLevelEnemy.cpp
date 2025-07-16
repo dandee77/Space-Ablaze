@@ -74,7 +74,7 @@ void MidLevelEnemy::update()
     if (shouldShoot && !fireCooldown.isOnCooldown() && dist <= ENEMY_MAX_RANGE)
     {
         fireCooldown.startCooldown();
-        Bullet b(position, viewDirection, true);
+        Bullet b(position, viewDirection, true, 1);  // Enemy bullets have default pierce power
         b.setBulletSpeed(bulletSpeed);
         BulletManager::GetInstance().addBullet(b);
     }
