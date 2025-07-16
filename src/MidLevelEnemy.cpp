@@ -11,6 +11,7 @@
 MidLevelEnemy::MidLevelEnemy(std::string enemyID, EnemyType type, Vector2 spawnPos, Vector2 playerPos) 
     : Enemy(enemyID, type, spawnPos, playerPos), textureName("mid_level_enemy"), fireCooldown(1.5f)
 {
+    health = 50;  // Mid level enemies have 50 health
     spriteSize = 15.0f;
     origin = {spriteSize / 2.0f, spriteSize / 2.0f};
     speed = GetRandomValue(25, 50);

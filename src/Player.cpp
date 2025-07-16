@@ -59,11 +59,15 @@ void Player::init()
     burstDelay = 0.1f;  // 100ms delay between burst shots
     isBurstActive = false; 
 
-    // scatter Shot initialization
+    // scatter shot initialization
     scatterCount = 1;  
 
-    // piercing Rounds initialization
+    // piercing rounds initialization
     bulletPiercePower = 1; 
+
+    // Damage system initialization
+    minDamage = 7;
+    maxDamage = 12; 
 
     // ? We animate two textures, one for acceleration and one for deacceleration
     // ? Then hide the deacceleration animation until we need it
@@ -153,6 +157,10 @@ void Player::increaseScatterShot() {
 void Player::increasePiercingRounds() {
     bulletPiercePower++;
     TraceLog(LOG_INFO, "Player bullet pierce power increased to: %d", bulletPiercePower);
+}
+
+int Player::getRandomDamage() const {
+    return GetRandomValue(minDamage, maxDamage);
 }
 
 

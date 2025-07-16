@@ -13,6 +13,7 @@
 #include "Card.hpp"
 #include <vector>
 #include "Utils.hpp"
+#include "DamageIndicatorManager.hpp"
 
 #define MAX_SOUND_INSTANCES 10
 

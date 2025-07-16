@@ -32,6 +32,9 @@ public:
     inline Rectangle getHitbox() const { return hitbox; };
     std::string getEnemyID() const { return enemyID; };
     virtual void destruct() = 0;
+    
+    void takeDamage(int damage);
+    bool isDead() const { return health <= 0; }
 
 protected:
 

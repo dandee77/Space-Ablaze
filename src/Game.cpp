@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <unordered_set>
 #include <memory>
+#include "DamageIndicatorManager.hpp"
 
 
 static bool CheckCollisions(Vector2 bulletPos, Vector2 shipPos, float shipSize) // circled hitbox so edit the draw hitbox
@@ -52,6 +53,7 @@ void Game::onSwitch()
     EnemyManager::GetInstance().reset();
     AsteroidManager::GetInstance().reset();
     BulletManager::GetInstance().reset();
+    DamageIndicatorManager::GetInstance().reset();
 
     playerBulletTexture = ResourceManager::GetInstance().GetTexture("player_bullet");
     enemyBulletTexture = ResourceManager::GetInstance().GetTexture("enemy_bullet");
@@ -177,6 +179,7 @@ std::string Game::update()
         playerEntity.update();
         // ?  the enemies bullet shares the same bullet max range since it is relative to the player
         BulletManager::GetInstance().update(playerEntity.getPosition()); // ?  it only gets player position to calculate the distance to the bullets
+        DamageIndicatorManager::GetInstance().update();
 
 #pragma endregion
 
@@ -218,25 +221,36 @@ std::string Game::update()
                     if (CheckCollisions(bm.getBullets()[i].getPosition(), 
                                     enemy->getPosition(), 
                                     enemy->getHitbox().width)) {
-                        for (int j = 0; j < MAX_SOUND_INSTANCES; j++) {
-                            if (!IsSoundPlaying(scoreSounds[j])) {
-                                PlaySound(scoreSounds[j]);
+                        
+                        int damage = playerEntity.getRandomDamage();
+                        enemy->takeDamage(damage);
+                        
+                        DamageIndicatorManager::GetInstance().addDamageIndicator(
+                            enemy->getPosition(), damage, playerEntity.getMaxDamage(), enemy->getEnemyID());
+            
+                        
+                        if (enemy->isDead()) {
+                            killCounter.increment();
+                            for (int j = 0; j < MAX_SOUND_INSTANCES; j++) {
+                                if (!IsSoundPlaying(scoreSounds[j])) {
+                                    PlaySound(scoreSounds[j]);
+                                    break;
+                                }
+                            }
+                            switch (enemy->getEnemyType()) {
+                            case LOW_LEVEL_ENEMY:
+                                playerEntity.addScore(10);
+                                break;
+                            case MID_LEVEL_ENEMY:
+                                playerEntity.addScore(50);
+                                break;
+                            default:
+                                playerEntity.addScore(5);
                                 break;
                             }
+                            enemiesToRemove.push_back(id);
                         }
-                        killCounter.increment();
-                        switch (enemy->getEnemyType()) {
-                        case LOW_LEVEL_ENEMY:
-                            playerEntity.addScore(10);
-                            break;
-                        case MID_LEVEL_ENEMY:
-                            playerEntity.addScore(50);
-                            break;
-                        default:
-                            playerEntity.addScore(5);
-                            break;
-                        }
-                        enemiesToRemove.push_back(id);
+                        
                         hitSomething = true;
                         break;
                     }
@@ -266,10 +280,9 @@ std::string Game::update()
         
 
                 if (hitSomething) {
-                    // Reduce pierce power when hitting something
+   
                     bm.getBullets()[i].reducePiercePower();
                     
-                    // Only remove bullet if it can't pierce anymore
                     if (!bm.getBullets()[i].canPierce()) {
                         bm.removeBullet(i);
                         i--; 
@@ -511,6 +524,7 @@ void Game::draw()
 
         EnemyManager::GetInstance().draw();
         AsteroidManager::GetInstance().draw();
+        DamageIndicatorManager::GetInstance().draw();
 
 #pragma region ControlsGuide
 
@@ -547,12 +561,12 @@ void Game::draw()
             Color textTint = {128, 128, 128, (unsigned char)(alpha * 255)}; 
             
             // WASD text
-            Vector2 wasdTextScreenPos = {wasdScreenPos.x + 380, wasdScreenPos.y + 50}; // Offset to the right
+            Vector2 wasdTextScreenPos = {wasdScreenPos.x + 380, wasdScreenPos.y + 50}; 
             Vector2 wasdTextWorldPos = GetScreenToWorld2D(wasdTextScreenPos, utils::gameCamera);
             DrawTextEx(font, "MOVEMENT", wasdTextWorldPos, 5, 0, textTint);
             
             // E key text
-            Vector2 eKeyTextScreenPos = {eKeyScreenPos.x + 160, eKeyScreenPos.y}; // Offset to the right
+            Vector2 eKeyTextScreenPos = {eKeyScreenPos.x + 160, eKeyScreenPos.y}; 
             Vector2 eKeyTextWorldPos = GetScreenToWorld2D(eKeyTextScreenPos, utils::gameCamera);
             DrawTextEx(font, "AUTO-SHOOT", eKeyTextWorldPos, 5, 0, textTint);
         }

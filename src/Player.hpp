@@ -38,6 +38,11 @@ public:
     void increaseTriggerHappyBurst();
     void increaseScatterShot();
     void increasePiercingRounds();
+    
+    // Damage system
+    int getRandomDamage() const;
+    int getMinDamage() const { return minDamage; }
+    int getMaxDamage() const { return maxDamage; }
 
 
 private:
@@ -64,6 +69,10 @@ private:
 
 // Piercing Rounds variables
     int bulletPiercePower;
+
+    // Damage system
+    int minDamage;
+    int maxDamage;
 
     int playerScore;
     Camera2D camera;

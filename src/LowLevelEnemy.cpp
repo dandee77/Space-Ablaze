@@ -16,6 +16,7 @@ static const std::string EnemyTextureNames[] =
 LowLevelEnemy::LowLevelEnemy(std::string enemyID, EnemyType type, Vector2 spawnPos, Vector2 playerPos) 
     : Enemy(enemyID, type, spawnPos, playerPos), textureName(EnemyTextureNames[GetRandomValue(0, 2)])
 {
+    health = 30;  // Low level enemies have 30 health
     spriteSize = 15.0f;
     origin = {spriteSize / 2.0f, spriteSize / 2.0f};
     speed = GetRandomValue(15, 30);
