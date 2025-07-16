@@ -30,15 +30,19 @@ public:
     void addScore(int score) { playerScore += score; }
     int getScore() const { return playerScore; }
 
-    // void setPlayerAttackSpeed(float attackSpeed);
+    void increasePlayerAttackSpeed();
+    void increasePlayerHealth();
+    void increasePlayerMovementSpeed();
+    void increasePlayerIframeDuration();
     // void setPlayerFireRate(int fireRate);
-    // void setPlayerMovementSpeed(float movementSpeed);
-    // void setPlayerHealth(int health);
     // void setPlayerBulletPierce(int piercePower);
-    // void setPlayerIframeDuration(float duration);
     // void setPlayerRotationSpeed(float rotationSpeed);
 
 private:
+    float rotationVelocity = 0.0f; 
+// plyr attrbutes (some are on the entity class)
+    float attackSpeed;
+    float iframeDuration;
 
     int playerScore;
     Camera2D camera;

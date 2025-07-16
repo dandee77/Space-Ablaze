@@ -10,7 +10,7 @@
 #define GAME_SCREEN_WIDTH 3840
 #define GAME_SCREEN_HEIGHT 2160
 
-#define PLAYER_SPEED 70.0f
+#define PLAYER_SPEED 50.0f
 #define PLAYER_MAX_ACCELERATION 400.0f
 
 #define PLAYER_STATE_STUN_DURATION 0.2f
@@ -39,7 +39,6 @@ void Player::init()
     rect = {250, 250, 8, 8};
     position = {rect.x, rect.y};
     speed = PLAYER_SPEED;
-    health = 100;
     damage = 10.0f;
     rotation = 0.0f;
     velocity = {0, 0};
@@ -47,6 +46,11 @@ void Player::init()
     playerState = PLAYER_DEFAULT;
     timeStateEntered = 0.0f;
     origin = {rect.width / 2.0f, rect.height / 2.0f};
+    
+    // attributes
+    attackSpeed = 0.5f; 
+    health = 100;
+    iframeDuration = PLAYER_STATE_IFRAME_DURATION;
 
     // ? We animate two textures, one for acceleration and one for deacceleration
     // ? Then hide the deacceleration animation until we need it
@@ -74,8 +78,7 @@ void Player::init()
     Animator::GetInstance().SetOrigin("deaccelerating", origin);
     Animator::GetInstance().Play("deaccelerating");
 
-
-    playerAttackCooldown = Cooldown(0.1f); 
+    playerAttackCooldown = Cooldown(attackSpeed); 
     playerAttackCooldown.startCooldown(); // ? prevents accidental shooting at the start of the game
     autoShoot = false;
     rect.width -= 4.0f;
@@ -87,6 +90,35 @@ void Player::init()
         shootingSounds[i] = LoadSound("assets/sounds/player_atk_sound.mp3");
     }
 };
+
+#pragma region PlayerAttributes
+
+// decrease by 10% 
+void Player::increasePlayerAttackSpeed() {
+    float newCooldown = attackSpeed * 0.9f;
+    playerAttackCooldown.updateCooldownDuration(newCooldown);
+}
+
+// increase health by 10
+void Player::increasePlayerHealth() {
+    if (health < 100) health += 10; 
+}
+
+// increase speed by 10%
+void Player::increasePlayerMovementSpeed() {
+    speed *= 1.1f; // increase speed by 10%
+    // if (speed > PLAYER_SPEED * 2.0f) speed = PLAYER_SPEED * 2.0f;
+}
+
+// increase iframe duration by 10%
+void Player::increasePlayerIframeDuration() {
+    iframeDuration *= 1.1f;
+    // if (iframeDuration > PLAYER_STATE_IFRAME_DURATION * 2.0f) iframeDuration = PLAYER_STATE_IFRAME_DURATION * 2.0f;
+}
+
+
+
+#pragma endregion PlayerAttributes
 
 
 void Player::update() {
@@ -107,7 +139,7 @@ void Player::update() {
         }
         break;
     case PLAYER_IFRAME:
-        if ((GetTime() - timeStateEntered) > PLAYER_STATE_IFRAME_DURATION)
+        if ((GetTime() - timeStateEntered) > iframeDuration)
         {
             playerState = PLAYER_DEFAULT;
             Animator::GetInstance().SetTint("accelerating", WHITE);
@@ -143,34 +175,26 @@ void Player::update() {
 #pragma region PlayerRotation
 
     Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), utils::gameCamera); 
-
     Vector2 direction = Vector2Subtract(mouseWorldPos, position);
 
     if (Vector2Length(direction) == 0.0f) direction = {1, 0};
     else direction = Vector2Normalize(direction);
 
-    // ? standard rotation
-    float rotation = atan2f(direction.y, direction.x) * RAD2DEG + 90.0f; 
+    float targetRotation = atan2(direction.y, direction.x) * RAD2DEG + 90.0f;
 
-    // // ! SMOOTHING ROTATION WAS BUGGED ASF
-    // // ? IT WORKS NOW? SOMEHOW IDEK
-    // float targetRotation = atan2(direction.y, direction.x) * RAD2DEG + 90.0f;
+    float deltaAngle = targetRotation - rotation;
+    
+    while (deltaAngle > 180.0f) deltaAngle -= 360.0f;
+    while (deltaAngle < -180.0f) deltaAngle += 360.0f;
+    
+    float baseRotationSpeed = 4.0f;
+    float maxRotationSpeed = 8.0f;
+    float speedFactor = Vector2Length(velocity) / speed; 
+    float rotationSpeed = baseRotationSpeed + speedFactor * (maxRotationSpeed - baseRotationSpeed);
 
-    // // Normalize angles to avoid abrupt jumps
-    // float deltaAngle = targetRotation - rotation;
-    // deltaAngle = fmodf(deltaAngle + 180.0f, 360.0f) - 180.0f;
-    // // deltaAngle = fmodf(deltaAngle + 540.0f, 360.0f) - 180.0f; // shortest path
-    // // // ! PLAYER STILL JUMPS FROM 180 TO -180
-    // // deltaAngle = Clamp(deltaAngle, -179.0f, 179.0f); // resolves the issue of the angle jumping from 180 to -180
+    rotation += deltaAngle * (1.0f - expf(-rotationSpeed * GetFrameTime()));
 
-    // // Calculate rotation speed based on velocity (minimum 3.0f, scales up) 
-    // float baseRotationSpeed = 5.0f;
-    // float maxRotationSpeed = 10.0f;
-    // float speedFactor = Vector2Length(velocity) / speed; 
-    // float rotationSpeed = baseRotationSpeed + speedFactor * (maxRotationSpeed - baseRotationSpeed);
-
-    // // Apply smoothing rotation
-    // rotation += deltaAngle * (1.0f - expf(-rotationSpeed * GetFrameTime()));
+    rotation = fmodf(rotation + 360.0f, 360.0f);
 
     Animator::GetInstance().SetRotation("accelerating", rotation);
     Animator::GetInstance().SetRotation("deaccelerating", rotation);
@@ -208,7 +232,7 @@ void Player::update() {
 #pragma region PlayerAnimation
 
 
-    if (Vector2Length(velocity) > 65.0f) {
+    if (Vector2Length(velocity) > 0) {
         if (!playerAccelerating) {
             Animator::GetInstance().Play("accelerating");
             playerAccelerating = true;

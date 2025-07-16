@@ -103,6 +103,7 @@ std::string Game::update()
 
     if (IsKeyPressed(KEY_P)) {
         if (gameState == GAME_RUNNING) {
+            gameTimer.pause();
             gameState = GAME_PAUSED;
         } else if (gameState == GAME_PAUSED) {
             gameTimer.unpause();
@@ -117,7 +118,7 @@ std::string Game::update()
     {
 #pragma region AugmentSelection
 
-        if ((int)gameTimer.getElapsedTime() % 3 == 0 && (int)gameTimer.getElapsedTime() > 0 && (int)gameTimer.getElapsedTime() != prevGameTimer) {
+        if ((int)gameTimer.getElapsedTime() % 300 == 0 && (int)gameTimer.getElapsedTime() > 0 && (int)gameTimer.getElapsedTime() != prevGameTimer) {
             
             std::vector<int> usedIndices;
             
@@ -401,7 +402,6 @@ std::string Game::update()
     
     case GAME_AUGMENT_SELECTION:
     {
-        // Handle augment selection logic
         for (auto& card : augmentCards) {
             card.update();
             if (card.isIntroComplete() && card.isClicked()) {
@@ -418,14 +418,13 @@ std::string Game::update()
     
     case GAME_PAUSED:
     {
-        gameTimer.pause();
+        // cant draw here as it is an update function
+        // const Texture2D& pauseTexture = ResourceManager::GetInstance().GetTextureRef("window");
         break;
     }
     
     case GAME_OVER:
     {
-        // Handle game over state - play death animation, show game over screen
-        // Stop all game logic updates
         break;
     }
     

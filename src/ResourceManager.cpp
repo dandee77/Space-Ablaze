@@ -39,6 +39,7 @@ ResourceManager::ResourceManager(){
         {"e_key",                               "assets/textures/e_key.png"},
         {"health",                              "assets/textures/health.png"},
         {"health_bar",                          "assets/textures/healthBar.png"},
+        {"window",                              "assets/textures/window.png"},
     };
 
     shaderPaths = {
