@@ -53,6 +53,12 @@ void Player::init()
     iframeDuration = PLAYER_STATE_IFRAME_DURATION;
     rotationSpeedMultiplier = 1.0f; 
 
+    // Trigger Happy burst fire initialization
+    burstCount = 1;  // Default: single shot
+    currentBurstShot = 0;
+    burstDelay = 0.1f;  // 100ms delay between burst shots
+    isBurstActive = false; 
+
     // ? We animate two textures, one for acceleration and one for deacceleration
     // ? Then hide the deacceleration animation until we need it
     Animator::GetInstance().AddAnimation("accelerating", std::make_shared<Animation>(
@@ -123,6 +129,12 @@ void Player::increasePlayerIframeDuration() {
 void Player::increasePlayerRotationSpeed() {
     rotationSpeedMultiplier *= 1.1f;
     TraceLog(LOG_INFO, "Player rotation speed multiplier increased to: %f", rotationSpeedMultiplier);
+}
+
+// increase burst count by 1
+void Player::increaseTriggerHappyBurst() {
+    burstCount++;
+    TraceLog(LOG_INFO, "Player burst count increased to: %d", burstCount);
 }
 
 // TODO: bullet pierce power, fire rate, attack multiplier
@@ -262,11 +274,36 @@ void Player::update() {
 
     if (IsKeyPressed(KEY_E)) autoShoot = !autoShoot;
 
-    if ((IsMouseButtonDown(MOUSE_BUTTON_LEFT) || autoShoot) && !playerAttackCooldown.isOnCooldown())
-    {
+    // burst fire 
+    if (isBurstActive) {
+        burstTimer += GetFrameTime();
+        if (burstTimer >= burstDelay && currentBurstShot < burstCount) {
+ 
+            Bullet bullet = Bullet(position, facing_direction, false);
+            BulletManager::GetInstance().addBullet(bullet);
+            
+            for (int i = 0; i < MAX_SHOOTING_SOUND_INSTANCES; i++) {
+                if (!IsSoundPlaying(shootingSounds[i])) {
+                    PlaySound(shootingSounds[i]);
+                    break;
+                }
+            }
+            
+            currentBurstShot++;
+            burstTimer = 0.0f; 
+
+            if (currentBurstShot >= burstCount) {
+                isBurstActive = false;
+                currentBurstShot = 0;
+                playerAttackCooldown.startCooldown(); 
+            }
+        }
+    }
+   
+    else if ((IsMouseButtonDown(MOUSE_BUTTON_LEFT) || autoShoot) && !playerAttackCooldown.isOnCooldown()) {
+     
         Bullet bullet = Bullet(position, facing_direction, false);
         BulletManager::GetInstance().addBullet(bullet);
-        playerAttackCooldown.startCooldown();
         
         for (int i = 0; i < MAX_SHOOTING_SOUND_INSTANCES; i++) {
             if (!IsSoundPlaying(shootingSounds[i])) {
@@ -274,7 +311,16 @@ void Player::update() {
                 break;
             }
         }
-    } 
+        
+        if (burstCount > 1) {
+            isBurstActive = true;
+            currentBurstShot = 1; 
+            burstTimer = 0.0f;
+        } else {
+            
+            playerAttackCooldown.startCooldown();
+        }
+    }
 
 #pragma endregion PlayerShoot
 

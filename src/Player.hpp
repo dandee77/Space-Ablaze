@@ -35,6 +35,7 @@ public:
     void increasePlayerMovementSpeed();
     void increasePlayerIframeDuration();
     void increasePlayerRotationSpeed();
+    void increaseTriggerHappyBurst();
     // void setPlayerFireRate(int fireRate);
     // void setPlayerBulletPierce(int piercePower);
 
@@ -46,6 +47,13 @@ private:
     float baseRotationSpeed;
     float maxRotationSpeed;
     float rotationSpeedMultiplier;
+
+ // Trigger Happy burst fire variables
+    int burstCount;
+    int currentBurstShot;
+    float burstTimer;
+    float burstDelay;
+    bool isBurstActive;
 
     int playerScore;
     Camera2D camera;

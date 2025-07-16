@@ -118,7 +118,7 @@ std::string Game::update()
     {
 #pragma region AugmentSelection
 
-        if ((int)gameTimer.getElapsedTime() % 500 == 0 && (int)gameTimer.getElapsedTime() > 0 && (int)gameTimer.getElapsedTime() != prevGameTimer) {
+        if ((int)gameTimer.getElapsedTime() % 5 == 0 && (int)gameTimer.getElapsedTime() > 0 && (int)gameTimer.getElapsedTime() != prevGameTimer) {
             
             std::vector<int> usedIndices;
             
@@ -407,13 +407,13 @@ std::string Game::update()
             if (card.isIntroComplete() && card.isClicked()) {
                 if (card.getTitle() == "Rapid Fire") {
                     playerEntity.increasePlayerAttackSpeed();
-                } else if (card.getTitle() == "Trigger Happy") { // fire rate
-                   //none
+                } else if (card.getTitle() == "Trigger Happy") {
+                    playerEntity.increaseTriggerHappyBurst();
                 } else if (card.getTitle() == "Scatter Shot") { // bullet spread
                     //none
-                } else if (card.getTitle() == "Speed Demon") {
+                } else if (card.getTitle() == "Agility Boost") {
                     playerEntity.increasePlayerMovementSpeed();
-                } else if (card.getTitle() == "Second Wind") {
+                } else if (card.getTitle() == "Iron Core") {
                     playerEntity.increasePlayerHealth();
                 } else if (card.getTitle() == "Piercing Rounds") { // bullet pierce
                     //none
