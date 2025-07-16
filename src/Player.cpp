@@ -59,6 +59,9 @@ void Player::init()
     burstDelay = 0.1f;  // 100ms delay between burst shots
     isBurstActive = false; 
 
+    // Scatter Shot initialization
+    scatterCount = 1;  // Default: single bullet 
+
     // ? We animate two textures, one for acceleration and one for deacceleration
     // ? Then hide the deacceleration animation until we need it
     Animator::GetInstance().AddAnimation("accelerating", std::make_shared<Animation>(
@@ -135,6 +138,64 @@ void Player::increasePlayerRotationSpeed() {
 void Player::increaseTriggerHappyBurst() {
     burstCount++;
     TraceLog(LOG_INFO, "Player burst count increased to: %d", burstCount);
+}
+
+// increase scatter count by 1
+void Player::increaseScatterShot() {
+    scatterCount++;
+    TraceLog(LOG_INFO, "Player scatter count increased to: %d", scatterCount);
+}
+
+
+void Player::fireScatterBullets(Vector2 baseDirection) {
+    if (scatterCount == 1) {
+        Bullet bullet = Bullet(position, baseDirection, false);
+        BulletManager::GetInstance().addBullet(bullet);
+    } else {
+      
+        float baseAngle = atan2(baseDirection.y, baseDirection.x);
+        float angleStep = 30.0f * DEG2RAD; 
+        
+        if (scatterCount % 2 == 1) {
+            Bullet centerBullet = Bullet(position, baseDirection, false);
+            BulletManager::GetInstance().addBullet(centerBullet);
+            
+            for (int i = 1; i <= scatterCount / 2; i++) {
+                float leftAngle = baseAngle - (angleStep * i);
+                float rightAngle = baseAngle + (angleStep * i);
+                
+                Vector2 leftDir = {cos(leftAngle), sin(leftAngle)};
+                Vector2 rightDir = {cos(rightAngle), sin(rightAngle)};
+                
+                Bullet leftBullet = Bullet(position, leftDir, false);
+                Bullet rightBullet = Bullet(position, rightDir, false);
+                
+                BulletManager::GetInstance().addBullet(leftBullet);
+                BulletManager::GetInstance().addBullet(rightBullet);
+            }
+        } else {
+            for (int i = 0; i < scatterCount / 2; i++) {
+                float leftAngle = baseAngle - (angleStep * (i + 0.5f));
+                float rightAngle = baseAngle + (angleStep * (i + 0.5f));
+                
+                Vector2 leftDir = {cos(leftAngle), sin(leftAngle)};
+                Vector2 rightDir = {cos(rightAngle), sin(rightAngle)};
+                
+                Bullet leftBullet = Bullet(position, leftDir, false);
+                Bullet rightBullet = Bullet(position, rightDir, false);
+                
+                BulletManager::GetInstance().addBullet(leftBullet);
+                BulletManager::GetInstance().addBullet(rightBullet);
+            }
+        }
+    }
+
+    for (int i = 0; i < MAX_SHOOTING_SOUND_INSTANCES; i++) {
+        if (!IsSoundPlaying(shootingSounds[i])) {
+            PlaySound(shootingSounds[i]);
+            break;
+        }
+    }
 }
 
 // TODO: bullet pierce power, fire rate, attack multiplier
@@ -272,22 +333,12 @@ void Player::update() {
 
 #pragma region PlayerShoot
 
-    if (IsKeyPressed(KEY_E)) autoShoot = !autoShoot;
-
-    // burst fire 
+    if (IsKeyPressed(KEY_E)) autoShoot = !autoShoot;    // burst fire 
     if (isBurstActive) {
         burstTimer += GetFrameTime();
         if (burstTimer >= burstDelay && currentBurstShot < burstCount) {
  
-            Bullet bullet = Bullet(position, facing_direction, false);
-            BulletManager::GetInstance().addBullet(bullet);
-            
-            for (int i = 0; i < MAX_SHOOTING_SOUND_INSTANCES; i++) {
-                if (!IsSoundPlaying(shootingSounds[i])) {
-                    PlaySound(shootingSounds[i]);
-                    break;
-                }
-            }
+            fireScatterBullets(facing_direction);
             
             currentBurstShot++;
             burstTimer = 0.0f; 
@@ -302,15 +353,7 @@ void Player::update() {
    
     else if ((IsMouseButtonDown(MOUSE_BUTTON_LEFT) || autoShoot) && !playerAttackCooldown.isOnCooldown()) {
      
-        Bullet bullet = Bullet(position, facing_direction, false);
-        BulletManager::GetInstance().addBullet(bullet);
-        
-        for (int i = 0; i < MAX_SHOOTING_SOUND_INSTANCES; i++) {
-            if (!IsSoundPlaying(shootingSounds[i])) {
-                PlaySound(shootingSounds[i]);
-                break;
-            }
-        }
+        fireScatterBullets(facing_direction);
         
         if (burstCount > 1) {
             isBurstActive = true;

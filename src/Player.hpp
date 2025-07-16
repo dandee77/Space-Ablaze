@@ -36,10 +36,14 @@ public:
     void increasePlayerIframeDuration();
     void increasePlayerRotationSpeed();
     void increaseTriggerHappyBurst();
+    void increaseScatterShot();
     // void setPlayerFireRate(int fireRate);
     // void setPlayerBulletPierce(int piercePower);
 
 private:
+    
+    // Helper function for scatter shot
+    void fireScatterBullets(Vector2 baseDirection);
     
 // plyr attrbutes (some are on the entity class)
     float attackSpeed;
@@ -54,6 +58,9 @@ private:
     float burstTimer;
     float burstDelay;
     bool isBurstActive;
+
+ // Scatter Shot variables
+    int scatterCount;
 
     int playerScore;
     Camera2D camera;

@@ -409,11 +409,11 @@ std::string Game::update()
                     playerEntity.increasePlayerAttackSpeed();
                 } else if (card.getTitle() == "Trigger Happy") {
                     playerEntity.increaseTriggerHappyBurst();
-                } else if (card.getTitle() == "Scatter Shot") { // bullet spread
-                    //none
-                } else if (card.getTitle() == "Agility Boost") {
+                } else if (card.getTitle() == "Scatter Shot") {
+                    playerEntity.increaseScatterShot();
+                } else if (card.getTitle() == "Speed Demon") {
                     playerEntity.increasePlayerMovementSpeed();
-                } else if (card.getTitle() == "Iron Core") {
+                } else if (card.getTitle() == "Second Wind") {
                     playerEntity.increasePlayerHealth();
                 } else if (card.getTitle() == "Piercing Rounds") { // bullet pierce
                     //none
@@ -435,7 +435,7 @@ std::string Game::update()
     
     case GAME_PAUSED:
     {
-        // cant draw here as it is an update function
+        // cant draw here as it is an update function (a prob to solved latr)
         // const Texture2D& pauseTexture = ResourceManager::GetInstance().GetTextureRef("window");
         break;
     }
