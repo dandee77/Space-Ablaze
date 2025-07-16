@@ -51,6 +51,7 @@ void Player::init()
     attackSpeed = 0.5f; 
     health = 100;
     iframeDuration = PLAYER_STATE_IFRAME_DURATION;
+    rotationSpeedMultiplier = 1.0f; 
 
     // ? We animate two textures, one for acceleration and one for deacceleration
     // ? Then hide the deacceleration animation until we need it
@@ -92,30 +93,39 @@ void Player::init()
 };
 
 #pragma region PlayerAttributes
-
+// TODO: passively increase each every minute for better skill balance
 // decrease by 10% 
 void Player::increasePlayerAttackSpeed() {
-    float newCooldown = attackSpeed * 0.9f;
-    playerAttackCooldown.updateCooldownDuration(newCooldown);
+    attackSpeed *= 0.9f;
+    playerAttackCooldown.updateCooldownDuration(attackSpeed);
+    TraceLog(LOG_INFO, "Player attack speed increased to: %f", attackSpeed);
 }
 
 // increase health by 10
 void Player::increasePlayerHealth() {
     if (health < 100) health += 10; 
+    TraceLog(LOG_INFO, "Player health increased to: %d", health);
 }
 
 // increase speed by 10%
 void Player::increasePlayerMovementSpeed() {
     speed *= 1.1f; // increase speed by 10%
-    // if (speed > PLAYER_SPEED * 2.0f) speed = PLAYER_SPEED * 2.0f;
+    TraceLog(LOG_INFO, "Player speed increased to: %f", speed);
 }
 
 // increase iframe duration by 10%
 void Player::increasePlayerIframeDuration() {
     iframeDuration *= 1.1f;
-    // if (iframeDuration > PLAYER_STATE_IFRAME_DURATION * 2.0f) iframeDuration = PLAYER_STATE_IFRAME_DURATION * 2.0f;
+    TraceLog(LOG_INFO, "Player iframe duration increased to: %f", iframeDuration);
 }
 
+// increase rotation speed by 10%
+void Player::increasePlayerRotationSpeed() {
+    rotationSpeedMultiplier *= 1.1f;
+    TraceLog(LOG_INFO, "Player rotation speed multiplier increased to: %f", rotationSpeedMultiplier);
+}
+
+// TODO: bullet pierce power, fire rate, attack multiplier
 
 
 #pragma endregion PlayerAttributes
@@ -187,8 +197,8 @@ void Player::update() {
     while (deltaAngle > 180.0f) deltaAngle -= 360.0f;
     while (deltaAngle < -180.0f) deltaAngle += 360.0f;
     
-    float baseRotationSpeed = 4.0f;
-    float maxRotationSpeed = 8.0f;
+    float baseRotationSpeed = 4.0f * rotationSpeedMultiplier;
+    float maxRotationSpeed = 8.0f * rotationSpeedMultiplier;
     float speedFactor = Vector2Length(velocity) / speed; 
     float rotationSpeed = baseRotationSpeed + speedFactor * (maxRotationSpeed - baseRotationSpeed);
 

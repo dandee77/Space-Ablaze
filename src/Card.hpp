@@ -45,6 +45,7 @@ public:
     Rectangle getRect() const { return rect; }
     Vector2 getPosition() const { return {rect.x, rect.y}; }
     Vector2 getSize() const { return {rect.width, rect.height}; }
+    std::string getTitle() const { return title; }
 
     void setPosition(Vector2 position);
     void setSize(Vector2 size);

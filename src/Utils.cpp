@@ -8,7 +8,7 @@ namespace utils
         {"Rapid Fire", "Increases attack\nspeed by 50%"},
         {"Trigger Happy", "Boosts fire rate\nfor faster shooting"},
         {"Scatter Shot", "Fires bullets in\nmultiple directions"},
-        {"Agility Boost", "Increases player\nmovement speed"},
+        {"Speed Demon", "Increases player\nmovement speed"},
         {"Second Wind", "Heals a portion\nof your HP instantly"},
         {"Piercing Rounds", "Bullets pierce through\nenemies"},
         {"Phase Shift", "Extends iframe duration\nafter damage"},

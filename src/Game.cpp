@@ -111,14 +111,14 @@ std::string Game::update()
         }
     }
 
-    std::cout << "Game Timer: " << (int)gameTimer.getElapsedTime() << " seconds" << std::endl;
+    // std::cout << "Game Timer: " << (int)gameTimer.getElapsedTime() << " seconds" << std::endl;
 
     switch (gameState) {
     case GAME_RUNNING:
     {
 #pragma region AugmentSelection
 
-        if ((int)gameTimer.getElapsedTime() % 300 == 0 && (int)gameTimer.getElapsedTime() > 0 && (int)gameTimer.getElapsedTime() != prevGameTimer) {
+        if ((int)gameTimer.getElapsedTime() % 500 == 0 && (int)gameTimer.getElapsedTime() > 0 && (int)gameTimer.getElapsedTime() != prevGameTimer) {
             
             std::vector<int> usedIndices;
             
@@ -405,6 +405,23 @@ std::string Game::update()
         for (auto& card : augmentCards) {
             card.update();
             if (card.isIntroComplete() && card.isClicked()) {
+                if (card.getTitle() == "Rapid Fire") {
+                    playerEntity.increasePlayerAttackSpeed();
+                } else if (card.getTitle() == "Trigger Happy") { // fire rate
+                   //none
+                } else if (card.getTitle() == "Scatter Shot") { // bullet spread
+                    //none
+                } else if (card.getTitle() == "Speed Demon") {
+                    playerEntity.increasePlayerMovementSpeed();
+                } else if (card.getTitle() == "Second Wind") {
+                    playerEntity.increasePlayerHealth();
+                } else if (card.getTitle() == "Piercing Rounds") { // bullet pierce
+                    //none
+                } else if (card.getTitle() == "Phase Shift") {
+                    playerEntity.increasePlayerIframeDuration();
+                } else if (card.getTitle() == "Gyro Control") {
+                    playerEntity.increasePlayerRotationSpeed();
+                }
                 card.startExitAnimation();
             }
             if (card.isExitComplete()) {

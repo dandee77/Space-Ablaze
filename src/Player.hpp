@@ -34,15 +34,18 @@ public:
     void increasePlayerHealth();
     void increasePlayerMovementSpeed();
     void increasePlayerIframeDuration();
+    void increasePlayerRotationSpeed();
     // void setPlayerFireRate(int fireRate);
     // void setPlayerBulletPierce(int piercePower);
-    // void setPlayerRotationSpeed(float rotationSpeed);
 
 private:
-    float rotationVelocity = 0.0f; 
+    
 // plyr attrbutes (some are on the entity class)
     float attackSpeed;
     float iframeDuration;
+    float baseRotationSpeed;
+    float maxRotationSpeed;
+    float rotationSpeedMultiplier;
 
     int playerScore;
     Camera2D camera;
