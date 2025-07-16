@@ -14,6 +14,7 @@
 #include <vector>
 #include "Utils.hpp"
 #include "DamageIndicatorManager.hpp"
+#include "ConfettiManager.hpp"
 
 #define MAX_SOUND_INSTANCES 10
 

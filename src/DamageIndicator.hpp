@@ -6,11 +6,10 @@
 class DamageIndicator
 {
 public:
-    DamageIndicator(Vector2 position, int damageAmount, int maxDamage, const std::string& enemyID);
+    DamageIndicator(Vector2 position, int damageAmount, int maxDamage);
     void update();
     void draw();
     bool isFinished() const { return finished; }
-    const std::string& getEnemyID() const { return enemyID; }
 
 private:
     Vector2 position;
@@ -23,5 +22,4 @@ private:
     Color color;
     bool finished;
     std::string damageText;
-    std::string enemyID;
 };

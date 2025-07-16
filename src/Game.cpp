@@ -12,6 +12,7 @@
 #include <unordered_set>
 #include <memory>
 #include "DamageIndicatorManager.hpp"
+#include "ConfettiManager.hpp"
 
 
 static bool CheckCollisions(Vector2 bulletPos, Vector2 shipPos, float shipSize) // circled hitbox so edit the draw hitbox
@@ -54,6 +55,7 @@ void Game::onSwitch()
     AsteroidManager::GetInstance().reset();
     BulletManager::GetInstance().reset();
     DamageIndicatorManager::GetInstance().reset();
+    ConfettiManager::GetInstance().reset();
 
     playerBulletTexture = ResourceManager::GetInstance().GetTexture("player_bullet");
     enemyBulletTexture = ResourceManager::GetInstance().GetTexture("enemy_bullet");
@@ -122,7 +124,7 @@ std::string Game::update()
     {
 #pragma region AugmentSelection
 
-        if ((int)gameTimer.getElapsedTime() % 30 == 0 && (int)gameTimer.getElapsedTime() > 0 && (int)gameTimer.getElapsedTime() != prevGameTimer) {
+        if ((int)gameTimer.getElapsedTime() % 5 == 0 && (int)gameTimer.getElapsedTime() > 0 && (int)gameTimer.getElapsedTime() != prevGameTimer) {
             
             std::vector<int> usedIndices;
             
@@ -159,6 +161,8 @@ std::string Game::update()
                 card.startIntroAnimation();
             }
 
+            ConfettiManager::GetInstance().startConfetti();
+
             prevGameTimer = (int)gameTimer.getElapsedTime();
             gameTimer.pause();
             gameState = GAME_AUGMENT_SELECTION;
@@ -182,6 +186,7 @@ std::string Game::update()
         // ?  the enemies bullet shares the same bullet max range since it is relative to the player
         BulletManager::GetInstance().update(playerEntity.getPosition()); // ?  it only gets player position to calculate the distance to the bullets
         DamageIndicatorManager::GetInstance().update();
+        ConfettiManager::GetInstance().update();
 
 #pragma endregion
 
@@ -228,7 +233,7 @@ std::string Game::update()
                         enemy->takeDamage(damage);
                         
                         DamageIndicatorManager::GetInstance().addDamageIndicator(
-                            enemy->getPosition(), damage, playerEntity.getMaxDamage(), enemy->getEnemyID());
+                            enemy->getPosition(), damage, playerEntity.getMaxDamage());
             
                         
                         if (enemy->isDead()) {
@@ -429,6 +434,9 @@ std::string Game::update()
     
     case GAME_AUGMENT_SELECTION:
     {
+        // Update confetti effect
+        ConfettiManager::GetInstance().update();
+        
         for (auto& card : augmentCards) {
             card.update();
             if (card.isIntroComplete() && card.isClicked()) {
@@ -442,7 +450,7 @@ std::string Game::update()
                     playerEntity.increasePlayerMovementSpeed();
                 } else if (card.getTitle() == "Nano Repair") {
                     playerEntity.increasePlayerHealth();
-                } else if (card.getTitle() == "Piercing Rounds") { // bullet pierce
+                } else if (card.getTitle() == "Piercing Rounds") { 
                     playerEntity.increasePiercingRounds();
                 } else if (card.getTitle() == "Phase Shift") {
                     playerEntity.increasePlayerIframeDuration();
@@ -453,6 +461,7 @@ std::string Game::update()
             }
             if (card.isExitComplete()) {
                 augmentCards.clear();
+                ConfettiManager::GetInstance().stopConfetti();
                 gameTimer.unpause();
                 gameState = GAME_RUNNING; 
             }
@@ -586,6 +595,8 @@ void Game::draw()
         // std::cout << "Player Position: (" << playerEntity.getPosition().x << ", " << playerEntity.getPosition().y << ")" << std::endl;
 
     EndMode2D();
+
+    if(gameState == GAME_AUGMENT_SELECTION) ConfettiManager::GetInstance().draw();
 
     if (!augmentCards.empty()) {
         for (auto& card : augmentCards) {

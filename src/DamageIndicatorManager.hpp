@@ -11,7 +11,7 @@ public:
         return instance;
     }
     
-    void addDamageIndicator(Vector2 position, int damage, int maxDamage, const std::string& enemyID);
+    void addDamageIndicator(Vector2 position, int damage, int maxDamage);
     void update();
     void draw();
     void reset();

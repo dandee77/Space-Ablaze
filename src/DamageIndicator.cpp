@@ -2,16 +2,19 @@
 #include "ResourceManager.hpp"
 #include <string>
 
-DamageIndicator::DamageIndicator(Vector2 pos, int damage, int maxDmg, const std::string& enemyId)
-    : position(pos), damageAmount(damage), maxDamage(maxDmg), lifetime(0.0f), maxLifetime(1.5f), finished(false), enemyID(enemyId)
+DamageIndicator::DamageIndicator(Vector2 pos, int damage, int maxDmg)
+    : position(pos), damageAmount(damage), maxDamage(maxDmg), lifetime(0.0f), maxLifetime(1.5f), finished(false)
 {
-    velocity = {0.0f, -5.0f};
+    velocity = {
+        (float)GetRandomValue(-10, 10),
+        (float)GetRandomValue(-10, 10)
+    };
     
     if (damage >= maxDmg) {
         color = RED;
-        scale = 1.2f; 
+        scale = 1.5f; 
     } else {
-        color = LIGHTGRAY;
+        color = WHITE;
         scale = 1.0f;
     }
     

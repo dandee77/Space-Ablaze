@@ -1,17 +1,9 @@
 #include "DamageIndicatorManager.hpp"
 #include <algorithm>
 
-void DamageIndicatorManager::addDamageIndicator(Vector2 position, int damage, int maxDamage, const std::string& enemyID)
+void DamageIndicatorManager::addDamageIndicator(Vector2 position, int damage, int maxDamage)
 {
-    indicators.erase(
-        std::remove_if(indicators.begin(), indicators.end(),
-            [&enemyID](const std::unique_ptr<DamageIndicator>& indicator) {
-                return indicator->getEnemyID() == enemyID;
-            }),
-        indicators.end()
-    );
-    
-    indicators.push_back(std::make_unique<DamageIndicator>(position, damage, maxDamage, enemyID));
+    indicators.push_back(std::make_unique<DamageIndicator>(position, damage, maxDamage));
 }
 
 void DamageIndicatorManager::update()
