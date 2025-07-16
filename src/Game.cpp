@@ -93,6 +93,8 @@ void Game::onSwitch()
     for (int i = 0; i < MAX_SOUND_INSTANCES; i++) {
         scoreSounds[i] = LoadSound("assets/sounds/score_sound.wav");
     }
+
+    augmentCards.clear();
 }
 
 
@@ -120,7 +122,7 @@ std::string Game::update()
     {
 #pragma region AugmentSelection
 
-        if ((int)gameTimer.getElapsedTime() % 5 == 0 && (int)gameTimer.getElapsedTime() > 0 && (int)gameTimer.getElapsedTime() != prevGameTimer) {
+        if ((int)gameTimer.getElapsedTime() % 30 == 0 && (int)gameTimer.getElapsedTime() > 0 && (int)gameTimer.getElapsedTime() != prevGameTimer) {
             
             std::vector<int> usedIndices;
             
@@ -438,7 +440,7 @@ std::string Game::update()
                     playerEntity.increaseScatterShot();
                 } else if (card.getTitle() == "Speed Demon") {
                     playerEntity.increasePlayerMovementSpeed();
-                } else if (card.getTitle() == "Second Wind") {
+                } else if (card.getTitle() == "Nano Repair") {
                     playerEntity.increasePlayerHealth();
                 } else if (card.getTitle() == "Piercing Rounds") { // bullet pierce
                     playerEntity.increasePiercingRounds();
@@ -467,6 +469,7 @@ std::string Game::update()
     
     case GAME_OVER:
     {
+        gameTimer.pause();
         break;
     }
     
