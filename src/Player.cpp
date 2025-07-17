@@ -407,6 +407,8 @@ void Player::takeDamage(float timeStateEntered, Vector2 entityPosition, float en
     Animator::GetInstance().SetTint("accelerating", RED);
     Animator::GetInstance().SetTint("deaccelerating", RED);
     
+    PlaySound(ResourceManager::GetInstance().GetSound("player_damaged"));
+    PlaySound(ResourceManager::GetInstance().GetSound("player_damaged_2"));
     DamageOverlay::GetInstance().startDamageAnimation();
 }
 

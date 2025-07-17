@@ -32,13 +32,17 @@ std::string MainMenu::update()
             switch (idx)
             {
                 case PLAY:
+                    PlaySound(ResourceManager::GetInstance().GetSound("button_click"));
                     return "Game";
                 case SETTINGS:
+                    PlaySound(ResourceManager::GetInstance().GetSound("button_click"));
                     return "Settings";
                 case CREDITS:
+                    PlaySound(ResourceManager::GetInstance().GetSound("button_click"));
                     return "Credits";
                 case QUIT:
                 {
+                    PlaySound(ResourceManager::GetInstance().GetSound("exit_sound"));
                     const Texture2D& exit_texture = ResourceManager::GetInstance().GetTextureRef("exit_animation");
                     Animator::GetInstance().AddAnimation("exit", std::make_shared<Animation>(
                         exit_texture,

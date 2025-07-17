@@ -28,6 +28,9 @@ LowLevelEnemy::LowLevelEnemy(std::string enemyID, EnemyType type, Vector2 spawnP
     knockbackVelocity = {0, 0};
     knockbackDecay = 0.9f;
     knockbackCooldown = Cooldown(ENEMY_KNOCKBACK_COOLDOWN); 
+    
+    separationRadius = Vector2Length(origin);
+    separationStrength = 10.0f; 
 
     //! INEFFICIENT WAY TO PASS TEXTURES, BUT IT WORKS FOR NOW
     randomEnemyTextureIdx = GetRandomValue(0, 2);
@@ -86,15 +89,24 @@ void LowLevelEnemy::update()
         knockbackVelocity = Vector2Scale(knockbackVelocity, knockbackDecay);
     }
     
+    Vector2 separationForce = calculateSeparation(nearbyEnemyPositions);
+    
     Vector2 desiredDirection = Vector2Subtract(playerPosition, position);
     float distance = Vector2Length(desiredDirection);
     
     if (distance > 0.0f) 
     {
         desiredDirection = Vector2Normalize(desiredDirection);
-        currentDirection = Vector2Lerp(currentDirection, desiredDirection, turnSpeed * GetFrameTime());
+        
+        Vector2 combinedDirection = Vector2Add(desiredDirection, separationForce);
+        combinedDirection = Vector2Normalize(combinedDirection);
+        
+        currentDirection = Vector2Lerp(currentDirection, combinedDirection, turnSpeed * GetFrameTime());
         currentDirection = Vector2Normalize(currentDirection);
-        position = Vector2MoveTowards(position, playerPosition, speed * GetFrameTime());
+        
+        Vector2 moveDirection = Vector2Scale(currentDirection, speed * GetFrameTime());
+        position = Vector2Add(position, moveDirection);
+        
         viewDirection = currentDirection;
     }
 

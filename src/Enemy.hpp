@@ -4,6 +4,7 @@
 #include "Entity.hpp"
 #include "Timer.hpp"
 #include <string>
+#include <vector>
 
 #define ENEMY_KNOCKBACK_COOLDOWN 0.5f 
 
@@ -41,6 +42,9 @@ public:
     void applyKnockback(Vector2 direction, float force);
     bool canReceiveKnockback() const;
 
+    Vector2 calculateSeparation(const std::vector<Vector2>& nearbyEnemyPositions);
+    void setNearbyEnemies(const std::vector<Vector2>& positions) { nearbyEnemyPositions = positions; }
+
 protected:
 
     std::string enemyID;
@@ -51,8 +55,12 @@ protected:
     float speed;
     float spriteSize;
     
-    // Knockback system
+
     Vector2 knockbackVelocity;
     float knockbackDecay;
     Cooldown knockbackCooldown;
+    
+    std::vector<Vector2> nearbyEnemyPositions;
+    float separationRadius;
+    float separationStrength;
 };

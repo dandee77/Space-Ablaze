@@ -53,8 +53,10 @@ ResourceManager::ResourceManager(){
     };
 
     soundPaths = {
-        // {"player_shoot",                        "assets/sounds/player_atk_sound.mp3"},
-        {"button_click",                        "assets/sounds/button_click.wav"},
+        {"player_damaged",                      "assets/sounds/hit.wav"},
+        {"player_damaged_2",                    "assets/sounds/player_damaged.mp3"},
+        {"button_click",                        "assets/sounds/click_sound.mp3"},
+        {"exit_sound",                          "assets/sounds/exit_sound.mp3"},
     };      
 
     // TODO: ADD MUSIC DIR

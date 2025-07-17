@@ -25,6 +25,9 @@ MidLevelEnemy::MidLevelEnemy(std::string enemyID, EnemyType type, Vector2 spawnP
     knockbackVelocity = {0, 0};
     knockbackDecay = 0.9f;
     knockbackCooldown = Cooldown(ENEMY_KNOCKBACK_COOLDOWN);
+    
+    separationRadius = Vector2Length(origin);
+    separationStrength = 20.0f; 
 
     Animator::GetInstance().AddAnimation(enemyID, std::make_shared<Animation>(
         ResourceManager::GetInstance().GetTextureRef(textureName),
@@ -52,6 +55,9 @@ void MidLevelEnemy::update()
         knockbackVelocity = Vector2Scale(knockbackVelocity, knockbackDecay);
     }
 
+    // Calculate separation force from nearby enemies (provided by EnemyManager)
+    Vector2 separationForce = calculateSeparation(nearbyEnemyPositions);
+
     Vector2 toPlayer = Vector2Subtract(playerPosition, position);
     if (Vector2Length(toPlayer) == 0.0f) toPlayer = {1, 0};
     else toPlayer = Vector2Normalize(toPlayer);
@@ -67,6 +73,8 @@ void MidLevelEnemy::update()
     else
     {
         newDir = Vector2Add(Vector2Scale(toPlayer, turnSpeed * deltaTime), viewDirection);
+        // Apply separation force to the direction
+        newDir = Vector2Add(newDir, separationForce);
     }
 
     float newLength = Vector2Length(newDir);

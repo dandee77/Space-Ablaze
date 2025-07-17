@@ -448,6 +448,7 @@ std::string Game::update()
         for (auto& card : augmentCards) {
             card.update();
             if (card.isIntroComplete() && card.isClicked()) {
+                PlaySound(ResourceManager::GetInstance().GetSound("button_click"));
                 if (card.getTitle() == "Rapid Fire") {
                     playerEntity.increasePlayerAttackSpeed();
                 } else if (card.getTitle() == "Trigger Happy") {

@@ -8,7 +8,7 @@
 
 #define ENEMY_MAX_DISTANCE 1000.0f
 #define ENEMY_MAX_RANGE 100.0f
-#define MID_LEVEL_ENEMY_SPAWN_START_TIME 300.0f // 5 mins
+#define MID_LEVEL_ENEMY_SPAWN_START_TIME 300.0f 
 
 void EnemyManager::update(Vector2 playerPos, const GameTimer& gameTimer)
 {
@@ -16,7 +16,7 @@ void EnemyManager::update(Vector2 playerPos, const GameTimer& gameTimer)
 
     //? spawn cooldown drops over time, min 0.25s at 10 mins
     //? starts at 1.5s, drops to 0.25s over 10 minutes
-    float newCooldown = std::max(0.25f, 1.5f - (elapsed / 600.0f) * 1.25f);
+    float newCooldown = std::max(0.25f, 0.5f - (elapsed / 600.0f) * 1.25f);
     enemySpawnCooldown.updateCooldownDuration(newCooldown);
 
     if (enemies.size() < maxEnemies && !enemySpawnCooldown.isOnCooldown()) {
@@ -31,6 +31,20 @@ void EnemyManager::update(Vector2 playerPos, const GameTimer& gameTimer)
     for (auto& [id, enemy] : enemies) {
         float dist = Vector2Distance(enemy->getPosition(), playerPos);
         enemy->getPlayerPositionForEnemy(playerPos);
+        
+        std::vector<Vector2> nearbyPositions;
+        Vector2 currentPos = enemy->getPosition();
+        for (const auto& [otherId, otherEnemy] : enemies) {
+            if (otherId != id) { 
+                Vector2 otherPos = otherEnemy->getPosition();
+                float distance = Vector2Distance(currentPos, otherPos);
+                if (distance < 50.0f) { 
+                    nearbyPositions.push_back(otherPos);
+                }
+            }
+        }
+        enemy->setNearbyEnemies(nearbyPositions);
+        
         enemy->update();
         if (dist > ENEMY_MAX_DISTANCE) {
             toRemove.push_back(id);

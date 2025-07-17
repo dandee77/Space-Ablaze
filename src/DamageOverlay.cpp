@@ -49,19 +49,19 @@ void DamageOverlay::draw()
     
     float borderSize = 500.0f; 
     
-    // Top rectangle (gradient from top to bottom)
+    // Top 
     Rectangle topRect = {0, 0, GAME_SCREEN_WIDTH, borderSize};
     drawGradientRectangle(topRect, redTransparent, transparent, false);
     
-    // Bottom rectangle (gradient from bottom to top)
+    // Bottom 
     Rectangle bottomRect = {0, GAME_SCREEN_HEIGHT - borderSize, GAME_SCREEN_WIDTH, borderSize};
     drawGradientRectangle(bottomRect, transparent, redTransparent, false);
     
-    // Left rectangle (gradient from left to right)
+    // Left
     Rectangle leftRect = {0, 0, borderSize, GAME_SCREEN_HEIGHT};
     drawGradientRectangle(leftRect, redTransparent, transparent, true);
     
-    // Right rectangle (gradient from right to left)
+    // Right
     Rectangle rightRect = {GAME_SCREEN_WIDTH - borderSize, 0, borderSize, GAME_SCREEN_HEIGHT};
     drawGradientRectangle(rightRect, transparent, redTransparent, true);
 }
