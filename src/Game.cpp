@@ -13,6 +13,7 @@
 #include <memory>
 #include "DamageIndicatorManager.hpp"
 #include "ConfettiManager.hpp"
+#include "DamageOverlay.hpp"
 
 
 static bool CheckCollisions(Vector2 bulletPos, Vector2 shipPos, float shipSize) // circled hitbox so edit the draw hitbox
@@ -56,6 +57,7 @@ void Game::onSwitch()
     BulletManager::GetInstance().reset();
     DamageIndicatorManager::GetInstance().reset();
     ConfettiManager::GetInstance().reset();
+    DamageOverlay::GetInstance().reset();
 
     playerBulletTexture = ResourceManager::GetInstance().GetTexture("player_bullet");
     enemyBulletTexture = ResourceManager::GetInstance().GetTexture("enemy_bullet");
@@ -124,7 +126,7 @@ std::string Game::update()
     {
 #pragma region AugmentSelection
 
-        if ((int)gameTimer.getElapsedTime() % 500 == 0 && (int)gameTimer.getElapsedTime() > 0 && (int)gameTimer.getElapsedTime() != prevGameTimer) {
+        if ((int)gameTimer.getElapsedTime() % 20 == 0 && (int)gameTimer.getElapsedTime() > 0 && (int)gameTimer.getElapsedTime() != prevGameTimer) {
             
             std::vector<int> usedIndices;
             
@@ -187,6 +189,7 @@ std::string Game::update()
         BulletManager::GetInstance().update(playerEntity.getPosition()); // ?  it only gets player position to calculate the distance to the bullets
         DamageIndicatorManager::GetInstance().update();
         ConfettiManager::GetInstance().update();
+        DamageOverlay::GetInstance().update();
 
 #pragma endregion
 
@@ -232,7 +235,6 @@ std::string Game::update()
                         int damage = playerEntity.getRandomDamage();
                         enemy->takeDamage(damage);
                         
-                        // Apply knockback effect if the bullet has knockback power and enemy can receive it
                         if (bm.getBullets()[i].getKnockbackPower() > 0.0f && enemy->canReceiveKnockback()) {
                             enemy->applyKnockback(bm.getBullets()[i].getDirection(), 
                                                 bm.getBullets()[i].getKnockbackPower());
@@ -640,6 +642,8 @@ void Game::draw()
 
     killCounter.draw();
     gameTimer.draw(GAME_SCREEN_WIDTH);
+    
+    DamageOverlay::GetInstance().draw();
 }
 
 void Game::onExit()

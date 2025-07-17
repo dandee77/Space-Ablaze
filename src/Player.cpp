@@ -1,6 +1,7 @@
 #include "Player.hpp"
 #include "Animator.hpp"
 #include "ResourceManager.hpp"
+#include "DamageOverlay.hpp"
 #include <memory>
 #include <iostream>
 #include "raymath.h"
@@ -54,7 +55,7 @@ void Player::init()
     rotationSpeedMultiplier = 1.0f; 
 
     // trigger hppy burst fire initialization
-    burstCount = 15; 
+    burstCount = 1; 
     currentBurstShot = 0;
     burstDelay = 0.1f;  // 100ms delay between burst shots
     isBurstActive = false; 
@@ -66,7 +67,7 @@ void Player::init()
     bulletPiercePower = 1; 
 
     // inertia impact initialization
-    knockbackPower = 150.0f;  
+    knockbackPower = 0.0f;  
 
     // damage system initialization
     minDamage = 7;
@@ -405,6 +406,8 @@ void Player::takeDamage(float timeStateEntered, Vector2 entityPosition, float en
     velocity = Vector2Scale(nudgeDirection, PLAYER_COLLISION_NUDGE * entitySize); 
     Animator::GetInstance().SetTint("accelerating", RED);
     Animator::GetInstance().SetTint("deaccelerating", RED);
+    
+    DamageOverlay::GetInstance().startDamageAnimation();
 }
 
 
