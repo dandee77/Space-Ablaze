@@ -2,7 +2,10 @@
 
 #include "raylib.h"
 #include "Entity.hpp"
+#include "Timer.hpp"
 #include <string>
+
+#define ENEMY_KNOCKBACK_COOLDOWN 0.5f 
 
 enum EnemyType
 {
@@ -35,6 +38,8 @@ public:
     
     void takeDamage(int damage);
     bool isDead() const { return health <= 0; }
+    void applyKnockback(Vector2 direction, float force);
+    bool canReceiveKnockback() const;
 
 protected:
 
@@ -45,4 +50,9 @@ protected:
     Rectangle hitbox;
     float speed;
     float spriteSize;
+    
+    // Knockback system
+    Vector2 knockbackVelocity;
+    float knockbackDecay;
+    Cooldown knockbackCooldown;
 };

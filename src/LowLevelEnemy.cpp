@@ -16,7 +16,7 @@ static const std::string EnemyTextureNames[] =
 LowLevelEnemy::LowLevelEnemy(std::string enemyID, EnemyType type, Vector2 spawnPos, Vector2 playerPos) 
     : Enemy(enemyID, type, spawnPos, playerPos), textureName(EnemyTextureNames[GetRandomValue(0, 2)])
 {
-    health = 30;  // Low level enemies have 30 health
+    health = 30;  
     spriteSize = 15.0f;
     origin = {spriteSize / 2.0f, spriteSize / 2.0f};
     speed = GetRandomValue(15, 30);
@@ -24,7 +24,10 @@ LowLevelEnemy::LowLevelEnemy(std::string enemyID, EnemyType type, Vector2 spawnP
     currentDirection = {0, 0};
     rect = {position.x, position.y, spriteSize, spriteSize};
     hitbox = {position.x, position.y, spriteSize, spriteSize};
-
+    
+    knockbackVelocity = {0, 0};
+    knockbackDecay = 0.9f;
+    knockbackCooldown = Cooldown(ENEMY_KNOCKBACK_COOLDOWN); 
 
     //! INEFFICIENT WAY TO PASS TEXTURES, BUT IT WORKS FOR NOW
     randomEnemyTextureIdx = GetRandomValue(0, 2);
@@ -78,6 +81,11 @@ LowLevelEnemy::LowLevelEnemy(std::string enemyID, EnemyType type, Vector2 spawnP
 
 void LowLevelEnemy::update()
 {
+    if (Vector2Length(knockbackVelocity) > 0.1f) {
+        position = Vector2Add(position, Vector2Scale(knockbackVelocity, GetFrameTime()));
+        knockbackVelocity = Vector2Scale(knockbackVelocity, knockbackDecay);
+    }
+    
     Vector2 desiredDirection = Vector2Subtract(playerPosition, position);
     float distance = Vector2Length(desiredDirection);
     

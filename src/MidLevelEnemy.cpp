@@ -11,7 +11,7 @@
 MidLevelEnemy::MidLevelEnemy(std::string enemyID, EnemyType type, Vector2 spawnPos, Vector2 playerPos) 
     : Enemy(enemyID, type, spawnPos, playerPos), textureName("mid_level_enemy"), fireCooldown(1.5f)
 {
-    health = 50;  // Mid level enemies have 50 health
+    health = 50;  
     spriteSize = 15.0f;
     origin = {spriteSize / 2.0f, spriteSize / 2.0f};
     speed = GetRandomValue(25, 50);
@@ -21,6 +21,10 @@ MidLevelEnemy::MidLevelEnemy(std::string enemyID, EnemyType type, Vector2 spawnP
     rect = {position.x, position.y, spriteSize, spriteSize};
     hitbox = {position.x, position.y, spriteSize, spriteSize};
     bulletSpeed = GetRandomValue(120, 150);
+    
+    knockbackVelocity = {0, 0};
+    knockbackDecay = 0.9f;
+    knockbackCooldown = Cooldown(ENEMY_KNOCKBACK_COOLDOWN);
 
     Animator::GetInstance().AddAnimation(enemyID, std::make_shared<Animation>(
         ResourceManager::GetInstance().GetTextureRef(textureName),
@@ -41,6 +45,12 @@ MidLevelEnemy::MidLevelEnemy(std::string enemyID, EnemyType type, Vector2 spawnP
 void MidLevelEnemy::update()
 {
     float deltaTime = GetFrameTime();
+
+    // Apply knockback if any
+    if (Vector2Length(knockbackVelocity) > 0.1f) {
+        position = Vector2Add(position, Vector2Scale(knockbackVelocity, deltaTime));
+        knockbackVelocity = Vector2Scale(knockbackVelocity, knockbackDecay);
+    }
 
     Vector2 toPlayer = Vector2Subtract(playerPosition, position);
     if (Vector2Length(toPlayer) == 0.0f) toPlayer = {1, 0};

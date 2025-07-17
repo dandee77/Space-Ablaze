@@ -124,7 +124,7 @@ std::string Game::update()
     {
 #pragma region AugmentSelection
 
-        if ((int)gameTimer.getElapsedTime() % 5 == 0 && (int)gameTimer.getElapsedTime() > 0 && (int)gameTimer.getElapsedTime() != prevGameTimer) {
+        if ((int)gameTimer.getElapsedTime() % 500 == 0 && (int)gameTimer.getElapsedTime() > 0 && (int)gameTimer.getElapsedTime() != prevGameTimer) {
             
             std::vector<int> usedIndices;
             
@@ -231,6 +231,12 @@ std::string Game::update()
                         
                         int damage = playerEntity.getRandomDamage();
                         enemy->takeDamage(damage);
+                        
+                        // Apply knockback effect if the bullet has knockback power and enemy can receive it
+                        if (bm.getBullets()[i].getKnockbackPower() > 0.0f && enemy->canReceiveKnockback()) {
+                            enemy->applyKnockback(bm.getBullets()[i].getDirection(), 
+                                                bm.getBullets()[i].getKnockbackPower());
+                        }
                         
                         DamageIndicatorManager::GetInstance().addDamageIndicator(
                             enemy->getPosition(), damage, playerEntity.getMaxDamage());
@@ -456,7 +462,14 @@ std::string Game::update()
                     playerEntity.increasePlayerIframeDuration();
                 } else if (card.getTitle() == "Gyro Control") {
                     playerEntity.increasePlayerRotationSpeed();
+                } else if (card.getTitle() == "Inertia Impact") {
+                    playerEntity.increaseInertiaImpact();
                 }
+                // } else if (card.getTitle() == "Overdrive") {
+                    
+                // } else if (card.getTitle() == "Damage Amplifier") {
+                   
+                // }                
                 card.startExitAnimation();
             }
             if (card.isExitComplete()) {

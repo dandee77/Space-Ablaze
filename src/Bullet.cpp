@@ -1,8 +1,8 @@
 #include "Bullet.hpp"
 #include "raymath.h"
 
-Bullet::Bullet(Vector2 pos, Vector2 direction, bool isEnemy, int pierce)
-    : position(pos), fireDirection(Vector2Normalize(direction)), enemyBullet(isEnemy), piercePower(pierce)
+Bullet::Bullet(Vector2 pos, Vector2 direction, bool isEnemy, int pierce, float knockback)
+    : position(pos), fireDirection(Vector2Normalize(direction)), enemyBullet(isEnemy), piercePower(pierce), knockbackPower(knockback)
 {
     angle = atan2f(fireDirection.y, fireDirection.x) * RAD2DEG;
 }

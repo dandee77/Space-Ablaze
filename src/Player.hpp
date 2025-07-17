@@ -38,11 +38,13 @@ public:
     void increaseTriggerHappyBurst();
     void increaseScatterShot();
     void increasePiercingRounds();
+    void increaseInertiaImpact();
     
     // Damage system
     int getRandomDamage() const;
     int getMinDamage() const { return minDamage; }
     int getMaxDamage() const { return maxDamage; }
+    float getKnockbackPower() const { return knockbackPower; }
 
 
 private:
@@ -69,6 +71,9 @@ private:
 
 // Piercing Rounds variables
     int bulletPiercePower;
+
+// Inertia Impact variables
+    float knockbackPower;
 
     // Damage system
     int minDamage;
