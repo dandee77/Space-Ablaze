@@ -168,7 +168,7 @@ void Game::restartGame() { //ts kinda useless ngl
 
 std::string Game::update() 
 {
-    if (IsKeyPressed(KEY_ENTER)) return "MainMenu"; 
+    // if (IsKeyPressed(KEY_ENTER)) return "MainMenu"; 
     UpdateMusicStream(gameMusic);
 
     if (IsKeyPressed(KEY_P)) {

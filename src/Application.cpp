@@ -22,6 +22,7 @@ Application::Application()
     const int windowHeight = 720;
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT); 
     InitWindow(windowWidth, windowHeight, "Space Ablaze");
+    SetExitKey(KEY_NULL); 
     InitAudioDevice();
     SetTargetFPS(60);
 
@@ -186,7 +187,7 @@ void Application::Run()
                 0.0f,
                 WHITE);
                     
-            DrawFPS(10, 10);
+            // DrawFPS(10, 10);
             
         EndDrawing();
     }

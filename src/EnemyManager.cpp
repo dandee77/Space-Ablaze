@@ -8,7 +8,7 @@
 
 #define ENEMY_MAX_DISTANCE 1000.0f
 #define ENEMY_MAX_RANGE 100.0f
-#define MID_LEVEL_ENEMY_SPAWN_START_TIME 300.0f 
+#define MID_LEVEL_ENEMY_SPAWN_START_TIME 420.0f 
 
 void EnemyManager::update(Vector2 playerPos, const GameTimer& gameTimer)
 {
