@@ -14,6 +14,7 @@
 #include "DamageIndicatorManager.hpp"
 #include "ConfettiManager.hpp"
 #include "ExplosionConfettiManager.hpp"
+#include "GameOverOverlay.hpp"
 #include "DamageOverlay.hpp"
 
 
@@ -26,7 +27,8 @@ static bool CheckCollisions(Vector2 bulletPos, Vector2 shipPos, float shipSize) 
 // TODO: GLITTERS WHEN AUGMENT SELECTION
 // TODO: SPINNING COLORS ON THE RECTANGLE ON AUGMENTS BORDER]
 // todo: cursor
-
+static int prevGameTimer = 0;
+static bool gameOverTextStarted = false;
 
 Game::Game() 
 {}
@@ -34,6 +36,7 @@ Game::Game()
 void Game::onSwitch()
 {
     gameState = GAME_RUNNING;
+    gameOverTextStarted = false;
     worldTileSize = 500.0f; 
     playerEntity = Player();
     playerEntity.init();
@@ -59,6 +62,7 @@ void Game::onSwitch()
     DamageIndicatorManager::GetInstance().reset();
     ConfettiManager::GetInstance().reset();
     ExplosionConfettiManager::GetInstance().reset();
+    GameOverOverlay::GetInstance().reset();
     DamageOverlay::GetInstance().reset();
 
     playerBulletTexture = ResourceManager::GetInstance().GetTexture("player_bullet");
@@ -93,6 +97,17 @@ void Game::onSwitch()
         WHITE
     ));
 
+    Animator::GetInstance().AddAnimation("game_over_text", std::make_shared<Animation>(
+        ResourceManager::GetInstance().GetTextureRef("game_over_text"),
+        ResourceManager::GetInstance().GetTextureRef("game_over_text").width / 10,
+        ResourceManager::GetInstance().GetTextureRef("game_over_text").height,
+        0.5f,
+        true,
+        Rectangle{0, 0, 1800, 300},
+        false,
+        WHITE
+    ));
+
     Animator::GetInstance().Play("wasd_keys_tutorial");
     Animator::GetInstance().Play("e_key_tutorial");
 
@@ -103,8 +118,6 @@ void Game::onSwitch()
     augmentCards.clear();
 }
 
-
-static int prevGameTimer = 0;
 
 std::string Game::update() 
 {
@@ -325,6 +338,9 @@ std::string Game::update()
                     if (playerEntity.getHealth() <= 0) {
                         gameState = GAME_OVER;
                         ExplosionConfettiManager::GetInstance().startExplosion(playerEntity.getPosition());
+                        GameOverOverlay::GetInstance().startOverlay();
+                        PlaySound(ResourceManager::GetInstance().GetSound("game_over"));
+                        StopMusicStream(gameMusic);
                     }
                     i--; 
                     continue;
@@ -384,6 +400,9 @@ std::string Game::update()
                 if (playerEntity.getHealth() <= 0) {
                     gameState = GAME_OVER;
                     ExplosionConfettiManager::GetInstance().startExplosion(playerEntity.getPosition());
+                    GameOverOverlay::GetInstance().startOverlay();
+                    PlaySound(ResourceManager::GetInstance().GetSound("game_over"));
+                    StopMusicStream(gameMusic);
                 }
                 enemiesToRemove.push_back(enemyId);
                 continue; 
@@ -407,6 +426,9 @@ std::string Game::update()
                 if (playerEntity.getHealth() <= 0) {
                     gameState = GAME_OVER;
                     ExplosionConfettiManager::GetInstance().startExplosion(playerEntity.getPosition());
+                    GameOverOverlay::GetInstance().startOverlay();
+                    PlaySound(ResourceManager::GetInstance().GetSound("game_over"));
+                    StopMusicStream(gameMusic);
                 }
                 asteroidsToRemove.push_back(asteroidId);
             }
@@ -505,8 +527,17 @@ std::string Game::update()
     
     case GAME_OVER:
     {
+        //TODO: STOP THE GAME OVER SOUND AFTER CLICKING THE BUTTON
         gameTimer.pause();
         ExplosionConfettiManager::GetInstance().update();
+        GameOverOverlay::GetInstance().update();
+        
+        if (GameOverOverlay::GetInstance().shouldShowText() && !gameOverTextStarted) {
+            Animator::GetInstance().Play("game_over_text");
+            gameOverTextStarted = true;
+        }
+        
+        Animator::GetInstance().Update();
         break;
     }
     
@@ -632,7 +663,19 @@ void Game::draw()
             card.draw();
         }
     }
-
+    
+    if(gameState == GAME_OVER) {
+        GameOverOverlay::GetInstance().draw();
+        
+        if (GameOverOverlay::GetInstance().shouldShowText()) {
+            float textY = GameOverOverlay::GetInstance().getTextYPosition() + 100;
+            float textX = (GAME_SCREEN_WIDTH - 1800.0f) / 2.0f; 
+            
+            Animator::GetInstance().SetPosition("game_over_text", {textX, textY});
+            Animator::GetInstance().Draw();
+        }
+    } 
+    else {
 #pragma region HealtBar
 
         const Texture2D& healthbarTexture = ResourceManager::GetInstance().GetTextureRef("health_bar");
@@ -654,10 +697,11 @@ void Game::draw()
 
 #pragma endregion HealtBar
 
-    killCounter.draw();
-    gameTimer.draw(GAME_SCREEN_WIDTH);
-    
-    DamageOverlay::GetInstance().draw();
+        killCounter.draw();
+        gameTimer.draw(GAME_SCREEN_WIDTH);
+        
+        DamageOverlay::GetInstance().draw();
+    }
 }
 
 void Game::onExit()

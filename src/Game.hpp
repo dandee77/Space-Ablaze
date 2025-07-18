@@ -16,6 +16,7 @@
 #include "DamageIndicatorManager.hpp"
 #include "ConfettiManager.hpp"
 #include "ExplosionConfettiManager.hpp"
+#include "GameOverOverlay.hpp"
 
 #define MAX_SOUND_INSTANCES 10
 

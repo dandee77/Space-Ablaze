@@ -40,6 +40,7 @@ ResourceManager::ResourceManager(){
         {"health",                              "assets/textures/health.png"},
         {"health_bar",                          "assets/textures/healthBar.png"},
         {"window",                              "assets/textures/window.png"},
+        {"game_over_text",                      "assets/textures/game_over_text.png"},
     };
 
     shaderPaths = {
@@ -57,6 +58,7 @@ ResourceManager::ResourceManager(){
         {"player_damaged_2",                    "assets/sounds/player_damaged.mp3"},
         {"button_click",                        "assets/sounds/click_sound.mp3"},
         {"exit_sound",                          "assets/sounds/exit_sound.mp3"},
+        {"game_over",                           "assets/sounds/game_over.mp3"},
     };      
 
     // TODO: ADD MUSIC DIR

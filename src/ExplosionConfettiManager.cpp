@@ -12,7 +12,7 @@ void ExplosionConfettiManager::startExplosion(Vector2 playerPosition)
     currentExplosionTime = 0.0f;
     explosionCenter = playerPosition;
     
-    for (int i = 0; i < 50; i++) {
+    for (int i = 0; i < 500; i++) {
         particles.push_back(std::make_unique<ExplosionConfettiParticle>(explosionCenter));
     }
 }
@@ -33,8 +33,14 @@ void ExplosionConfettiManager::update()
     if (spawnTimer >= spawnInterval) {
         spawnTimer = 0.0f;
         
-        int baseParticles = 12;
-        int extraParticles = (int)(8.0f * sinf(currentExplosionTime * 3.0f)) + 8; 
+        float timeProgress = std::min(currentExplosionTime / 2.5f, 1.0f);
+        float exponentialScale = timeProgress * timeProgress * timeProgress; 
+        
+        int baseParticles = (int)(1 + (14 * exponentialScale));
+        
+        int maxExtraParticles = (int)(8 * exponentialScale); 
+        int extraParticles = (int)(maxExtraParticles * sinf(currentExplosionTime * 3.0f)) + maxExtraParticles;
+        
         int particlesToSpawn = baseParticles + extraParticles;
         
         for (int i = 0; i < particlesToSpawn; i++) {
