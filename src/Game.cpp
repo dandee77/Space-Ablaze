@@ -13,6 +13,7 @@
 #include <memory>
 #include "DamageIndicatorManager.hpp"
 #include "ConfettiManager.hpp"
+#include "ExplosionConfettiManager.hpp"
 #include "DamageOverlay.hpp"
 
 
@@ -57,6 +58,7 @@ void Game::onSwitch()
     BulletManager::GetInstance().reset();
     DamageIndicatorManager::GetInstance().reset();
     ConfettiManager::GetInstance().reset();
+    ExplosionConfettiManager::GetInstance().reset();
     DamageOverlay::GetInstance().reset();
 
     playerBulletTexture = ResourceManager::GetInstance().GetTexture("player_bullet");
@@ -320,7 +322,10 @@ std::string Game::update()
                     Vector2 bulletPosition = bm.getBullets()[i].getPosition(); 
                     bm.removeBullet(i);
                     playerEntity.takeDamage(GetTime(), bulletPosition, 3.0f);
-                    if (playerEntity.getHealth() <= 0) gameState = GAME_OVER;
+                    if (playerEntity.getHealth() <= 0) {
+                        gameState = GAME_OVER;
+                        ExplosionConfettiManager::GetInstance().startExplosion(playerEntity.getPosition());
+                    }
                     i--; 
                     continue;
                 }
@@ -376,7 +381,10 @@ std::string Game::update()
             if (CheckCollisions(enemy->getPosition(), playerEntity.getPosition(), playerEntity.getHitbox().width)
                 && playerEntity.getPlayerState() == PLAYER_DEFAULT) {
                 playerEntity.takeDamage(GetTime(), enemy->getPosition(), enemy->getHitbox().width);
-                if (playerEntity.getHealth() <= 0) gameState = GAME_OVER;
+                if (playerEntity.getHealth() <= 0) {
+                    gameState = GAME_OVER;
+                    ExplosionConfettiManager::GetInstance().startExplosion(playerEntity.getPosition());
+                }
                 enemiesToRemove.push_back(enemyId);
                 continue; 
             }
@@ -396,7 +404,10 @@ std::string Game::update()
             if (CheckCollisions(asteroid->getPosition(), playerEntity.getPosition(), playerEntity.getHitbox().width) 
                 && playerEntity.getPlayerState() == PLAYER_DEFAULT) {
                 playerEntity.takeDamage(GetTime(), asteroid->getPosition(), asteroid->getAsteroidSize());
-                if (playerEntity.getHealth() <= 0) gameState = GAME_OVER;
+                if (playerEntity.getHealth() <= 0) {
+                    gameState = GAME_OVER;
+                    ExplosionConfettiManager::GetInstance().startExplosion(playerEntity.getPosition());
+                }
                 asteroidsToRemove.push_back(asteroidId);
             }
         }
@@ -495,6 +506,7 @@ std::string Game::update()
     case GAME_OVER:
     {
         gameTimer.pause();
+        ExplosionConfettiManager::GetInstance().update();
         break;
     }
     
@@ -609,6 +621,7 @@ void Game::draw()
         Animator::GetInstance().Draw(); 
 
         // std::cout << "Player Position: (" << playerEntity.getPosition().x << ", " << playerEntity.getPosition().y << ")" << std::endl;
+        if(gameState == GAME_OVER) ExplosionConfettiManager::GetInstance().draw();
 
     EndMode2D();
 

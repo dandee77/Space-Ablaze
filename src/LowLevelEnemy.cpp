@@ -29,7 +29,7 @@ LowLevelEnemy::LowLevelEnemy(std::string enemyID, EnemyType type, Vector2 spawnP
     knockbackDecay = 0.9f;
     knockbackCooldown = Cooldown(ENEMY_KNOCKBACK_COOLDOWN); 
     
-    separationRadius = Vector2Length(origin);
+    separationRadius = 7.5f;
     separationStrength = 10.0f; 
 
     //! INEFFICIENT WAY TO PASS TEXTURES, BUT IT WORKS FOR NOW
