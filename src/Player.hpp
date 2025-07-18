@@ -29,6 +29,8 @@ public:
     PlayerState getPlayerState() const { return playerState; }
     void addScore(int score) { playerScore += score; }
     int getScore() const { return playerScore; }
+    void addDamageDealt(int damage) { totalDamageDealt += damage; }
+    int getTotalDamageDealt() const { return totalDamageDealt; }
 
     void increasePlayerAttackSpeed();
     void increasePlayerHealth();
@@ -80,6 +82,7 @@ private:
     int maxDamage;
 
     int playerScore;
+    int totalDamageDealt;
     Camera2D camera;
     bool playerAccelerating;
     PlayerState playerState;

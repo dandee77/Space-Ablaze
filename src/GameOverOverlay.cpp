@@ -13,7 +13,7 @@ void GameOverOverlay::startOverlay()
     screenHeight = GAME_SCREEN_HEIGHT;
     overlayPosition = -screenHeight; 
     slideSpeed = 8000.0f; 
-    targetAlpha = 0.5f; 
+    targetAlpha = 0.7f; 
     currentAlpha = 0.0f;
     
     textAnimationStarted = false;

@@ -37,6 +37,7 @@ Player::Player() : playerState(PLAYER_DEFAULT), timeStateEntered(0.0f) {};
 void Player::init() 
 {   
     playerScore = 0;
+    totalDamageDealt = 0;
     rect = {250, 250, 8, 8};
     position = {rect.x, rect.y};
     speed = PLAYER_SPEED;

@@ -12,6 +12,7 @@ public:
     void update();
     void draw();
     void reset();
+    int getCount() const { return count; }
 
 private:
     int count;

@@ -31,7 +31,16 @@ static int prevGameTimer = 0;
 static bool gameOverTextStarted = false;
 
 Game::Game() 
-{}
+{
+    restartButton = nullptr;
+    mainMenuButton = nullptr;
+}
+
+Game::~Game()
+{
+    if (restartButton) delete restartButton;
+    if (mainMenuButton) delete mainMenuButton;
+}
 
 void Game::onSwitch()
 {
@@ -115,7 +124,43 @@ void Game::onSwitch()
         scoreSounds[i] = LoadSound("assets/sounds/score_sound.wav");
     }
 
+    // Initialize game over buttons
+    if (restartButton) delete restartButton;
+    if (mainMenuButton) delete mainMenuButton;
+    restartButton = new Button(Rectangle{GAME_SCREEN_WIDTH/2.0f - 400, 1600, 800, 120}, "RESTART", 120, BUTTON_CENTERED);
+    mainMenuButton = new Button(Rectangle{GAME_SCREEN_WIDTH/2.0f - 400, 1780, 800, 120}, "MAIN MENU", 120, BUTTON_CENTERED);
+
     augmentCards.clear();
+}
+
+
+void Game::restartGame() { //ts kinda useless ngl
+    gameOverTextStarted = false;
+    
+    PlayMusicStream(gameMusic);
+    
+    EnemyManager::GetInstance().reset();
+    AsteroidManager::GetInstance().reset();
+    BulletManager::GetInstance().reset();
+    DamageIndicatorManager::GetInstance().reset();
+    ConfettiManager::GetInstance().reset();
+    ExplosionConfettiManager::GetInstance().reset();
+    GameOverOverlay::GetInstance().reset();
+    DamageOverlay::GetInstance().reset();
+    
+    Animator::GetInstance().StopAll();
+
+    playerEntity.init();
+    
+    killCounter.reset();
+    gameTimer.reset();
+    gameTimer.start();
+    augmentCards.clear();
+    
+    Animator::GetInstance().Play("wasd_keys_tutorial");
+    Animator::GetInstance().Play("e_key_tutorial");
+    
+    gameState = GAME_RUNNING;
 }
 
 
@@ -249,6 +294,7 @@ std::string Game::update()
                         
                         int damage = playerEntity.getRandomDamage();
                         enemy->takeDamage(damage);
+                        playerEntity.addDamageDealt(damage);
                         
                         if (bm.getBullets()[i].getKnockbackPower() > 0.0f && enemy->canReceiveKnockback()) {
                             enemy->applyKnockback(bm.getBullets()[i].getDirection(), 
@@ -336,6 +382,10 @@ std::string Game::update()
                     bm.removeBullet(i);
                     playerEntity.takeDamage(GetTime(), bulletPosition, 3.0f);
                     if (playerEntity.getHealth() <= 0) {
+                        deathInfo.killerType = KILLER_ENEMY_BULLET;
+                        deathInfo.killerID = "enemy_bullet";
+                        deathInfo.killerName = "Enemy Bullet";
+                        deathInfo.killerTexture = ResourceManager::GetInstance().GetTexture("enemy_bullet");
                         gameState = GAME_OVER;
                         ExplosionConfettiManager::GetInstance().startExplosion(playerEntity.getPosition());
                         GameOverOverlay::GetInstance().startOverlay();
@@ -398,6 +448,18 @@ std::string Game::update()
                 && playerEntity.getPlayerState() == PLAYER_DEFAULT) {
                 playerEntity.takeDamage(GetTime(), enemy->getPosition(), enemy->getHitbox().width);
                 if (playerEntity.getHealth() <= 0) {
+                    deathInfo.killerType = KILLER_ENEMY_COLLISION;
+                    deathInfo.killerID = enemyId;
+                    if (enemy->getEnemyType() == LOW_LEVEL_ENEMY) {
+                        deathInfo.killerName = "Low Level Enemy";
+                        deathInfo.killerTexture = ResourceManager::GetInstance().GetTexture("low_level_enemy1");
+                    } else if (enemy->getEnemyType() == MID_LEVEL_ENEMY) {
+                        deathInfo.killerName = "Mid Level Enemy";
+                        deathInfo.killerTexture = ResourceManager::GetInstance().GetTexture("mid_level_enemy");
+                    } else {
+                        deathInfo.killerName = "Enemy";
+                        deathInfo.killerTexture = ResourceManager::GetInstance().GetTexture("low_level_enemy1");
+                    }
                     gameState = GAME_OVER;
                     ExplosionConfettiManager::GetInstance().startExplosion(playerEntity.getPosition());
                     GameOverOverlay::GetInstance().startOverlay();
@@ -424,6 +486,10 @@ std::string Game::update()
                 && playerEntity.getPlayerState() == PLAYER_DEFAULT) {
                 playerEntity.takeDamage(GetTime(), asteroid->getPosition(), asteroid->getAsteroidSize());
                 if (playerEntity.getHealth() <= 0) {
+                    deathInfo.killerType = KILLER_ASTEROID;
+                    deathInfo.killerID = asteroidId;
+                    deathInfo.killerName = "Asteroid";
+                    deathInfo.killerTexture = ResourceManager::GetInstance().GetTexture("asteroid");
                     gameState = GAME_OVER;
                     ExplosionConfettiManager::GetInstance().startExplosion(playerEntity.getPosition());
                     GameOverOverlay::GetInstance().startOverlay();
@@ -535,6 +601,18 @@ std::string Game::update()
         if (GameOverOverlay::GetInstance().shouldShowText() && !gameOverTextStarted) {
             Animator::GetInstance().Play("game_over_text");
             gameOverTextStarted = true;
+        }
+        
+        if (restartButton && restartButton->isClicked()) {
+            this->restartGame();
+            StopSound(ResourceManager::GetInstance().GetSound("game_over"));
+            PlaySound(ResourceManager::GetInstance().GetSound("button_click"));
+        }
+        
+        if (mainMenuButton && mainMenuButton->isClicked()) {
+            StopSound(ResourceManager::GetInstance().GetSound("game_over"));
+            PlaySound(ResourceManager::GetInstance().GetSound("button_click"));
+            return "MainMenu";
         }
         
         Animator::GetInstance().Update();
@@ -673,6 +751,53 @@ void Game::draw()
             
             Animator::GetInstance().SetPosition("game_over_text", {textX, textY});
             Animator::GetInstance().Draw();
+            
+            Font font = ResourceManager::GetInstance().GetFont("primary_font");
+            float detailsStartY = textY + 500; 
+            float leftColumnX = GAME_SCREEN_WIDTH / 2.0f - 800;
+            float rightColumnX = GAME_SCREEN_WIDTH / 2.0f + 150;
+            float lineHeight = 80;
+            
+            DrawTextEx(font, TextFormat("Kill Count: %d", killCounter.getCount()), 
+                      Vector2{leftColumnX, detailsStartY}, 80, 0, WHITE);
+            
+            DrawTextEx(font, TextFormat("Total Score: %d", playerEntity.getScore()), 
+                      Vector2{leftColumnX, detailsStartY + lineHeight}, 80, 0, WHITE);
+            
+            DrawTextEx(font, TextFormat("Time Survived: %ds", (int)gameTimer.getElapsedTime()), 
+                      Vector2{leftColumnX, detailsStartY + lineHeight * 2}, 80, 0, WHITE);
+            
+            DrawTextEx(font, TextFormat("Damage Dealt: %d", playerEntity.getTotalDamageDealt()), 
+                      Vector2{leftColumnX, detailsStartY + lineHeight * 3}, 80, 0, WHITE);
+            
+            DrawTextEx(font, "Killed by:", 
+                      Vector2{rightColumnX, detailsStartY}, 80, 0, WHITE);
+            
+            DrawTextEx(font, deathInfo.killerName.c_str(), 
+                      Vector2{rightColumnX, detailsStartY + lineHeight}, 80, 0, RED);
+            
+            float killerImageY = detailsStartY + lineHeight;
+            Rectangle killerRect = {rightColumnX, killerImageY, 500, 500};
+            
+            if (deathInfo.killerType == KILLER_ENEMY_COLLISION) {
+                DrawTexturePro(deathInfo.killerTexture,
+                              Rectangle{0, 0, (float)deathInfo.killerTexture.width, (float)deathInfo.killerTexture.height},
+                              killerRect,
+                              Vector2{0, 0},
+                              0.0f,
+                              WHITE);
+            } else {
+                DrawTexturePro(deathInfo.killerTexture,
+                              Rectangle{0, 0, (float)deathInfo.killerTexture.width, (float)deathInfo.killerTexture.height},
+                              killerRect,
+                              Vector2{0, 0},
+                              0.0f,
+                              WHITE);
+            }
+            
+            // Draw buttons
+            if (restartButton) restartButton->draw();
+            if (mainMenuButton) mainMenuButton->draw();
         }
     } 
     else {

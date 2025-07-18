@@ -17,9 +17,24 @@
 #include "ConfettiManager.hpp"
 #include "ExplosionConfettiManager.hpp"
 #include "GameOverOverlay.hpp"
+#include "Button.hpp"
 
 #define MAX_SOUND_INSTANCES 10
 
+enum KillerType
+{
+    KILLER_ENEMY_BULLET = 0,
+    KILLER_ENEMY_COLLISION,
+    KILLER_ASTEROID
+};
+
+struct DeathInfo
+{
+    KillerType killerType;
+    std::string killerID;
+    std::string killerName;
+    Texture2D killerTexture;
+};
 
 enum GameState
 {
@@ -33,11 +48,11 @@ class Game : public Scene
 {
 public:
     Game();
+    ~Game();
     std::string update() override;
     void draw() override;
     void onSwitch() override;
     void onExit() override;
-    ~Game() override = default;
 
 private:        
     struct BackgroundLayer {
@@ -45,6 +60,8 @@ private:
         float parallaxFactor; // 0.0 (stationary) to 1.0 (moves with player)
         float size;
     };
+
+    void restartGame();
 
     GameState gameState;
 
@@ -66,4 +83,8 @@ private:
     GameTimer gameTimer;
 
     std::vector<Card> augmentCards;
+    
+    DeathInfo deathInfo;
+    Button* restartButton;
+    Button* mainMenuButton;
 };
