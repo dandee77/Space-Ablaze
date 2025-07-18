@@ -14,9 +14,7 @@ void EnemyManager::update(Vector2 playerPos, const GameTimer& gameTimer)
 {
     float elapsed = gameTimer.getElapsedTime();
 
-    //? spawn cooldown drops over time, min 0.25s at 10 mins
-    //? starts at 1.5s, drops to 0.25s over 10 minutes
-    float newCooldown = std::max(0.1f, 1.5f - (elapsed / 300.0f) * 1.25f);
+    float newCooldown = std::max(0.0f, 1.5f - (elapsed / 300.0f) * 1.25f);
     enemySpawnCooldown.updateCooldownDuration(newCooldown);
 
     if (enemies.size() < maxEnemies && !enemySpawnCooldown.isOnCooldown()) {
@@ -55,7 +53,7 @@ void EnemyManager::update(Vector2 playerPos, const GameTimer& gameTimer)
         removeEnemy(id);
     }
 
-    // std::cout << "enemy spawn rate: " << newCooldown << std::endl;
+    std::cout << "enemy spawn rate: " << newCooldown << std::endl;
 
     // print number of enemies
     // std::cout << "Number of enemies: " << enemies.size() << std::endl;

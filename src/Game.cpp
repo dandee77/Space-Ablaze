@@ -788,7 +788,7 @@ void Game::draw()
             DrawTextEx(font, TextFormat("Total Score: %d", playerEntity.getScore()), 
                       Vector2{leftColumnX, detailsStartY + lineHeight}, 80, 0, WHITE);
             
-            DrawTextEx(font, TextFormat("Time Survived: %ds", (int)gameTimer.getElapsedTime()), 
+            DrawTextEx(font, TextFormat("Time Survived: %s", gameTimer.getElapsedTimeString().c_str()), 
                       Vector2{leftColumnX, detailsStartY + lineHeight * 2}, 80, 0, WHITE);
             
             DrawTextEx(font, TextFormat("Damage Dealt: %d", playerEntity.getTotalDamageDealt()), 

@@ -51,7 +51,7 @@ void Player::init()
     
     // attributes
     attackSpeed = 0.5f; 
-    health = 10;
+    health = 100;
     iframeDuration = PLAYER_STATE_IFRAME_DURATION;
     rotationSpeedMultiplier = 1.0f; 
 
