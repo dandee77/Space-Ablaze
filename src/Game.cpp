@@ -149,6 +149,8 @@ void Game::restartGame() { //ts kinda useless ngl
     DamageOverlay::GetInstance().reset();
     
     Animator::GetInstance().StopAll();
+    // Clean up the killer display animation if it exists
+    Animator::GetInstance().Remove("killer_display");
 
     playerEntity.init();
     
@@ -452,10 +454,32 @@ std::string Game::update()
                     deathInfo.killerID = enemyId;
                     if (enemy->getEnemyType() == LOW_LEVEL_ENEMY) {
                         deathInfo.killerName = "Low Level Enemy";
-                        deathInfo.killerTexture = ResourceManager::GetInstance().GetTexture("low_level_enemy1");
+                        // Create a temporary animation for the game over screen
+                        Animator::GetInstance().AddAnimation("killer_display", std::make_shared<Animation>(
+                            ResourceManager::GetInstance().GetTextureRef("low_level_enemy1"),
+                            ResourceManager::GetInstance().GetTexture("low_level_enemy1").width / 10,
+                            ResourceManager::GetInstance().GetTexture("low_level_enemy1").height,
+                            0.1f,
+                            true,
+                            Rectangle{0, 0, 256, 256}, // Larger rectangle for scaling
+                            false,
+                            WHITE
+                        ));
+                        Animator::GetInstance().Play("killer_display");
                     } else if (enemy->getEnemyType() == MID_LEVEL_ENEMY) {
                         deathInfo.killerName = "Mid Level Enemy";
-                        deathInfo.killerTexture = ResourceManager::GetInstance().GetTexture("mid_level_enemy");
+                        // Create a temporary animation for the game over screen
+                        Animator::GetInstance().AddAnimation("killer_display", std::make_shared<Animation>(
+                            ResourceManager::GetInstance().GetTextureRef("mid_level_enemy"),
+                            ResourceManager::GetInstance().GetTexture("mid_level_enemy").width / 12,
+                            ResourceManager::GetInstance().GetTexture("mid_level_enemy").height,
+                            0.1f,
+                            true,
+                            Rectangle{0, 0, 256, 256}, // Larger rectangle for scaling
+                            false,
+                            WHITE
+                        ));
+                        Animator::GetInstance().Play("killer_display");
                     } else {
                         deathInfo.killerName = "Enemy";
                         deathInfo.killerTexture = ResourceManager::GetInstance().GetTexture("low_level_enemy1");
@@ -776,17 +800,14 @@ void Game::draw()
             DrawTextEx(font, deathInfo.killerName.c_str(), 
                       Vector2{rightColumnX, detailsStartY + lineHeight}, 80, 0, RED);
             
-            float killerImageY = detailsStartY + lineHeight;
-            Rectangle killerRect = {rightColumnX, killerImageY, 500, 500};
+            float killerImageY = detailsStartY + lineHeight * 2;
+            Vector2 killerPos = {rightColumnX, killerImageY}; 
             
             if (deathInfo.killerType == KILLER_ENEMY_COLLISION) {
-                DrawTexturePro(deathInfo.killerTexture,
-                              Rectangle{0, 0, (float)deathInfo.killerTexture.width, (float)deathInfo.killerTexture.height},
-                              killerRect,
-                              Vector2{0, 0},
-                              0.0f,
-                              WHITE);
+                Animator::GetInstance().SetPosition("killer_display", killerPos);
+                Animator::GetInstance().Draw();
             } else {
+                Rectangle killerRect = {rightColumnX, killerImageY, 256, 256};
                 DrawTexturePro(deathInfo.killerTexture,
                               Rectangle{0, 0, (float)deathInfo.killerTexture.width, (float)deathInfo.killerTexture.height},
                               killerRect,
@@ -795,30 +816,29 @@ void Game::draw()
                               WHITE);
             }
             
-            // Draw buttons
             if (restartButton) restartButton->draw();
             if (mainMenuButton) mainMenuButton->draw();
         }
     } 
     else {
 #pragma region HealtBar
-
+ 
         const Texture2D& healthbarTexture = ResourceManager::GetInstance().GetTextureRef("health_bar");
         DrawTexturePro(healthbarTexture,
-                       Rectangle{0, 0, (float)healthbarTexture.width, (float)healthbarTexture.height},
-                       Rectangle{GAME_SCREEN_WIDTH - 1200, 150, 1000, 150},
-                       Vector2{0, 0},
-                       0.0f,
-                       Fade(WHITE, 1.0f));
+                    Rectangle{0, 0, (float)healthbarTexture.width, (float)healthbarTexture.height},
+                    Rectangle{GAME_SCREEN_WIDTH - 1200, 150, 1000, 150},
+                    Vector2{0, 0},
+                    0.0f,
+                    WHITE);
 
         const Texture2D& healthTexture = ResourceManager::GetInstance().GetTextureRef("health");
         float healthBarWidth = 1000.0f * (static_cast<float>(playerEntity.getHealth()) / 100.0f);
         DrawTexturePro(healthTexture,
-                        Rectangle{0, 0, (float)healthTexture.width, (float)healthTexture.height},
-                        Rectangle{GAME_SCREEN_WIDTH - 1200, 150, healthBarWidth, 150},
-                        Vector2{0, 0},
-                        0.0f,
-                        Fade(WHITE, 1.0f));
+                    Rectangle{0, 0, (float)healthTexture.width, (float)healthTexture.height},
+                    Rectangle{GAME_SCREEN_WIDTH - 1200, 150, healthBarWidth, 150},
+                    Vector2{0, 0},
+                    0.0f,
+                    WHITE);
 
 #pragma endregion HealtBar
 
@@ -832,5 +852,6 @@ void Game::draw()
 void Game::onExit()
 {
     Animator::GetInstance().StopAll();
+    Animator::GetInstance().Remove("killer_display"); // Clean up killer animation
     StopMusicStream(gameMusic);
 }
