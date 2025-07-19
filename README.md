@@ -2,16 +2,7 @@
 
 <div align="center">
 
-```
-    ✦           .                    ✦       ✦
-        .        ✦      🚀 SPACE ABLAZE 🚀      ✦        .
-    ✦       .            Epic Space Combat           .       ✦
-        .    ✦                                   ✦    .
-            .        Built with C++ & Raylib        .
-    ✦           .                    ✦           .       ✦
-        .            ✦           .            ✦
-```
-
+![GAME TITLE](image-4.png)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![C++](https://img.shields.io/badge/C++-17-blue.svg)](https://isocpp.org/)
 [![Raylib](https://img.shields.io/badge/Raylib-5.5-green.svg)](https://www.raylib.com/)

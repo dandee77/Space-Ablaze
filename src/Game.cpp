@@ -782,7 +782,7 @@ void Game::draw()
             float rightColumnX = GAME_SCREEN_WIDTH / 2.0f + 150;
             float lineHeight = 80;
             
-            DrawTextEx(font, TextFormat("Kill Count: %d", killCounter.getCount()), 
+            DrawTextEx(font, TextFormat("Destroyed: %d", killCounter.getCount()), 
                       Vector2{leftColumnX, detailsStartY}, 80, 0, WHITE);
             
             DrawTextEx(font, TextFormat("Total Score: %d", playerEntity.getScore()), 

@@ -91,7 +91,7 @@ void MainMenu::draw()
         text_dimensions = MeasureTextEx(ResourceManager::GetInstance().GetFont("primary_font"), "BLAZE", 400, 1.0f);
         text_x = (GAME_SCREEN_WIDTH - text_dimensions.x) / 2;
         text_y = 480;
-        DrawTextEx(ResourceManager::GetInstance().GetFont("primary_font"), "BLAZE", (Vector2){ text_x + 80, text_y }, 400, 1.0f, Fade(RED, 0.55f));
+        DrawTextEx(ResourceManager::GetInstance().GetFont("primary_font"), "ABLAZE", (Vector2){ text_x + 80, text_y }, 400, 1.0f, Fade(RED, 0.55f));
 
         // ? Draw "Equtiy Quest - 2024" at center bottom
         text_dimensions = MeasureTextEx(ResourceManager::GetInstance().GetFont("secondary_font"), "Equity Quest - 2024", 50, 1.0f);
