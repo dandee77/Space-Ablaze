@@ -1,5 +1,3 @@
-# 🌌 Space Ablaze 🚀
-
 <div align="center">
 
 ![GAME TITLE](image-4.png)
@@ -10,9 +8,7 @@
 
 </div>
 
----
-
-## 🌟 About Space Ablaze
+## 🌟 About
 
 **Space Ablaze** is an intense, fast-paced 2D space shooter that throws you into the heart of galactic warfare! Navigate through asteroid fields, battle diverse enemy fleets, and upgrade your ship's capabilities as you fight for survival in the vast cosmos.
 
@@ -29,8 +25,6 @@
    • Dynamic music           • Damage analytics       • Smooth scrolling
    • Reactive audio cues     • Survival metrics       • Atmospheric effects
 ```
-
----
 
 ## 🚀 Gameplay Features
 
@@ -63,8 +57,6 @@ Choose from **9 powerful upgrades** every 20 seconds:
 | 🔄 **Gyro Control**    | Faster ship rotation          |
 | 💢 **Inertia Impact**  | Adds knockback to bullets     |
 
----
-
 ## 🎮 Controls
 
 ```
@@ -73,8 +65,6 @@ Choose from **9 powerful upgrades** every 20 seconds:
     Smooth 360°        Left Click          P - Pause Toggle
     Ship rotation      Auto-aim mode       E - Auto-fire
 ```
-
----
 
 ## 🖼️ Screenshots
 
@@ -274,8 +264,6 @@ Have an idea for a new feature? We'd love to hear it!
 4. Push to the branch: `git push origin feature/amazing-feature`
 5. Open a Pull Request
 
----
-
 ## 📜 License
 
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
@@ -294,8 +282,6 @@ The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 ```
 
----
-
 ## 🙏 Acknowledgments
 
 ```
@@ -308,8 +294,6 @@ copies or substantial portions of the Software.
 🚀 Game Developers     - For sharing knowledge and techniques
 ```
 
----
-
 ## 📞 Connect & Support
 
 <div align="center">
@@ -320,11 +304,8 @@ copies or substantial portions of the Software.
 [![Issues](https://img.shields.io/badge/Issues-Bug%20Reports-red?style=for-the-badge&logo=github)](https://github.com/dandee77/Space-Ablaze/issues)
 [![Discussions](https://img.shields.io/badge/Discussions-Community-blue?style=for-the-badge&logo=github)](https://github.com/dandee77/Space-Ablaze/discussions)
 
-```
-🚀 Ready to embark on your space adventure? 🚀
-        Download Space Ablaze and start blasting!
-                ✦ ° ✦ ° ✦ ° ✦ ° ✦
-```
+Ready to embark on your space adventure? <br>
+Download Space Ablaze and start blasting!
 
 **Made with ❤️ and lots of ☕ by the Space Ablaze Team**
 
