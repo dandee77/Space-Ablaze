@@ -33,8 +33,23 @@ endif()
 
 
 add_executable(${PROJECT_NAME} ${SOURCES})
+
+# hide console window on Windows
+if(WIN32)
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        WIN32_EXECUTABLE TRUE
+    )
+endif()
+
 target_link_libraries(${PROJECT_NAME} raylib)
 
+#? copy assets to build directory after building
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_SOURCE_DIR}/assets
+    $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets
+    COMMENT "Copying assets to build directory"
+)
 
 if (MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /wd4244)
