@@ -69,10 +69,6 @@ Choose from **9 powerful upgrades** every 20 seconds:
 ![AUGMENT SELECTION](image-1.png)
 ![GAME OVER](image-2.png)
 
----
-
----
-
 ## 🛠️ Installation & Setup
 
 ### 📋 **System Requirements**
