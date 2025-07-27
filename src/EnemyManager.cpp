@@ -8,13 +8,13 @@
 
 #define ENEMY_MAX_DISTANCE 1000.0f
 #define ENEMY_MAX_RANGE 100.0f
-#define MID_LEVEL_ENEMY_SPAWN_START_TIME 420.0f 
+#define MID_LEVEL_ENEMY_SPAWN_START_TIME 300.0f 
 
 void EnemyManager::update(Vector2 playerPos, const GameTimer& gameTimer)
 {
     float elapsed = gameTimer.getElapsedTime();
 
-    float newCooldown = std::max(0.0f, 1.5f - (elapsed / 300.0f) * 1.25f);
+    float newCooldown = std::max(0.025f, 1.5f - (elapsed / 300.0f) * 1.25f);
     enemySpawnCooldown.updateCooldownDuration(newCooldown);
 
     if (enemies.size() < maxEnemies && !enemySpawnCooldown.isOnCooldown()) {
