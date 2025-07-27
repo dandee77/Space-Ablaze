@@ -12,28 +12,13 @@
 
 **Space Ablaze** is an intense, fast-paced 2D space shooter that throws you into the heart of galactic warfare! Navigate through asteroid fields, battle diverse enemy fleets, and upgrade your ship's capabilities as you fight for survival in the vast cosmos.
 
-### ✨ Key Features
-
-```
-🎮 DYNAMIC COMBAT         🔧 UPGRADE SYSTEM        🎨 STUNNING VISUALS
-   • Multiple enemy types    • 9 unique augments      • Parallax backgrounds
-   • Smart AI behaviors      • Weapon modifications   • Particle effects
-   • Asteroid obstacles      • Player progression     • Smooth animations
-
-🎵 IMMERSIVE AUDIO        📊 DETAILED STATS        🌌 SPACE ENVIRONMENTS
-   • Spatial sound design   • Kill tracking          • Multiple backgrounds
-   • Dynamic music           • Damage analytics       • Smooth scrolling
-   • Reactive audio cues     • Survival metrics       • Atmospheric effects
-```
-
 ## 🚀 Gameplay Features
 
 ### 🛸 **Combat System**
 
 - **Multi-directional shooting** with mouse aiming
-- **Weapon variety**: Scatter shot, piercing rounds, burst fire
-- **Knockback mechanics** for tactical crowd control
-- **Dynamic damage system** with visual feedback
+- **Powerups variety**: Scatter shot, piercing rounds, etc..
+- **Scaling difficulty** for tactical gameplay
 
 ### 👾 **Enemy Variety**
 
@@ -59,12 +44,24 @@ Choose from **9 powerful upgrades** every 20 seconds:
 
 ## 🎮 Controls
 
-```
-🕹️  MOVEMENT        🖱️  COMBAT          ⌨️  INTERFACE
-    WASD               Mouse Aim           ESC - Pause (removed)
-    Smooth 360°        Left Click          P - Pause Toggle
-    Ship rotation      Auto-aim mode       E - Auto-fire
-```
+### 🕹️ Movement
+
+- W / A / S / D – Smooth 360° movement
+- hip Rotation – Full analog-style control
+
+### 🖱️ Combat
+
+- Mouse Aim & Shoot – Aim with the mouse
+
+- Left Click – Fire weapon
+
+- Auto-Aim Mode – Optional toggle for assisted targeting
+
+### ⌨️ Interface
+
+- P – Toggle Pause
+
+- E – Toggle Auto-Fire
 
 ## 🖼️ Screenshots
 
@@ -209,32 +206,6 @@ make -j$(nproc)  # Use all CPU cores
 
 </details>
 
-## 🏗️ Technical Architecture
-
-### **🧱 Core Components**
-
-```cpp
-🎮 Application.cpp     - Main game loop and rendering pipeline
-🎨 ResourceManager     - Asset loading and management
-🎯 Game.cpp           - Core gameplay logic and state management
-🎪 Animator           - Animation system for sprites
-🔊 Audio System       - Music and sound effect management
-```
-
-### **🎨 Rendering Pipeline**
-
-- **Multi-pass Rendering**: Separate passes for game content and UI
-- **Shader Effects**: Post-processing with fragment shaders
-- **Resolution Scaling**: Automatic scaling for different screen sizes
-- **VSync Support**: Smooth 60 FPS gameplay
-
-### **🔧 Technologies Used**
-
-- **🎮 Raylib 5.5**: Cross-platform game development library
-- **🏗️ CMake**: Build system and dependency management
-- **🎨 OpenGL/DirectX**: Hardware-accelerated graphics rendering
-- **🔊 Audio Engine**: Built-in spatial audio processing
-
 ## 🤝 Contributing
 
 We welcome contributions to **Space Ablaze**! Here's how you can help:
@@ -280,18 +251,6 @@ furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
-```
-
-## 🙏 Acknowledgments
-
-```
-🌟 Special Thanks 🌟
-
-🎮 Raylib Community    - For the amazing game development library
-💻 Open Source         - For making game development accessible
-🎨 Asset Artists       - For inspiring visual designs
-🎵 Audio Engineers     - For spatial sound techniques
-🚀 Game Developers     - For sharing knowledge and techniques
 ```
 
 ## 📞 Connect & Support
