@@ -13,8 +13,7 @@ private:
     float borderAnimationTime;
     float borderSpeed;
     float borderWidth;
-    
-    // Animation properties
+
     float introAnimationTime;
     float exitAnimationTime;
     bool isIntroPlaying;
@@ -24,7 +23,6 @@ private:
     Rectangle originalRect;
     Rectangle targetRect;
     
-    // Hover properties
     bool isHovered;
     float hoverScale;
     Rectangle baseRect;  
@@ -55,7 +53,6 @@ public:
     bool isMouseHovered() const;
     bool isClicked() const;
     
-    // Animation controls
     void startIntroAnimation();
     void startExitAnimation();
     bool isIntroComplete() const { return isAnimationComplete && !isIntroPlaying; }
