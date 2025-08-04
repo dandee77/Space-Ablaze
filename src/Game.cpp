@@ -82,7 +82,6 @@ void Game::onSwitch()
     gameTimer = GameTimer();
     gameTimer.reset();
     gameTimer.start();
-    gameTimer.setStartTime(240.0f); 
 
     //? setup control guides keyboard keys animations
     Animator::GetInstance().AddAnimation("wasd_keys_tutorial",std::make_shared<Animation>(
@@ -158,7 +157,6 @@ void Game::restartGame() { //ts kinda useless ngl
     killCounter.reset();
     gameTimer.reset();
     gameTimer.start();
-    gameTimer.setStartTime(240.0f); 
     augmentCards.clear();
     
     Animator::GetInstance().Play("wasd_keys_tutorial");
