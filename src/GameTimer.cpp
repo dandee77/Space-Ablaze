@@ -27,6 +27,15 @@ void GameTimer::unpause() {
     }
 }
 
+int GameTimer::setStartTime(float time) {
+    if (time < 0) return -1; // Invalid time
+    startTime = time;
+    isPaused = false;
+    pausedTime = 0;
+    totalPausedDuration = 0;
+    return 0; // Success
+}
+
 void GameTimer::reset() {
     startTime = 0;
     isPaused = true;

@@ -18,6 +18,8 @@ public:
     void unpause();
     void reset();
 
+    int setStartTime(float time);
+
     float getElapsedTime() const;
     std::string getElapsedTimeString() const;
     bool isRunning() const { return !isPaused && startTime > 0; }
