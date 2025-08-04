@@ -25,9 +25,6 @@ MidLevelEnemy::MidLevelEnemy(std::string enemyID, EnemyType type, Vector2 spawnP
     knockbackVelocity = {0, 0};
     knockbackDecay = 0.9f;
     knockbackCooldown = Cooldown(ENEMY_KNOCKBACK_COOLDOWN);
-    
-    separationRadius = 7.5f;
-    separationStrength = 20.0f; 
 
     Animator::GetInstance().AddAnimation(enemyID, std::make_shared<Animation>(
         ResourceManager::GetInstance().GetTextureRef(textureName),

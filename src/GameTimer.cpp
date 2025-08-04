@@ -29,7 +29,8 @@ void GameTimer::unpause() {
 
 int GameTimer::setStartTime(float time) {
     if (time < 0) return -1; // Invalid time
-    startTime = time;
+    // Calculate the start time so that elapsed time equals the desired time
+    startTime = GetTime() - time;
     isPaused = false;
     pausedTime = 0;
     totalPausedDuration = 0;

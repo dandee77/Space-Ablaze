@@ -42,9 +42,6 @@ public:
     void applyKnockback(Vector2 direction, float force);
     bool canReceiveKnockback() const;
 
-    Vector2 calculateSeparation(const std::vector<Vector2>& nearbyEnemyPositions);
-    void setNearbyEnemies(const std::vector<Vector2>& positions) { nearbyEnemyPositions = positions; }
-
 protected:
 
     std::string enemyID;
@@ -59,8 +56,4 @@ protected:
     Vector2 knockbackVelocity;
     float knockbackDecay;
     Cooldown knockbackCooldown;
-    
-    std::vector<Vector2> nearbyEnemyPositions;
-    float separationRadius;
-    float separationStrength;
 };

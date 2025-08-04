@@ -30,19 +30,6 @@ void EnemyManager::update(Vector2 playerPos, const GameTimer& gameTimer)
         float dist = Vector2Distance(enemy->getPosition(), playerPos);
         enemy->getPlayerPositionForEnemy(playerPos);
         
-        std::vector<Vector2> nearbyPositions;
-        Vector2 currentPos = enemy->getPosition();
-        for (const auto& [otherId, otherEnemy] : enemies) {
-            if (otherId != id) { 
-                Vector2 otherPos = otherEnemy->getPosition();
-                float distance = Vector2Distance(currentPos, otherPos);
-                if (distance < 50.0f) { 
-                    nearbyPositions.push_back(otherPos);
-                }
-            }
-        }
-        enemy->setNearbyEnemies(nearbyPositions);
-        
         enemy->update();
         if (dist > ENEMY_MAX_DISTANCE) {
             toRemove.push_back(id);

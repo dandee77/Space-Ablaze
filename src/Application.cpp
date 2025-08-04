@@ -187,7 +187,7 @@ void Application::Run()
                 0.0f,
                 WHITE);
                     
-            // DrawFPS(10, 10);
+            DrawFPS(10, 10);
             
         EndDrawing();
     }
